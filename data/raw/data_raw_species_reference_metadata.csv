@@ -1,0 +1,4 @@
+attributeName;attributeDefinition;formatString;definition;unit;numberType;type;factor;comment
+name;Botanischer Artname mit der Nomenklatur von data_raw_traits.csv;NA;botanical species name;NA;NA;character;NA;NA
+X2021tum01;Deckungsschaetzung fuer den Plot 'tum01' im Jahr 2021 nach Braun-Blanquet (1964) und der Londo-Skala (Londo 1976);NA;NA;percent;real;numeric;NA;Braun-Blanquet J (1964) Pflanzensoziologie: Grundzuege der Vegetationskunde (3rd ed.). Wien-New York: Springer (Original work published 1928) / Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61-64. http://dx.doi.org/10.1007/BF00055300
+X2021tum02;etc.;;;;;;;
