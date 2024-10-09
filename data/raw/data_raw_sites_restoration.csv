@@ -1,4 +1,4 @@
-﻿Table number,plot,latitude,longitutde,elevation,plot_size,treatment,mowing,survey_date_2024,botanist_2024,cover_herb_2024,cover_moss_2024,cover_litter_2024,cover_soil_2024,height_herb_2024,comments
+﻿Table number,plot,latitude,longitutde,elevation,plot_size,treatment,mowing,survey_date_2024,botanist_2024,cover_vegetation_2024,cover_moss_2024,cover_litter_2024,cover_soil_2024,height_vegetation_2024,comments
 1,29,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer,65,65,80,4,44,"Richtung Westen: Ästige Graslilie, Salvia pratensis, Orobanche, Oreoselinum majus, Stachys recta"
 5,4,4828895,1164883,469,4,cut_summer,1990,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte Knöppler,70,80,70,1,35,
 6,10,4828895,1164883,469,4,cut_summer,2000,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte Knöppler,60,80,60,2,30,Dianthus daneben

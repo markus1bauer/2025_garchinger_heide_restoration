@@ -8,20 +8,16 @@
 
 
 
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# A Preparation ###############################################################
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
 ### Packages ###
 library(renv)
+library(installr)
 library(here)
 library(tidyverse)
 library(TNRS)
 library(GIFT)
 
 ### Start ###
+# Create hashtag infront of a line: shift + strg + c
 rm(list = ls())
 # installr::updateR(
 #   browse_news = FALSE,
@@ -36,26 +32,155 @@ rm(list = ls())
 
 
 
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# A Load data #################################################################
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+## 1 Sites ####################################################################
+
+
+sites_reference <- read_csv2(
+  here("data", "raw", "data_raw_sites_reference.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types =
+    cols(
+      .default = "?",
+      aufnahmedatum_2021 = col_date(format = "%d.%m.%Y")
+    )
+) %>%
+  select(!ends_with("_2026")) %>%
+  rename(
+    botanist_2021 = botaniker_2021,
+    survey_date_2021 = aufnahmedatum_2021,
+    height_vegetation_2021 = vegetationshoehe_2021,
+    cover_vegetation_2021 = vegetationsdeckung_2021,
+    cover_moss_2021 = moosdeckung_2021,
+    cover_litter_2021 = streudeckung_2021,
+    cover_soil_2021 = rohbodendeckung_2021
+  )
+
+sites_restoration <- read_csv(
+  here("data", "raw", "data_raw_sites_restoration.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types =
+    cols(
+    .default = "?"
+  )
+)
+
+
+
+## 2 Species ##################################################################
+
+species_reference <- read_csv2(
+  here("data", "raw", "data_raw_species_reference.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types =
+    cols(
+      .default = "?"
+    )
+)
+
+species_restoration <- read_csv(
+  here("data", "raw", "data_raw_species_restoration.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types =
+    cols(
+      .default = "?"
+    )
+)
+
+
+
+## 3 FloraVeg.EU species #######################################################
+
+
+traits <- readxl::read_excel(
+  here(
+    "data", "raw",
+    "Characteristic-species-combinations-EUNIS-habitats-2021-06-01.xlsx"
+    ),
+  col_names = TRUE, na = c("", "NA", "na")
+)
+
+
+
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # B Create variables ###########################################################
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-## 1 Combine reference and restoration plots ##################################
+
+## 1 Select target species from FloraVeg.EU ###################################
+
+
+data <- traits %>%
+  rename_with(~ tolower(gsub(" ", "_", .x))) %>%
+  filter(
+    habitat_code %in% c("R1A", "R22") &
+      species_type %in% c("Diagnostic", "Constant")
+    ) %>%
+  select(species, habitat_code, species_type) %>%
+  mutate(value = 1) %>%
+  pivot_wider(names_from = "habitat_code", values_from = "value") %>%
+  group_by(species) %>%
+  summarize(across(c("R1A", "R22"), ~ sum(.x, na.rm = TRUE))) %>%
+  mutate(
+    across(c("R1A", "R22"), ~ if_else(. > 0, 1, 0)),
+    both = if_else(R1A > 0 & R22 > 0, 1, 0)
+    )
+traits <- data
 
 
 
-## 2 Names from TNRS database #################################################
+## 2 Combine reference and restoration plots ##################################
+
+
+species <- species_reference %>%
+  left_join(species_restoration, by = "name")
+
+sites <- sites_reference %>%
+  full_join(sites_restoration, by = "plot")
+
+
+
+## 3 Names from TNRS database #################################################
 
 
 ### a Harmonize names ----------------------------------------------------------
 
+data <- species %>%
+  full_join(traits, by = "name") %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+  )
 
-### Check and summarize duplicates ---------------------------------------------
+names <- data %>%
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+  ) %>%
+  rename_with(tolower)
 
 
+### b Check and summarize duplicates -------------------------------------------
 
-## 3 Select target species from FloraVeg.EU ###################################
+data <- species_ammer %>%
+  rename(name_submitted = name) %>%
+  full_join(
+    data_names %>% select(name_submitted, accepted_name), by = "name_submitted"
+  )
+
+data %>% filter(duplicated(accepted_name))
+
+data2 <- data %>%
+  group_by(accepted_name) %>%
+  summarize(across(where(is.numeric), ~ sum(.x, na.rm = TRUE)))
+
+data2 %>% filter(duplicated(accepted_name))
+
 
 
 ## 4 Get red list status ######################################################
