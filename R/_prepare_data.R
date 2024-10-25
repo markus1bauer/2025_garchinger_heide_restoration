@@ -195,7 +195,9 @@ redlist <- readxl::read_excel(here("data", "raw",
 redlist_names <- TNRS(redlist$Name)
 redlist[1:5312,]$Name <- redlist_names[1:5312,]$Accepted_name
 
-# Sina, same names for species in redlist and species table, does not work
+#Sina, same names for species in redlist and species table, does not work
+
+### b Combine red list status and traits
 
 
 
