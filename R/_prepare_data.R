@@ -128,7 +128,7 @@ data <- traits %>%
     both = if_else(R1A > 0 & R22 > 0, 1, 0)
     )
 traits <- data
-
+# Markus: get target species and put them in 'traits' matrix. Works.
 
 
 ## 2 Combine reference and restoration plots ##################################
