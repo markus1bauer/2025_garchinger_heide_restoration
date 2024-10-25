@@ -192,10 +192,13 @@ redlist <- readxl::read_excel(here("data", "raw",
 RoteListe_plant_names <- TNRS(RoteListe$Name)
 RoteListe[1:5312,]$Name <- RoteListe_plant_names[1:5312,]$Accepted_name
 
-#Sina, imported the red list species, TNRS not working, better to select the species before?
+#Sina, imported the red list species, TNRS not working, is it better to select the required species before?
 
 ## 5 Traits from GIFT database ################################################
+traits_meta <- GIFT_traits_meta()
+trait_values <- GIFT_traits(trait_IDs=c("1.6.3", "3.2.3", "4.1.3"))
 
+#Sina, download the traits from GIFT database, no selecting of required species
 
 ## 6 Alpha diversity ##########################################################
 
