@@ -158,10 +158,6 @@ species <- species_reference %>%
 
 sites <- sites_reference %>%
   full_join(sites_restoration, by = "plot")
-=======
-
-# Markus hat die Zielarten von FloraVeg.EU gezogen. Sollte funktionieren.
->>>>>>> Stashed changes
 
 
 
