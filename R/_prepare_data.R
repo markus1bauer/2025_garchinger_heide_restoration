@@ -273,8 +273,9 @@ rm(
 
 ## 7 Calculation of CWMs ######################################################
 
-data2 <- data #test
-test2
+dbFD()
+#Sina, It is better to calculate it with dbFD than as in the old script, 
+# I have to look something up again 
 
 ## 8 ESy: EUNIS expert vegetation classification system #######################
 
