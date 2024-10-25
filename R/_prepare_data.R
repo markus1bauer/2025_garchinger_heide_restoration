@@ -127,7 +127,8 @@ data <- traits %>%
     across(c("R1A", "R22"), ~ if_else(. > 0, 1, 0)),
     both = if_else(R1A > 0 & R22 > 0, 1, 0)
     )
-traits <- data
+traits <- data %>%
+  rename(name = species)
 
 
 
