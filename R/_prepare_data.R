@@ -67,7 +67,7 @@ sites_restoration <- read_csv(
     .default = "?"
   )
 )
-
+# -> einfügen von Kürzel vor Plot-ID in Excel (wenn gemacht hier löschen)
 
 
 ## 2 Species ##################################################################
@@ -87,7 +87,7 @@ species_restoration <- read_csv(
       .default = "?"
     )
 )
-
+# -> einfügen von Kürzel vor Plot-ID in Excel (wenn gemacht hier löschen)
 
 
 ## 3 FloraVeg.EU species #######################################################
@@ -101,6 +101,10 @@ traits <- readxl::read_excel(
   col_names = TRUE, na = c("", "NA", "na")
 )
 
+# Bisher nur Zielarten in traits-Tabelle --> später müssen noch alle kartierten Arten
+# eingefügt werden und die dazugehörigen Traits und Rote-Liste-Status. Aber das
+# passiert weiter unten
+
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -109,7 +113,21 @@ traits <- readxl::read_excel(
 
 
 
-## 1 Select target species from FloraVeg.EU ###################################
+## 1 Combine reference and restoration plots ##################################
+
+
+species <- species_reference %>%
+  left_join(species_restoration, by = "name")
+
+sites <- sites_reference %>%
+  full_join(sites_restoration, by = "plot")
+
+# Jetzt kann man die Datensätze zusammenfassen. Es muss noch geschaut werden,
+# ob es funktioniert, wenn die Plotnamen stehen (s. oben)
+
+
+
+## 2 Select target species from FloraVeg.EU ###################################
 
 
 data <- traits %>%
@@ -128,6 +146,7 @@ data <- traits %>%
     both = if_else(R1A > 0 & R22 > 0, 1, 0)
     )
 traits <- data
+<<<<<<< Updated upstream
 # Markus: get target species and put them in 'traits' matrix. Works.
 
 
@@ -139,13 +158,20 @@ species <- species_reference %>%
 
 sites <- sites_reference %>%
   full_join(sites_restoration, by = "plot")
+=======
+
+# Markus hat die Zielarten von FloraVeg.EU gezogen. Sollte funktionieren.
+>>>>>>> Stashed changes
 
 
 
-## 3 Names from TNRS database #################################################
+## 3 Malte?: Names from TNRS database #################################################
 
 
 ### a Harmonize names ----------------------------------------------------------
+
+# Markus: Habe die kartierten Arten und die Zielarten zusammengefügt. Es läuft,
+# glaube ich noch nicht. Malte, kannst du das prüfen?
 
 data <- species %>%
   full_join(traits, by = "name") %>%
@@ -183,14 +209,20 @@ data2 %>% filter(duplicated(accepted_name))
 
 
 
-## 4 Get red list status ######################################################
+## 4 Sina?: Get red list status ######################################################
+
+# Sina, kannst du hier deinen Rote-Liste-Code einfügen?
 
 
-## 5 Traits from GIFT database ################################################
+## 5 Maren?: Traits from GIFT database ################################################
+
+# Maren kannst du den Code prüfen, wenn Sina ihn eingefügt hat?
 
 
 ## 6 Alpha diversity ##########################################################
 
+# Dieser Code ist noch nciht auf unseren Datensatz abgestimmt. (Wenn das gemacht
+# ist kann man die Sätze hier löschen)
 
 ### a Species richness -------------------------------------------------------
 
@@ -260,13 +292,12 @@ rm(
 
 
 
-## 7 Calculation of CWMs ######################################################
+## 7 ?: Calculation of CWMs ######################################################
 
 data2 <- data #test
 test2
 
-## 8 ESy: EUNIS expert vegetation classification system #######################
-
+## 8 Markus: ESy: EUNIS expert vegetation classification system #######################
 
 #### Start ###
 ### Bruelheide et al. 2021 Appl Veg Sci
