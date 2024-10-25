@@ -67,7 +67,7 @@ sites_restoration <- read_csv(
     .default = "?"
   )
 )
-
+# Sina, renamed the plot ID with resXX
 
 
 ## 2 Species ##################################################################
