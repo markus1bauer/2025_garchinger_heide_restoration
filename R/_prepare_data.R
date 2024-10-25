@@ -168,7 +168,7 @@ names <- data %>%
 
 ### b Check and summarize duplicates -------------------------------------------
 
-data <- species_ammer %>%
+data <- species_ammer %>% #does not work, what is species_ammer
   rename(name_submitted = name) %>%
   full_join(
     data_names %>% select(name_submitted, accepted_name), by = "name_submitted"
@@ -185,15 +185,19 @@ data2 %>% filter(duplicated(accepted_name))
 
 
 ## 4 Get red list status ######################################################
+
+### a Select red list status ---------------------------------------------------
 redlist <- readxl::read_excel(here("data", "raw",
                                    "data_raw_species_redlist_2018.xlsx"),
                               col_names = TRUE, na = c("", "NA", "na"))
+#Sina, imported the red list species
+
+redlist_names <- TNRS(redlist$Name)
+redlist[1:5312,]$Name <- redlist_names[1:5312,]$Accepted_name
+
+# Sina, same names for species in redlist and species table, does not work
 
 
-RoteListe_plant_names <- TNRS(RoteListe$Name)
-RoteListe[1:5312,]$Name <- RoteListe_plant_names[1:5312,]$Accepted_name
-
-#Sina, imported the red list species, TNRS not working, is it better to select the required species before?
 
 ## 5 Traits from GIFT database ################################################
 traits_meta <- GIFT_traits_meta()
