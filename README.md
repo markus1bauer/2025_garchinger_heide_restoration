@@ -32,7 +32,6 @@ XXX (under preparation) __Title__ &ndash; *XXX* XX, XXX&ndash;XXX.
     -   Folder for calculating habitat types (ESY)
 4.  **Markdown**: the folder `markdown` contains
     -   Markdown documents of the analyses with model evaluations and comparisons (.md)
-    -   Other test folder
 
 #### Package versioning
 
