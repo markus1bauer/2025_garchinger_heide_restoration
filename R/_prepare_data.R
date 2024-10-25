@@ -184,7 +184,15 @@ data2 %>% filter(duplicated(accepted_name))
 
 
 ## 4 Get red list status ######################################################
+redlist <- readxl::read_excel(here("data", "raw",
+                                   "data_raw_species_redlist_2018.xlsx"),
+                              col_names = TRUE, na = c("", "NA", "na"))
 
+
+RoteListe_plant_names <- TNRS(RoteListe$Name)
+RoteListe[1:5312,]$Name <- RoteListe_plant_names[1:5312,]$Accepted_name
+
+#Sina, imported the red list species, TNRS not working, better to select the species before?
 
 ## 5 Traits from GIFT database ################################################
 
