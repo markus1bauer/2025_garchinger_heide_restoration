@@ -262,6 +262,7 @@ rm(
 
 ## 7 Calculation of CWMs ######################################################
 
+data2 <- data #test
 
 ## 8 ESy: EUNIS expert vegetation classification system #######################
 
