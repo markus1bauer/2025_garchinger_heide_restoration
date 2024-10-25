@@ -1,20 +1,21 @@
-attributeName;attributeDefinition;formatString;definition;unit;numberType;type;factor;comment
-plot;plot ID unabhaengig vom Jahr;NA;plot ID independent of year;NA;NA;character;NA;NA
-botaniker_2021;Botaniker im Jahr 2021;NA;person responsible in 2021;NA;NA;character;NA;NA
-aufnahmedatum_2021;Datum der Aufnahme im Jahr 2021;YYYY-mm-dd;NA;NA;NA;date;NA;NA
-vegetationshoehe_2021;Durchschnittliche Vegetationshoehe im Feld gemessen im Jahr 2021 in 5-cm-Schritten;NA;NA;centimeter;integer;numeric;NA;NA
-streuhoehe_2021;Durchschnittliche Streuhoehe im Feld gemessen im Jahr 2021 in 1-cm-Schritten;NA;NA;centimeter;integer;numeric;NA;NA
-vegetationsdeckung_2021;Deckung der Krautschicht mit Londo-Skala (Londo 1976) im Jahr 2021;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-moosdeckung_2021;Deckung der Moose mit Londo-Skala (Londo 1976) im Jahr 2021;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-flechtendeckung_2021;Deckung der Flechten mit Londo-Skala (Londo 1976) im Jahr 2021;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-streudeckung_2021;Deckung der Streu mit Londo-Skala (Londo 1976) im Jahr 2021;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-rohbodendeckung_2021;Deckung des Rohbodens mit Londo-Skala (Londo 1976) im Jahr 2021;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-botaniker_2026;Botaniker im Jahr 2026;NA;person responsible in 2026;NA;NA;character;NA;NA
-aufnahmedatum_2026;Datum der Aufnahme im Jahr 2026;YYYY-mm-dd;NA;NA;NA;date;NA;NA
-vegetationshoehe_2026;Durchschnittliche Vegetationshoehe im Feld gemessen im Jahr 2026 in 5-cm-Schritten;NA;NA;centimeter;integer;numeric;NA;NA
-streuhoehe_2026;Durchschnittliche Streuhoehe im Feld gemessen im Jahr 2026 in 1-cm-Schritten;NA;NA;centimeter;integer;numeric;NA;NA
-vegetationsdeckung_2026;Deckung der Krautschicht mit Londo-Skala (Londo 1976) im Jahr 2026;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-moosdeckung_2026;Deckung der Moose mit Londo-Skala (Londo 1976) im Jahr 2026;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-flechtendeckung_2026;Deckung der Flechten mit Londo-Skala (Londo 1976) im Jahr 2026;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-streudeckung_2026;Deckung der Streu mit Londo-Skala (Londo 1976) im Jahr 2026;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
-rohbodendeckung_2026;Deckung des Rohbodens mit Londo-Skala (Londo 1976) im Jahr 2026;NA;NA;percent;integer;numeric;NA;Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+attributeName,attributeDefinition,formatString,definition,unit,numberType,type,factor,comment
+plot,plot ID unabhaengig vom Jahr,NA,plot ID independent of year,NA,NA,character,NA,NA
+botaniker_2021,Botaniker im Jahr 2021,NA,person responsible in 2021,NA,NA,character,NA,NA
+aufnahmedatum_2021,Datum der Aufnahme im Jahr 2021,YYYY-mm-dd,NA,NA,NA,date,NA,NA
+vegetationshoehe_2021,Durchschnittliche Vegetationshoehe im Feld gemessen im Jahr 2021 in 5-cm-Schritten,NA,NA,centimeter,integer,numeric,NA,NA
+streuhoehe_2021,Durchschnittliche Streuhoehe im Feld gemessen im Jahr 2021 in 1-cm-Schritten,NA,NA,centimeter,integer,numeric,NA,NA
+vegetationsdeckung_2021,Deckung der Krautschicht mit Londo-Skala (Londo 1976) im Jahr 2021,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+moosdeckung_2021,Deckung der Moose mit Londo-Skala (Londo 1976) im Jahr 2021,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+flechtendeckung_2021,Deckung der Flechten mit Londo-Skala (Londo 1976) im Jahr 2021,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+streudeckung_2021,Deckung der Streu mit Londo-Skala (Londo 1976) im Jahr 2021,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+rohbodendeckung_2021,Deckung des Rohbodens mit Londo-Skala (Londo 1976) im Jahr 2021,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+botaniker_2026,Botaniker im Jahr 2026,NA,person responsible in 2026,NA,NA,character,NA,NA
+aufnahmedatum_2026,Datum der Aufnahme im Jahr 2026,YYYY-mm-dd,NA,NA,NA,date,NA,NA
+vegetationshoehe_2026,Durchschnittliche Vegetationshoehe im Feld gemessen im Jahr 2026 in 5-cm-Schritten,NA,NA,centimeter,integer,numeric,NA,NA
+streuhoehe_2026,Durchschnittliche Streuhoehe im Feld gemessen im Jahr 2026 in 1-cm-Schritten,NA,NA,centimeter,integer,numeric,NA,NA
+vegetationsdeckung_2026,Deckung der Krautschicht mit Londo-Skala (Londo 1976) im Jahr 2026,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+moosdeckung_2026,Deckung der Moose mit Londo-Skala (Londo 1976) im Jahr 2026,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+flechtendeckung_2026,Deckung der Flechten mit Londo-Skala (Londo 1976) im Jahr 2026,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+streudeckung_2026,Deckung der Streu mit Londo-Skala (Londo 1976) im Jahr 2026,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+rohbodendeckung_2026,Deckung des Rohbodens mit Londo-Skala (Londo 1976) im Jahr 2026,NA,NA,percent,integer,numeric,NA,Londo G (1976) The decimal scale for releves of permanent quadrats. Vegetatio 33: 61�64. http://dx.doi.org/10.1007/BF00055300
+,test,,,,,,,
