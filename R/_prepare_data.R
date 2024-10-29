@@ -90,8 +90,6 @@ species_restoration <- read_csv(
     )
 )
 
-# -> einfügen von Kürzel vor Plot-ID in Excel (wenn gemacht hier löschen)
-
 # Sina, renamed the plot ID with resXX
 
 
