@@ -315,6 +315,7 @@ rm(
 ## 7 ?: Calculation of CWMs ######################################################
 
 dbFD()
+# dbFD(traits, species, w.abun = T, corr = "lingoes", calc.Fric = F, calc.CWM = T)
 #Sina, It is better to calculate it with dbFD than as in the old script, 
 # I have to look something up again 
 
