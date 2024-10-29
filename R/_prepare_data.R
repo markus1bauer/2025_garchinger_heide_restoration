@@ -210,9 +210,7 @@ data2 %>% filter(duplicated(accepted_name))
 
 
 
-## 4 Sina?: Get red list status ######################################################
-
-# Sina, kannst du hier deinen Rote-Liste-Code einfügen?
+## 4 Get red list status ######################################################
 
 ### a Select red list status ---------------------------------------------------
 redlist <- readxl::read_excel(here("data", "raw",
