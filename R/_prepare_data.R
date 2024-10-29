@@ -194,7 +194,7 @@ names <- data %>%
 
 ### b Check and summarize duplicates -------------------------------------------
 
-data <- species_ammer %>% #does not work, what is species_ammer
+data <- species_ammer %>% 
   rename(name_submitted = name) %>%
   full_join(
     data_names %>% select(name_submitted, accepted_name), by = "name_submitted"
