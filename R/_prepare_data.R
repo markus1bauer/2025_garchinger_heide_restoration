@@ -67,7 +67,11 @@ sites_restoration <- read_csv(
     .default = "?"
   )
 )
+
 # -> einfügen von Kürzel vor Plot-ID in Excel (wenn gemacht hier löschen)
+
+# Sina, renamed the plot ID with resXX
+
 
 
 ## 2 Species ##################################################################
@@ -87,7 +91,11 @@ species_restoration <- read_csv(
       .default = "?"
     )
 )
+
 # -> einfügen von Kürzel vor Plot-ID in Excel (wenn gemacht hier löschen)
+
+# Sina, renamed the plot ID with resXX
+
 
 
 ## 3 FloraVeg.EU species #######################################################
@@ -145,7 +153,8 @@ data <- traits %>%
     across(c("R1A", "R22"), ~ if_else(. > 0, 1, 0)),
     both = if_else(R1A > 0 & R22 > 0, 1, 0)
     )
-traits <- data
+traits <- data %>%
+  rename(name = species)
 
 # Markus: get target species and put them in 'traits' matrix. Works.
 
@@ -189,7 +198,7 @@ names <- data %>%
 
 ### b Check and summarize duplicates -------------------------------------------
 
-data <- species_ammer %>%
+data <- species_ammer %>% #does not work, what is species_ammer
   rename(name_submitted = name) %>%
   full_join(
     data_names %>% select(name_submitted, accepted_name), by = "name_submitted"
@@ -209,11 +218,32 @@ data2 %>% filter(duplicated(accepted_name))
 
 # Sina, kannst du hier deinen Rote-Liste-Code einfügen?
 
+### a Select red list status ---------------------------------------------------
+redlist <- readxl::read_excel(here("data", "raw",
+                                   "data_raw_species_redlist_2018.xlsx"),
+                              col_names = TRUE, na = c("", "NA", "na"))
+#Sina, imported the red list species
+
+redlist_names <- TNRS(redlist$Name)
+redlist[1:5312,]$Name <- redlist_names[1:5312,]$Accepted_name
+
+#Sina, same names for species in redlist and species table, does not work
+
+### b Combine red list status and traits
+
+
+
 
 ## 5 Maren?: Traits from GIFT database ################################################
 
 # Maren kannst du den Code prüfen, wenn Sina ihn eingefügt hat?
 
+## 5 Traits from GIFT database ################################################
+traits_meta <- GIFT_traits_meta()
+trait_values <- GIFT_traits(trait_IDs=c("1.6.3", "3.2.3", "4.1.3"))
+
+
+#Sina, download the traits from GIFT database, no selecting of required species
 
 ## 6 Alpha diversity ##########################################################
 
@@ -290,8 +320,9 @@ rm(
 
 ## 7 ?: Calculation of CWMs ######################################################
 
-data2 <- data #test
-test2
+dbFD()
+#Sina, It is better to calculate it with dbFD than as in the old script, 
+# I have to look something up again 
 
 ## 8 Markus: ESy: EUNIS expert vegetation classification system #######################
 

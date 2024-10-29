@@ -1,91 +1,91 @@
-ï»¿Table number,plot,latitude,longitutde,elevation,plot_size,treatment,mowing,survey_date_2024,botanist_2024,cover_vegetation_2024,cover_moss_2024,cover_litter_2024,cover_soil_2024,height_vegetation_2024,comments
-1,29,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer,65,65,80,4,44,"Richtung Westen: Ã„stige Graslilie, Salvia pratensis, Orobanche, Oreoselinum majus, Stachys recta"
-5,4,4828895,1164883,469,4,cut_summer,1990,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte KnÃ¶ppler,70,80,70,1,35,
-6,10,4828895,1164883,469,4,cut_summer,2000,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte KnÃ¶ppler,60,80,60,2,30,Dianthus daneben
-22,12,4828895,1164883,469,4,grazing,2000,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte KnÃ¶ppler,25,12,2,70,5,"Dorycnium pentaphyllum, Anthyllis vulneraria"
-7,18,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,25,85,5,10,9,
-13,15,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,25,30,2,65,9,
-14,17,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,15,7,1,80,2,Kaninchenspuren
-15,16,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,45,65,4,4,17,
-16,2,4828895,1164883,469,4,grazing,1990,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,30,55,3,20,7,
-17,1,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,35,60,3,7,12,
-18,3,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,50,55,1,10,6,
-19,20,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,20,50,1,35,3,Kaninchenbau daneben
-20,21,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,40,15,2,45,12,
-21,19,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte KnÃ¶ppler / Sina Appeltauer,20,7,2,70,4,
-23,13,4828895,1164883,469,4,grazing,2000,2024-06-08,Sina Appeltauer / Malte KnÃ¶ppler,30,70,2,20,11,
-24,14,4828895,1164883,469,4,grazing,2000,2024-06-08,Sina Appeltauer / Malte KnÃ¶ppler,35,40,3,40,9,
-2,30,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer,50,75,80,7,49,
-3,11,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer,55,85,80,3,31,
-4,6,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Maren Teschauer,50,60,90,3,39,
-75,5,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Maren Teschauer / Sina Appeltauer,90,5,50,5,45,
-76,9,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer / Sina Appeltauer,55,90,30,5,37,
-77,8,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Maren Teschauer / Sina Appeltauer,60,45,70,3,42,
-78,38,4828895,1164883,469,4,cut_autumn,2000,2024-06-10,Sina Appeltauer,40,40,50,5,40,
-79,31,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Sina Appeltauer,40,20,75,5,44,
-80,32,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Sina Appeltauer,45,15,75,3,35,"kaum BlÃ¼ten. nur Galium, sehr viel Gras"
-81,7,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Sina Appeltauer,60,20,75,7,48,
-8,36,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte KnÃ¶ppler,55,70,50,15,35,Galium verum daneben
-9,34,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte KnÃ¶ppler,65,70,75,5,40,Rhinanthus glacialis daneben
-10,39,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte KnÃ¶ppler,60,30,70,15,35,Stachys recta daneben
-11,37,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte KnÃ¶ppler,50,20,75,15,35,"Thymus, Backenklee & Trifolium montanum in der NÃ¤he"
-12,33,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte KnÃ¶ppler,60,40,60,20,35,
-35,35,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte KnÃ¶ppler,55,35,80,5,40,
-36,22,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,40,60,70,3,27,sehr wenig BlÃ¼ten
-37,23,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,45,60,60,5,32,
-38,24,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Malte KnÃ¶ppler,55,60,55,10,30,
-39,25,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Malte KnÃ¶ppler / Sina Appeltauer,55,35,70,7,0,
-40,26,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,45,50,75,8,36,
-41,27,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Malte KnÃ¶ppler,60,85,25,5,25,
-42,28,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,50,70,80,1,28,
-43,84,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte KnÃ¶ppler,50,60,50,70,50,
-44,85,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte KnÃ¶ppler,50,35,45,20,40,
-45,86,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte KnÃ¶ppler,55,25,65,10,40,
-46,87,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte KnÃ¶ppler,60,45,60,10,50,
-47,88,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,55,10,70,6,44,Schafskot? angrenzend Kaninchenbau
-48,89,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,80,5,70,50,58,angrenzend Carduus acanthoides
-49,90,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,70,30,80,5,46,"angrenzend Genista tinctoria, Prunella grandiflora"
-25,65,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,45,60,65,4,34,"daneben: Koeleria pyramidata, Inula hirta"
-26,83,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer / Sina Appeltauer,70,85,60,2,57,"herum: Buphthalmum salicifolium, Salvia pratense, Dianthus carthusianorum, Betonica officinale"
-27,81,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,65,95,75,1,42,
-28,67,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,65,30,50,6,48,
-29,76,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,90,20,30,4,41,"zwischen 67 & 76: Stachys recta, buschig"
-30,82,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,60,30,60,10,57,1 schlafender Schachbrettfalter :)
-31,79,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,65,90,50,4,51,
-32,75,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,75,65,30,15,39,"groÃŸer dichter Fleck Brachypodium pinnatum innerhalb Plot, angrenzend Stachys recta"
-33,70,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,75,90,60,2,37,
-34,66,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,70,60,80,1,42,
-87,80,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,70,80,75,1,42,
-88,69,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,75,80,70,5,41,
-89,78,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,85,50,70,1,49,
-90,72,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,80,85,65,3,50,grasdominiert
-50,46,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte KnÃ¶ppler,15,5,2,80,4,
-51,53,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Malte KnÃ¶ppler,60,50,70,10,50,
-52,50,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Malte KnÃ¶ppler,50,60,70,10,40,
-53,41,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte KnÃ¶ppler,20,3,3,80,4,
-54,45,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte KnÃ¶ppler,25,90,2,7,6,
-55,44,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte KnÃ¶ppler,20,85,2,10,4,
-56,43,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte KnÃ¶ppler,20,30,4,55,10,
-57,40,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte KnÃ¶ppler,20,40,4,45,15,
-58,42,4828895,1164883,469,4,grazing,1990,2024-06-15,Sina Appeltauer,40,70,2,10,14,
-59,47,4828895,1164883,469,4,grazing,1990,2024-06-15,Sina Appeltauer,40,30,5,40,16,
-60,48,4828895,1164883,469,4,grazing,1990,2024-06-15,Sina Appeltauer,40,60,5,55,14,
-61,49,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Sina Appeltauer,85,70,25,2,38,
-62,52,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Sina Appeltauer,85,30,70,5,36,angrenzend Potentilla recta
-63,51,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Sina Appeltauer,90,30,69,0,29,
-82,77,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,75,80,50,5,63,
-83,71,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,90,30,30,1,100,"sehr hohes Arrhenaterum elatius. Koeleria pyramidata, HÃ¤lfte des Plots"
-84,68,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,90,40,50,2,50,
-85,74,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,80,95,60,0,59,
-86,73,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,75,90,70,1,0,
-69,60,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte KnÃ¶ppler,25,50,2,25,6,
-70,54,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte KnÃ¶ppler,20,35,3,45,6,
-71,55,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte KnÃ¶ppler,15,80,1,10,5,
-72,56,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte KnÃ¶ppler,20,50,3,30,6,
-73,58,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte KnÃ¶ppler,15,65,2,25,5,
-74,59,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte KnÃ¶ppler,20,70,1,15,13,
-64,57,4828895,1164883,469,4,grazing,2000,2024-06-19,Maren Teschauer,25,55,2,25,5,
-65,63,4828895,1164883,469,4,cut_summer,2000,2024-06-19,Maren Teschauer,60,35,80,5,40,"daneben: 2x Gymnadenia conopsea, Scabiosa columbaria, Centaurea scabiosa, Briza media"
-66,61,4828895,1164883,469,4,grazing,2000,2024-06-19,Maren Teschauer,30,80,2,5,10,"daneben: Bupthalmum salicifolium, Carex humilis, Rhinanthus glacialis  / zwischen 60&61: Biscutella laevigata"
-67,62,4828895,1164883,469,4,cut_summer,2000,2024-06-19,Maren Teschauer,75,90,70,2,31,"daneben: Peucedanum oreoselinum, Dianthus cartusianorum, Securigera varia, Scabiosa columbaria, Galium verum, Prunella grandiflora, Centaurea scabiosa"
-68,64,4828895,1164883,469,4,cut_summer,2000,2024-06-19,Maren Teschauer,75,60,70,5,64,
+plot,latitude,longitutde,elevation,plot_size,treatment,mowing,survey_date_2024,botanist_2024,cover_vegetation_2024,cover_moss_2024,cover_litter_2024,cover_soil_2024,height_vegetation_2024,comments
+res29,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer,65,65,80,4,44,Richtung Westen: Ästige Graslilie Salvia pratensis Orobanche Oreoselinum majus Stachys recta
+res04,4828895,1164883,469,4,cut_summer,1990,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte Knöppler,70,80,70,1,35,
+res10,4828895,1164883,469,4,cut_summer,2000,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte Knöppler,60,80,60,2,30,Dianthus daneben
+res12,4828895,1164883,469,4,grazing,2000,2024-06-06,Maren Teschauer / Sina Appeltauer / Malte Knöppler,25,12,2,70,5,Dorycnium pentaphyllum Anthyllis vulneraria
+res18,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,25,85,5,10,9,
+res15,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,25,30,2,65,9,
+res17,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,15,7,1,80,2,Kaninchenspuren
+res16,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,45,65,4,4,17,
+res02,4828895,1164883,469,4,grazing,1990,2024-06-08,Malte Knöppler / Sina Appeltauer,30,55,3,20,7,
+res01,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,35,60,3,7,12,
+res03,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,50,55,1,10,6,
+res20,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,20,50,1,35,3,Kaninchenbau daneben
+res21,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,40,15,2,45,12,
+res19,4828895,1164883,469,4,grazing,2000,2024-06-08,Malte Knöppler / Sina Appeltauer,20,7,2,70,4,
+res13,4828895,1164883,469,4,grazing,2000,2024-06-08,Sina Appeltauer / Malte Knöppler,30,70,2,20,11,
+res14,4828895,1164883,469,4,grazing,2000,2024-06-08,Sina Appeltauer / Malte Knöppler,35,40,3,40,9,
+res30,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer,50,75,80,7,49,
+res11,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer,55,85,80,3,31,
+res06,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Maren Teschauer,50,60,90,3,39,
+res05,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Maren Teschauer / Sina Appeltauer,90,5,50,5,45,
+res09,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Maren Teschauer / Sina Appeltauer,55,90,30,5,37,
+res08,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Maren Teschauer / Sina Appeltauer,60,45,70,3,42,
+res38,4828895,1164883,469,4,cut_autumn,2000,2024-06-10,Sina Appeltauer,40,40,50,5,40,
+res31,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Sina Appeltauer,40,20,75,5,44,
+res32,4828895,1164883,469,4,cut_summer,2000,2024-06-10,Sina Appeltauer,45,15,75,3,35,kaum Blüten nur Galium sehr viel Gras
+res07,4828895,1164883,469,4,cut_summer,1990,2024-06-10,Sina Appeltauer,60,20,75,7,48,
+res36,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte Knöppler,55,70,50,15,35,Galium verum daneben
+res34,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte Knöppler,65,70,75,5,40,Rhinanthus glacialis daneben
+res39,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte Knöppler,60,30,70,15,35,Stachys recta daneben
+res37,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte Knöppler,50,20,75,15,35,Thymus Backenklee & Trifolium montanum in der Nähe
+res33,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte Knöppler,60,40,60,20,35,
+res35,4828895,1164883,469,4,cut_autumn,2000,2024-06-11,Malte Knöppler,55,35,80,5,40,
+res22,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,40,60,70,3,27,sehr wenig Blüten
+res23,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,45,60,60,5,32,
+res24,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Malte Knöppler,55,60,55,10,30,
+res25,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Malte Knöppler / Sina Appeltauer,55,35,70,7,0,
+res26,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,45,50,75,8,36,
+res27,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Malte Knöppler,60,85,25,5,25,
+res28,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,50,70,80,1,28,
+res84,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte Knöppler,50,60,50,70,50,
+res85,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte Knöppler,50,35,45,20,40,
+res86,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte Knöppler,55,25,65,10,40,
+res87,4828895,1164883,469,4,cut_autumn,2000,2024-06-12,Malte Knöppler,60,45,60,10,50,
+res88,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,55,10,70,6,44,Schafskot? angrenzend Kaninchenbau
+res89,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,80,5,70,50,58,angrenzend Carduus acanthoides
+res90,4828895,1164883,469,4,cut_summer,2000,2024-06-12,Sina Appeltauer,70,30,80,5,46,angrenzend Genista tinctoria Prunella grandiflora
+res65,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,45,60,65,4,34,daneben: Koeleria pyramidata Inula hirta
+res83,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer / Sina Appeltauer,70,85,60,2,57,herum: Buphthalmum salicifolium Salvia pratense Dianthus carthusianorum Betonica officinale
+res81,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,65,95,75,1,42,
+res67,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,65,30,50,6,48,
+res76,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Maren Teschauer,90,20,30,4,41,zwischen 67 & 76: Stachys recta buschig
+res82,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,60,30,60,10,57,1 schlafender Schachbrettfalter :)
+res79,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,65,90,50,4,51,
+res75,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,75,65,30,15,39, großer dichter Fleck Brachypodium pinnatum innerhalb Plot angrenzend Stachys recta
+res70,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,75,90,60,2,37,
+res66,4828895,1164883,469,4,cut_autumn,2000,2024-06-13,Sina Appeltauer,70,60,80,1,42,
+res80,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,70,80,75,1,42,
+res69,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,75,80,70,5,41,
+res78,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,85,50,70,1,49,
+res72,4828895,1164883,469,4,cut_autumn,2000,2024-06-14,Sina Appeltauer,80,85,65,3,50,grasdominiert
+res46,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte Knöppler,15,5,2,80,4,
+res53,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Malte Knöppler,60,50,70,10,50,
+res50,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Malte Knöppler,50,60,70,10,40,
+res41,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte Knöppler,20,3,3,80,4,
+res45,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte Knöppler,25,90,2,7,6,
+res44,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte Knöppler,20,85,2,10,4,
+res43,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte Knöppler,20,30,4,55,10,
+res40,4828895,1164883,469,4,grazing,1990,2024-06-15,Malte Knöppler,20,40,4,45,15,
+res42,4828895,1164883,469,4,grazing,1990,2024-06-15,Sina Appeltauer,40,70,2,10,14,
+res47,4828895,1164883,469,4,grazing,1990,2024-06-15,Sina Appeltauer,40,30,5,40,16,
+res48,4828895,1164883,469,4,grazing,1990,2024-06-15,Sina Appeltauer,40,60,5,55,14,
+res49,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Sina Appeltauer,85,70,25,2,38,
+res52,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Sina Appeltauer,85,30,70,5,36,angrenzend Potentilla recta
+res51,4828895,1164883,469,4,cut_summer,1990,2024-06-15,Sina Appeltauer,90,30,69,0,29,
+res77,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,75,80,50,5,63,
+res71,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,90,30,30,1,100,sehr hohes Arrhenaterum elatius Koeleria pyramidata Hälfte des Plots
+res68,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,90,40,50,2,50,
+res74,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,80,95,60,0,59,
+res73,4828895,1164883,469,4,cut_autumn,2000,2024-06-17,Sina Appeltauer,75,90,70,1,0,
+res60,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte Knöppler,25,50,2,25,6,
+res54,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte Knöppler,20,35,3,45,6,
+res55,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte Knöppler,15,80,1,10,5,
+res56,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte Knöppler,20,50,3,30,6,
+res58,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte Knöppler,15,65,2,25,5,
+res59,4828895,1164883,469,4,grazing,2000,2024-06-18,Malte Knöppler,20,70,1,15,13,
+res57,4828895,1164883,469,4,grazing,2000,2024-06-19,Maren Teschauer,25,55,2,25,5,
+res63,4828895,1164883,469,4,cut_summer,2000,2024-06-19,Maren Teschauer,60,35,80,5,40,daneben: 2x Gymnadenia conopsea Scabiosa columbaria Centaurea scabiosa Briza media
+res61,4828895,1164883,469,4,grazing,2000,2024-06-19,Maren Teschauer,30,80,2,5,10,daneben: Bupthalmum salicifolium Carex humilis Rhinanthus glacialis  zwischen 60&61: Biscutella laevigata
+res62,4828895,1164883,469,4,cut_summer,2000,2024-06-19,Maren Teschauer,75,90,70,2,31,daneben: Peucedanum oreoselinum Dianthus cartusianorum Securigera varia Scabiosa columbaria Galium verum Prunella grandiflora Centaurea scabiosa
+res64,4828895,1164883,469,4,cut_summer,2000,2024-06-19,Maren Teschauer,75,60,70,5,64,
