@@ -128,7 +128,7 @@ sites <- sites_reference %>%
 
 # Jetzt kann man die Datensätze zusammenfassen. Es muss noch geschaut werden,
 # ob es funktioniert, wenn die Plotnamen stehen (s. oben)
-
+# scheint zu funktionieren mit den neuen Plotnamen
 
 
 ## 2 Select target species from FloraVeg.EU ###################################
