@@ -128,7 +128,10 @@ sites <- sites_reference %>%
   full_join(sites_restoration, by = "plot") %>%
   mutate(
     plot = if_else(str_detect(plot, "^tum"), paste0("X2021", plot), plot),
-    plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot)
+    plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot),
+    elevation = if_else(is.na(elevation), 469, elevation),
+    plot_size = if_else(is.na(plot_size), 4, plot_size),
+    plot_size = if_else(is.na(treatment), "control", treatment)
   ) %>%
   unite("botanist", c("botanist_2021", "botanist_2024"), na.rm = TRUE) %>%
   unite("survey_date", c("survey_date_2021", "survey_date_2024"), na.rm = TRUE) %>%
