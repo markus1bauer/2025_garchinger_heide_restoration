@@ -93,6 +93,9 @@ species_restoration <- read_csv(
 
 ## 3 FloraVeg.EU species #######################################################
 
+# Chytrý et al. (2020) Appl Veg Sci https://doi.org/10.1111/avsc.12519
+# Version 2021-06-01: https://doi.org/10.5281/zenodo.4812736
+
 
 traits <- readxl::read_excel(
   here(
@@ -131,23 +134,29 @@ sites <- sites_reference %>%
     plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot),
     elevation = if_else(is.na(elevation), 469, elevation),
     plot_size = if_else(is.na(plot_size), 4, plot_size),
-    plot_size = if_else(is.na(treatment), "control", treatment)
+    treatment = if_else(is.na(treatment), "control", treatment)
   ) %>%
   unite("botanist", c("botanist_2021", "botanist_2024"), na.rm = TRUE) %>%
-  unite("survey_date", c("survey_date_2021", "survey_date_2024"), na.rm = TRUE) %>%
-  unite("survey_date", c("height_vegetation_2021", "height_vegetation_2024"), na.rm = TRUE) %>%
-  unite("survey_date", c("cover_vegetation_2021", "cover_vegetation_2024"), na.rm = TRUE) %>%
-  unite("survey_date", c("cover_moss_2021", "cover_moss_2024"), na.rm = TRUE) %>%
-  unite("survey_date", c("cover_litter_2021", "cover_litter_2024"), na.rm = TRUE) %>%
-  unite("survey_date", c("cover_soil_2021", "cover_soil_2024"), na.rm = TRUE)
+  unite(
+    "survey_date", c("survey_date_2021", "survey_date_2024"), na.rm = TRUE
+    ) %>%
+  unite(
+    "height_vegetation", c("height_vegetation_2021", "height_vegetation_2024"),
+    na.rm = TRUE
+    ) %>%
+  unite(
+    "cover_vegetation", c("cover_vegetation_2021", "cover_vegetation_2024"),
+    na.rm = TRUE
+    ) %>%
+  unite("cover_moss", c("cover_moss_2021", "cover_moss_2024"), na.rm = TRUE) %>%
+  unite(
+    "cover_litter", c("cover_litter_2021", "cover_litter_2024"), na.rm = TRUE
+    ) %>%
+  unite("cover_soil", c("cover_soil_2021", "cover_soil_2024"), na.rm = TRUE)
   
 
 rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
-
-# Jetzt kann man die Datensätze zusammenfassen. Es muss noch geschaut werden,
-# ob es funktioniert, wenn die Plotnamen stehen (s. oben)
-# scheint zu funktionieren mit den neuen Plotnamen
 
 
 ## 2 Select target species from FloraVeg.EU ###################################
@@ -220,16 +229,24 @@ data2 %>% filter(duplicated(accepted_name))
 
 ## 4 Get red list status ######################################################
 
+
 ### a Select red list status ---------------------------------------------------
-redlist <- readxl::read_excel(here("data", "raw",
-                                   "data_raw_species_redlist_2018.xlsx"),
-                              col_names = TRUE, na = c("", "NA", "na"))
-#Sina, imported the red list species
+redlist <- readxl::read_excel(
+  here("data", "raw", "data_raw_species_redlist_2018.xlsx"),
+  col_names = TRUE, na = c("", "NA", "na")
+  )
+#Sina: imported the red list species
 
-redlist_names <- TNRS(redlist$Name)
-redlist[1:5312,]$Name <- redlist_names[1:5312,]$Accepted_name
+data <- redlist %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+  )
 
-#Sina, same names for species in redlist and species table, does not work
+#Sina: same names for species in redlist and species table, does not work
 
 ### b Combine red list status and traits
 
@@ -243,7 +260,7 @@ redlist[1:5312,]$Name <- redlist_names[1:5312,]$Accepted_name
 ## 5 Traits from GIFT database ################################################
 traits_meta <- GIFT_traits_meta()
 trait_values <- GIFT_traits(trait_IDs=c("1.6.3", "3.2.3", "4.1.3"))
-#Sina, download the traits from GIFT database, no selecting of required species
+#Sina: download the traits from GIFT database, no selecting of required species
 
 
 
@@ -293,6 +310,10 @@ sites_dikes <- sites_dikes %>%
 
 ### b Species eveness and shannon ---------------------------------------------
 
+# Calculate Hill numbers with hillR-package and hill_taxa function
+# of Chao et al. (2014) Annu Rev
+# https://doi.org/10.1146/annurev-ecolsys-120213-091540
+  
 data <- species_dikes %>%
   mutate(across(where(is.numeric), ~ replace(., is.na(.), 0))) %>%
   pivot_longer(-name, names_to = "id", values_to = "value") %>%
@@ -307,15 +328,7 @@ sites_dikes <- sites_dikes %>%
   left_join(data, by = "id") %>%
   mutate(eveness = shannon / log(species_richness))
 
-rm(
-  list = setdiff(
-    ls(), c(
-      "sites_dikes", "species_dikes", "traits",
-      "sites_temperature", "sites_precipitation",
-      "pca_soil", "pca_construction_year", "pca_survey_year"
-    )
-  )
-)
+rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
 
 
