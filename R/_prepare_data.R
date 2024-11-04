@@ -235,18 +235,34 @@ redlist <- readxl::read_excel(
   here("data", "raw", "data_raw_species_redlist_2018.xlsx"),
   col_names = TRUE, na = c("", "NA", "na")
   )
-#Sina: imported the red list species
 
-data <- redlist %>%
-  rowid_to_column("id") %>%
-  select(id, name) %>%
-  TNRS::TNRS(
-    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-    classification = "wfo", # family classification
-    mode = "resolve"
-  )
+# Calculate just once to save time
 
+# data <- redlist %>%
+#   rowid_to_column("id") %>%
+#   select(id, name) %>%
+#   TNRS::TNRS(
+#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#     classification = "wfo", # family classification
+#     mode = "resolve"
+#   )
+# 
+# write_csv(data, here("data", "processed", "data_processed_redlist_tnrs.csv"))
+
+data <- read_csv(
+  here("data", "processed", "data_processed_redlist_tnrs.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types =
+    cols(.default = "?")
+  ) %>%
+  rename(name = Name_submitted) %>%
+  rename_with(tolower) %>%
+  select(Overall_score, Taxonomic_status, Accepted_name, Accepted_family, Source)
+
+redlist2 <- data %>%
+  rename(name = Name_submitted) %>%
+  
 #Sina: same names for species in redlist and species table, does not work
+
 
 ### b Combine red list status and traits
 
