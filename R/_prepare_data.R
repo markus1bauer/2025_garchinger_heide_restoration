@@ -119,13 +119,16 @@ traits <- readxl::read_excel(
 
 ## 1 Combine reference and restoration plots ##################################
 
+# Markus: combination works
 
 species <- species_reference %>%
   left_join(species_restoration, by = "name") %>%
   pivot_longer(-name, names_to = "plot", values_to = "value") %>%
   mutate(
     plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot)
-  )
+  ) %>%
+  filter(!is.na(value)) %>%
+  pivot_wider(names_from = "plot", values_from = "value")
 
 sites <- sites_reference %>%
   full_join(sites_restoration, by = "plot") %>%
@@ -161,6 +164,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
 ## 2 Select target species from FloraVeg.EU ###################################
 
+# Markus: get target species and put them in 'traits' matrix. Works.
 
 data <- traits %>%
   rename_with(~ tolower(gsub(" ", "_", .x))) %>%
@@ -180,7 +184,6 @@ data <- traits %>%
 traits <- data %>%
   rename(name = species)
 
-# Markus: get target species and put them in 'traits' matrix. Works.
 
 
 ## 3 Malte?: Names from TNRS database #################################################
@@ -374,9 +377,11 @@ dbFD()
 expertfile <- "EUNIS-ESy-2020-06-08.txt" ### file of 2021 is not working
 
 obs <- species %>%
-  pivot_longer(cols = -name,
-               names_to = "RELEVE_NR",
-               values_to = "Cover_Perc") %>%
+  pivot_longer(
+    cols = -name,
+    names_to = "RELEVE_NR",
+    values_to = "Cover_Perc"
+  ) %>%
   rename(TaxonName = "name") %>%
   mutate(
     TaxonName = str_replace_all(TaxonName, "_", " "),
