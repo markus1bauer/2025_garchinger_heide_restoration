@@ -120,13 +120,16 @@ traits <- readxl::read_excel(
 
 ## 1 Combine reference and restoration plots ##################################
 
+# Markus: combination works
 
 species <- species_reference %>%
   left_join(species_restoration, by = "name") %>%
   pivot_longer(-name, names_to = "plot", values_to = "value") %>%
   mutate(
     plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot)
-  )
+  ) %>%
+  filter(!is.na(value)) %>%
+  pivot_wider(names_from = "plot", values_from = "value")
 
 sites <- sites_reference %>%
   full_join(sites_restoration, by = "plot") %>%
@@ -162,6 +165,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
 ## 2 Select target species from FloraVeg.EU ###################################
 
+# Markus: get target species and put them in 'traits' matrix. Works.
 
 data <- traits %>%
   rename_with(~ tolower(gsub(" ", "_", .x))) %>%
@@ -181,7 +185,6 @@ data <- traits %>%
 traits <- data %>%
   rename(name = species)
 
-# Markus: get target species and put them in 'traits' matrix. Works.
 
 
 ## 3 Malte?: Names from TNRS database #################################################
@@ -235,7 +238,10 @@ data2 %>% filter(duplicated(accepted_name))
 redlist <- readxl::read_excel(
   here("data", "raw", "data_raw_species_redlist_2018.xlsx"),
   col_names = TRUE, na = c("", "NA", "na")
-  )
+  ) %>%
+  rename(redlist_germany = "RL Kat.", responsibility = Verantwortlichkeit) %>%
+  rename_with(tolower) %>%
+  select(name, status, redlist_germany)
 
 # Calculate just once to save time
 
@@ -250,27 +256,30 @@ redlist <- readxl::read_excel(
 # 
 # write_csv(data, here("data", "processed", "data_processed_redlist_tnrs.csv"))
 
-data <- read_csv(
+names <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
   col_names = TRUE, na = c("", "NA", "na"), col_types =
     cols(.default = "?")
   ) %>%
-  rename(name = Name_submitted) %>%
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+    ) %>%
   rename_with(tolower) %>%
-  select(Overall_score, Taxonomic_status, Accepted_name, Accepted_family, Source)
+  rename(name = name_submitted)
 
-redlist2 <- data %>%
-  rename(name = Name_submitted) %>%
+redlist2 <- names %>%
+  full_join(redlist, by = "name")
   
-#Sina: same names for species in redlist and species table, does not work
+### b Combine red list status and traits --------------------------------------
+
+# Merge in traits table
+
+rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
 
-### b Combine red list status and traits
 
-
-
-
-## 5 Maren?: Traits from GIFT database ################################################
+## 5 Maren?: Traits from GIFT database ########################################
 
 # Maren kannst du den Code prüfen, wenn Sina ihn eingefügt hat?
 
@@ -357,18 +366,23 @@ dbFD()
 #Sina, It is better to calculate it with dbFD than as in the old script, 
 # I have to look something up again 
 
+
+
 ## 8 Markus: ESy: EUNIS expert vegetation classification system #######################
 
 #### Start ###
 ### Bruelheide et al. 2021 Appl Veg Sci
 ### https://doi.org/10.1111/avsc.12562
 
+
 expertfile <- "EUNIS-ESy-2020-06-08.txt" ### file of 2021 is not working
 
-obs <- species_dikes %>%
-  pivot_longer(cols = -name,
-               names_to = "RELEVE_NR",
-               values_to = "Cover_Perc") %>%
+obs <- species %>%
+  pivot_longer(
+    cols = -name,
+    names_to = "RELEVE_NR",
+    values_to = "Cover_Perc"
+  ) %>%
   rename(TaxonName = "name") %>%
   mutate(
     TaxonName = str_replace_all(TaxonName, "_", " "),
