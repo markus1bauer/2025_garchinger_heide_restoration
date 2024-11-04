@@ -68,11 +68,10 @@ sites_restoration <- read_csv(
   )
 )
 
-# Sina, renamed the plot ID with resXX
-
 
 
 ## 2 Species ##################################################################
+
 
 species_reference <- read_csv2(
   here("data", "raw", "data_raw_species_reference.csv"),
@@ -89,8 +88,6 @@ species_restoration <- read_csv(
       .default = "?"
     )
 )
-
-# Sina, renamed the plot ID with resXX
 
 
 
@@ -121,10 +118,32 @@ traits <- readxl::read_excel(
 
 
 species <- species_reference %>%
-  left_join(species_restoration, by = "name")
+  left_join(species_restoration, by = "name") %>%
+  pivot_longer(-name, names_to = "plot", values_to = "value") %>%
+  mutate(
+    plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot)
+  )
 
 sites <- sites_reference %>%
-  full_join(sites_restoration, by = "plot")
+  full_join(sites_restoration, by = "plot") %>%
+  mutate(
+    plot = if_else(str_detect(plot, "^tum"), paste0("X2021", plot), plot),
+    plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot),
+    elevation = if_else(is.na(elevation), 469, elevation),
+    plot_size = if_else(is.na(plot_size), 4, plot_size),
+    plot_size = if_else(is.na(treatment), "control", treatment)
+  ) %>%
+  unite("botanist", c("botanist_2021", "botanist_2024"), na.rm = TRUE) %>%
+  unite("survey_date", c("survey_date_2021", "survey_date_2024"), na.rm = TRUE) %>%
+  unite("survey_date", c("height_vegetation_2021", "height_vegetation_2024"), na.rm = TRUE) %>%
+  unite("survey_date", c("cover_vegetation_2021", "cover_vegetation_2024"), na.rm = TRUE) %>%
+  unite("survey_date", c("cover_moss_2021", "cover_moss_2024"), na.rm = TRUE) %>%
+  unite("survey_date", c("cover_litter_2021", "cover_litter_2024"), na.rm = TRUE) %>%
+  unite("survey_date", c("cover_soil_2021", "cover_soil_2024"), na.rm = TRUE)
+  
+
+rm(list = setdiff(ls(), c("species", "sites", "traits")))
+
 
 # Jetzt kann man die Datensätze zusammenfassen. Es muss noch geschaut werden,
 # ob es funktioniert, wenn die Plotnamen stehen (s. oben)
@@ -154,17 +173,6 @@ traits <- data %>%
 
 # Markus: get target species and put them in 'traits' matrix. Works.
 
-
-## 2 Combine reference and restoration plots ##################################
-
-
-species <- species_reference %>%
-  left_join(species_restoration, by = "name")
-
-sites <- sites_reference %>%
-  full_join(sites_restoration, by = "plot")
-
-#warum hier nochmal?
 
 ## 3 Malte?: Names from TNRS database #################################################
 
