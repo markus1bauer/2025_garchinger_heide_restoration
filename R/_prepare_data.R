@@ -234,7 +234,10 @@ data2 %>% filter(duplicated(accepted_name))
 redlist <- readxl::read_excel(
   here("data", "raw", "data_raw_species_redlist_2018.xlsx"),
   col_names = TRUE, na = c("", "NA", "na")
-  )
+  ) %>%
+  rename(redlist_germany = "RL Kat.", responsibility = Verantwortlichkeit) %>%
+  rename_with(tolower) %>%
+  select(name, status, redlist_germany)
 
 # Calculate just once to save time
 
@@ -249,24 +252,24 @@ redlist <- readxl::read_excel(
 # 
 # write_csv(data, here("data", "processed", "data_processed_redlist_tnrs.csv"))
 
-data <- read_csv(
+names <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
   col_names = TRUE, na = c("", "NA", "na"), col_types =
     cols(.default = "?")
   ) %>%
-  rename(name = Name_submitted) %>%
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+    ) %>%
   rename_with(tolower) %>%
-  select(Overall_score, Taxonomic_status, Accepted_name, Accepted_family, Source)
+  rename(name = name_submitted)
 
-redlist2 <- data %>%
-  rename(name = Name_submitted) %>%
+redlist2 <- names %>%
+  full_join(redlist, by = "name")
   
-#Sina: same names for species in redlist and species table, does not work
-
-
 ### b Combine red list status and traits
 
-
+# Merge in traits table
 
 
 ## 5 Maren?: Traits from GIFT database ################################################
