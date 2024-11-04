@@ -267,12 +267,15 @@ names <- read_csv(
 redlist2 <- names %>%
   full_join(redlist, by = "name")
   
-### b Combine red list status and traits
+### b Combine red list status and traits --------------------------------------
 
 # Merge in traits table
 
+rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
-## 5 Maren?: Traits from GIFT database ################################################
+
+
+## 5 Maren?: Traits from GIFT database ########################################
 
 # Maren kannst du den Code prüfen, wenn Sina ihn eingefügt hat?
 
@@ -359,15 +362,18 @@ dbFD()
 #Sina, It is better to calculate it with dbFD than as in the old script, 
 # I have to look something up again 
 
+
+
 ## 8 Markus: ESy: EUNIS expert vegetation classification system #######################
 
 #### Start ###
 ### Bruelheide et al. 2021 Appl Veg Sci
 ### https://doi.org/10.1111/avsc.12562
 
+
 expertfile <- "EUNIS-ESy-2020-06-08.txt" ### file of 2021 is not working
 
-obs <- species_dikes %>%
+obs <- species %>%
   pivot_longer(cols = -name,
                names_to = "RELEVE_NR",
                values_to = "Cover_Perc") %>%
