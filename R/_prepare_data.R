@@ -126,16 +126,17 @@ species <- species_reference %>%
   left_join(species_restoration, by = "name") %>%
   pivot_longer(-name, names_to = "plot", values_to = "value") %>%
   mutate(
-    plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot)
+    id = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot)
   ) %>%
   filter(!is.na(value)) %>%
-  pivot_wider(names_from = "plot", values_from = "value")
+  select(-plot) %>%
+  pivot_wider(names_from = "id", values_from = "value")
 
 sites <- sites_reference %>%
   full_join(sites_restoration, by = "plot") %>%
   mutate(
-    plot = if_else(str_detect(plot, "^tum"), paste0("X2021", plot), plot),
-    plot = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot),
+    id = if_else(str_detect(plot, "^tum"), paste0("X2021", plot), plot),
+    id = if_else(str_detect(plot, "^res"), paste0("X2024", plot), id),
     elevation = if_else(is.na(elevation), 469, elevation),
     plot_size = if_else(is.na(plot_size), 4, plot_size),
     treatment = if_else(is.na(treatment), "control", treatment)
@@ -375,6 +376,32 @@ dbFD()
 ### https://doi.org/10.1111/avsc.12562
 
 
+coordinates_reference <- read_csv2(
+  here("data", "raw", "data_raw_coordinates_reference.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
+) %>%
+  sf::st_as_sf(coords = c("longitude", "latitude"), crs = 31468) %>%
+  # Transformation not correct...
+  sf::st_transform(4326) %>%
+  mutate(
+    latitude = sf::st_coordinates(.)[, 2],
+    longitude = sf::st_coordinates(.)[, 1]
+  ) %>%
+  sf::st_drop_geometry()
+
+coordinates_restoration <- read_csv(
+  here("data", "raw", "data_raw_coordinates_restoration.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
+  ) %>%
+  mutate(
+    id = paste0("X2024", plot)
+    )
+
+sites2 <- sites %>%
+  left_join(coordinates_reference, by = "id") %>%
+  left_join(coordinates_restoration, by = "id")
+  
+
 expertfile <- "EUNIS-ESy-2020-06-08.txt" ### file of 2021 is not working
 
 obs <- species %>%
@@ -387,38 +414,39 @@ obs <- species %>%
   mutate(
     TaxonName = str_replace_all(TaxonName, "_", " "),
     TaxonName = str_replace_all(TaxonName, "ssp", "subsp."),
-    TaxonName = as.factor(TaxonName),
-    TaxonName = fct_recode(
-      TaxonName,
-      "Carex praecox" = "Carex praecox subsp. curvata",
-      "Cerastium fontanum" = "Cerastium fontanum subsp. vulgare",
-      "Clinopodium acinos" = "Acinos arvensis",
-      "Ranunculus polyanthemos" = "Ranunculus serpens subsp. nemorosus",
-      "Silene latifolia" = "Silene latifolia subsp. alba",
-      "Vicia villosa" = "Vicia villosa subsp. varia"
-    )
+    TaxonName = as.factor(TaxonName)#,
+    # TaxonName = fct_recode(
+    #   TaxonName,
+    #   "Carex praecox" = "Carex praecox subsp. curvata",
+    #   "Cerastium fontanum" = "Cerastium fontanum subsp. vulgare",
+    #   "Clinopodium acinos" = "Acinos arvensis",
+    #   "Ranunculus polyanthemos" = "Ranunculus serpens subsp. nemorosus",
+    #   "Silene latifolia" = "Silene latifolia subsp. alba",
+    #   "Vicia villosa" = "Vicia villosa subsp. varia"
+    # )
   ) %>%
   data.table::as.data.table()
 
-header <- sites_dikes %>%
-  sf::st_as_sf(coords = c("longitude", "latitude"), crs = 31468) %>%
-  sf::st_transform(4326) %>%
+
+# Coordinates are in WGS84
+header <- sites %>%
   rename(
-    RELEVE_NR = id
+    RELEVE_NR = plot,
+    Latitude = latitude,
+    Longitude = longitude,
+    "Altitude (m)" = elevation
   ) %>%
   mutate(
-    "Altitude (m)" = 313,
-    Latitude = sf::st_coordinates(.)[, 2],
-    Longitude = sf::st_coordinates(.)[, 1],
     Country = "Germany",
     Coast_EEA = "N_COAST",
     Dunes_Bohn = "N_DUNES",
     Ecoreg = 686,
-    dataset = "Danube_dikes"
+    dataset = "garchinger_heide"
   ) %>%
-  select(RELEVE_NR, "Altitude (m)", Latitude, Longitude, Country,
-         Coast_EEA, Dunes_Bohn, Ecoreg, dataset) %>%
-  sf::st_drop_geometry()
+  select(
+    RELEVE_NR, "Altitude (m)", Latitude, Longitude, Country,
+    Coast_EEA, Dunes_Bohn, Ecoreg, dataset
+  )
 
 setwd(here("R", "esy"))
 source(here("R", "esy", "code", "prep.R"))
