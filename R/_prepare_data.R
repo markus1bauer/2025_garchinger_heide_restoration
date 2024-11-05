@@ -261,8 +261,9 @@ data2 %>% filter(duplicated(accepted_name))
 ## 4 Get red list status ######################################################
 
 
-### a Select red list status ---------------------------------------------------
-redlist <- readxl::read_excel(
+### a Load red list ------------------------------------------------------------
+
+data <- readxl::read_excel(
   here("data", "raw", "data_raw_species_redlist_2018.xlsx"),
   col_names = TRUE, na = c("", "NA", "na")
   ) %>%
@@ -283,7 +284,7 @@ redlist <- readxl::read_excel(
 # 
 # write_csv(data, here("data", "processed", "data_processed_redlist_tnrs.csv"))
 
-names <- read_csv(
+redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
   col_names = TRUE, na = c("", "NA", "na"), col_types =
     cols(.default = "?")
@@ -293,11 +294,10 @@ names <- read_csv(
     Accepted_family
     ) %>%
   rename_with(tolower) %>%
-  rename(name = name_submitted)
+  rename(name = name_submitted) %>%
+  full_join(data, by = "name")
 
-redlist2 <- names %>%
-  full_join(redlist, by = "name")
-  
+
 ### b Combine red list status and traits --------------------------------------
 
 # Merge in traits table. Wait for step 3
@@ -306,14 +306,54 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 5 Maren?: Traits from GIFT database ########################################
-
-# Maren kannst du den Code prüfen, wenn Sina ihn eingefügt hat?
-
 ## 5 Traits from GIFT database ################################################
-traits_meta <- GIFT_traits_meta()
-trait_values <- GIFT_traits(trait_IDs=c("1.6.3", "3.2.3", "4.1.3"))
-#Sina: download the traits from GIFT database, no selecting of required species
+
+
+### a Load traits from GIFT ---------------------------------------------------
+
+trait_ids <- c("1.6.3", "3.2.3", "4.1.3")
+
+GIFT::GIFT_traits_meta() %>%
+  filter(Lvl3 %in% trait_ids) # Get an overview of selected traits
+
+# Get traits and run name harmonization once to save time
+
+# data <- GIFT::GIFT_traits(
+#   trait_IDs = trait_ids,
+#   agreement = 0.66, bias_ref = FALSE, bias_deriv = FALSE
+# )
+
+# data <- data %>%
+#   rowid_to_column("id") %>%
+#   select(id, work_species) %>%
+#   TNRS::TNRS(
+#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#     classification = "wfo", # family classification
+#     mode = "resolve"
+#   )
+# 
+# write_csv(data, here("data", "processed", "data_processed_traits_tnrs.csv"))
+
+# Markus: change from read_csv() to fread()
+gift <- read_csv(
+  here("data", "processed", "data_processed_traits_tnrs.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types =
+    cols(.default = "?")
+) %>%
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+  ) %>%
+  rename_with(tolower) %>%
+  rename(name = name_submitted) %>%
+  full_join(data, by = "name")
+
+
+### b Combine red list status and traits --------------------------------------
+
+# Merge in traits table. Wait for step 3
+
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
