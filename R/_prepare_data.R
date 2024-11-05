@@ -274,7 +274,7 @@ redlist2 <- names %>%
   
 ### b Combine red list status and traits --------------------------------------
 
-# Merge in traits table
+# Merge in traits table. Wait for step 3
 
 rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
@@ -298,11 +298,10 @@ trait_values <- GIFT_traits(trait_IDs=c("1.6.3", "3.2.3", "4.1.3"))
 
 ### a Species richness -------------------------------------------------------
 
-richness <- left_join(species_dikes, traits, by = "name") %>%
+richness <- species %>%
+  left_join(traits, by = "name") %>%
   select(
-    name, rlg, rlb, target, target_herb, target_arrhenatherion,
-    target_ellenberg, ffh6510, ffh6210, nitrogen_indicator, lean_indicator,
-    table33, table34, starts_with("X")
+    name, status, redlist_germany, target, starts_with("X")
   ) %>%
   pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
   mutate(n = if_else(n > 0, 1, 0)) %>%
@@ -397,7 +396,7 @@ coordinates_restoration <- read_csv(
     id = paste0("X2024", plot)
     )
 
-sites2 <- sites %>%
+sites_coordinates <- sites %>%
   left_join(coordinates_reference, by = "id") %>%
   left_join(coordinates_restoration, by = "id")
   
@@ -429,7 +428,7 @@ obs <- species %>%
 
 
 # Coordinates are in WGS84
-header <- sites %>%
+header <- sites_coordinates %>%
   rename(
     RELEVE_NR = plot,
     Latitude = latitude,
@@ -483,7 +482,7 @@ source(
 table(result.classification)
 eval.EUNIS(which(result.classification == "V39")[1], "V39")
 
-sites_dikes <- sites_dikes %>%
+sites_coordinates2 <- sites_coordinates %>%
   mutate(
     esy = result.classification,
     esy = if_else(id == "X05_m_2021", "R1A", esy),
@@ -492,14 +491,9 @@ sites_dikes <- sites_dikes %>%
   )
 table(sites_dikes$esy)
 
-rm(
-  list = setdiff(
-    ls(), c(
-      "sites_dikes", "species_dikes", "traits",
-      "pca_soil", "pca_construction_year", "pca_survey_year"
-    )
-  )
-)
+rm(list = setdiff(ls(), c("species", "sites", "traits")))
+
+
 
 ## 9 Finalization ############################################################
 
