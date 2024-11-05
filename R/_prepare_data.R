@@ -69,6 +69,30 @@ sites_restoration <- read_csv(
   )
 )
 
+coordinates_reference <- read_csv2(
+  here("data", "raw", "data_raw_coordinates_reference.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
+) %>%
+  sf::st_as_sf(coords = c("longitude", "latitude"), crs = 25832) %>%
+  # Transformation not correct...
+  sf::st_transform(4326) %>%
+  mutate(
+    latitude = sf::st_coordinates(.)[, 2],
+    longitude = sf::st_coordinates(.)[, 1]
+  ) %>%
+  sf::st_drop_geometry()
+
+coordinates_restoration <- read_csv(
+  here("data", "raw", "data_raw_coordinates_restoration.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
+) %>%
+  mutate(
+    id = paste0("X2024", plot)
+  ) %>%
+  select(id, plot, latitude, longitude)
+
+coordinates <- coordinates_reference %>%
+  bind_rows(coordinates_restoration)
 
 
 ## 2 Species ##################################################################
@@ -374,27 +398,6 @@ dbFD()
 ### Bruelheide et al. 2021 Appl Veg Sci
 ### https://doi.org/10.1111/avsc.12562
 
-
-coordinates_reference <- read_csv2(
-  here("data", "raw", "data_raw_coordinates_reference.csv"),
-  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
-) %>%
-  sf::st_as_sf(coords = c("longitude", "latitude"), crs = 31468) %>%
-  # Transformation not correct...
-  sf::st_transform(4326) %>%
-  mutate(
-    latitude = sf::st_coordinates(.)[, 2],
-    longitude = sf::st_coordinates(.)[, 1]
-  ) %>%
-  sf::st_drop_geometry()
-
-coordinates_restoration <- read_csv(
-  here("data", "raw", "data_raw_coordinates_restoration.csv"),
-  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
-  ) %>%
-  mutate(
-    id = paste0("X2024", plot)
-    )
 
 sites_coordinates <- sites %>%
   left_join(coordinates_reference, by = "id") %>%
