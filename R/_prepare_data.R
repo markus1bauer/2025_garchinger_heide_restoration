@@ -74,7 +74,6 @@ coordinates_reference <- read_csv2(
   col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
 ) %>%
   sf::st_as_sf(coords = c("longitude", "latitude"), crs = 25832) %>%
-  # Transformation not correct...
   sf::st_transform(4326) %>%
   mutate(
     latitude = sf::st_coordinates(.)[, 2],
@@ -93,6 +92,7 @@ coordinates_restoration <- read_csv(
 
 coordinates <- coordinates_reference %>%
   bind_rows(coordinates_restoration)
+
 
 
 ## 2 Species ##################################################################
@@ -133,6 +133,8 @@ traits <- readxl::read_excel(
 # Bisher nur Zielarten in traits-Tabelle --> später müssen noch alle kartierten Arten
 # eingefügt werden und die dazugehörigen Traits und Rote-Liste-Status. Aber das
 # passiert weiter unten
+
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
@@ -184,7 +186,7 @@ sites <- sites_reference %>%
   unite("cover_soil", c("cover_soil_2021", "cover_soil_2024"), na.rm = TRUE)
   
 
-rm(list = setdiff(ls(), c("species", "sites", "traits")))
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
@@ -300,7 +302,7 @@ redlist2 <- names %>%
 
 # Merge in traits table. Wait for step 3
 
-rm(list = setdiff(ls(), c("species", "sites", "traits")))
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
@@ -378,7 +380,7 @@ sites_dikes <- sites_dikes %>%
   left_join(data, by = "id") %>%
   mutate(eveness = shannon / log(species_richness))
 
-rm(list = setdiff(ls(), c("species", "sites", "traits")))
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
@@ -390,19 +392,19 @@ dbFD()
 #Sina, It is better to calculate it with dbFD than as in the old script, 
 # I have to look something up again 
 
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
-## 8 Markus: ESy: EUNIS expert vegetation classification system #######################
 
-#### Start ###
-### Bruelheide et al. 2021 Appl Veg Sci
-### https://doi.org/10.1111/avsc.12562
+## 8 Markus: ESy: EUNIS expert vegetation classification system ################
 
+
+### a Preparation --------------------------------------------------------------
+
+# Markus: Calculate again with harmonized species names
 
 sites_coordinates <- sites %>%
-  left_join(coordinates_reference, by = "id") %>%
-  left_join(coordinates_restoration, by = "id")
-  
+  left_join(coordinates %>% select(-plot), by = "id")
 
 expertfile <- "EUNIS-ESy-2020-06-08.txt" ### file of 2021 is not working
 
@@ -416,24 +418,25 @@ obs <- species %>%
   mutate(
     TaxonName = str_replace_all(TaxonName, "_", " "),
     TaxonName = str_replace_all(TaxonName, "ssp", "subsp."),
-    TaxonName = as.factor(TaxonName)#,
-    # TaxonName = fct_recode(
-    #   TaxonName,
-    #   "Carex praecox" = "Carex praecox subsp. curvata",
-    #   "Cerastium fontanum" = "Cerastium fontanum subsp. vulgare",
-    #   "Clinopodium acinos" = "Acinos arvensis",
-    #   "Ranunculus polyanthemos" = "Ranunculus serpens subsp. nemorosus",
-    #   "Silene latifolia" = "Silene latifolia subsp. alba",
-    #   "Vicia villosa" = "Vicia villosa subsp. varia"
-    # )
+    TaxonName = as.factor(TaxonName),
+    TaxonName = fct_recode(
+     TaxonName,
+     "Centaurea pannonica" = "Centaurea angustifolia",
+     "Euphrasia picta" = "Euphrasia officinalis subsp. picta",
+     "Euphrasia officinalis subsp. pratensis" =
+       "Euphrasia officinalis subsp. rostkoviana"#,
+     # "Lotus corniculatus" = "Lotus corniculatus var corniculatus",
+     # "Lotus corniculatus" = "Lotus corniculatus var hirsutus"
+     )
   ) %>%
+  filter(!is.na(Cover_Perc)) %>%
   data.table::as.data.table()
 
 
 # Coordinates are in WGS84
 header <- sites_coordinates %>%
   rename(
-    RELEVE_NR = plot,
+    RELEVE_NR = id,
     Latitude = latitude,
     Longitude = longitude,
     "Altitude (m)" = elevation
@@ -449,6 +452,12 @@ header <- sites_coordinates %>%
     RELEVE_NR, "Altitude (m)", Latitude, Longitude, Country,
     Coast_EEA, Dunes_Bohn, Ecoreg, dataset
   )
+
+
+### b Calculation --------------------------------------------------------------
+
+### Bruelheide et al. 2021 Appl Veg Sci
+### https://doi.org/10.1111/avsc.12562
 
 setwd(here("R", "esy"))
 source(here("R", "esy", "code", "prep.R"))
@@ -482,17 +491,22 @@ source(
   )
 )
 
+# warning: 1: In max(Cover_Perc) : kein nicht-fehlendes Argument für max; gebe -Inf zurück
+max(obs$Cover_Perc)
+
+### c Summary and integration --------------------------------------------------
+
 table(result.classification)
 eval.EUNIS(which(result.classification == "V39")[1], "V39")
 
 sites_coordinates2 <- sites_coordinates %>%
   mutate(
-    esy = result.classification,
-    esy = if_else(id == "X05_m_2021", "R1A", esy),
-    esy = if_else(id == "X62_m_2019", "R", esy),
-    esy = if_else(id == "X67_o_2021", "R", esy)
+    esy = result.classification#,
+    # esy = if_else(id == "X05_m_2021", "R1A", esy),
+    # esy = if_else(id == "X62_m_2019", "R", esy),
+    # esy = if_else(id == "X67_o_2021", "R", esy)
   )
-table(sites_dikes$esy)
+table(sites$esy)
 
 rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
