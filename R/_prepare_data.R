@@ -30,7 +30,6 @@ rm(list = ls())
 #   quit_R = TRUE
 #   )
 
-##test
 
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -134,7 +133,12 @@ traits <- readxl::read_excel(
 # eingefügt werden und die dazugehörigen Traits und Rote-Liste-Status. Aber das
 # passiert weiter unten
 
-rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
+rm(
+  list = setdiff(ls(), c(
+    "species_reference", "species_restoration", "sites_reference",
+    "sites_restoration", "traits", "coordinates"
+    ))
+  )
 
 
 
@@ -149,7 +153,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 # Markus: combination works
 
 species <- species_reference %>%
-  left_join(species_restoration, by = "name") %>%
+  full_join(species_restoration, by = "name") %>%
   pivot_longer(-name, names_to = "plot", values_to = "value") %>%
   mutate(
     id = if_else(str_detect(plot, "^res"), paste0("X2024", plot), plot)
@@ -223,7 +227,7 @@ traits <- data %>%
 # glaube ich noch nicht. Malte, kannst du das prüfen?
 
 data <- species %>%
-  full_join(traits, by = "name") %>%
+  full_join(traits, by = "name") %>% # combine with target species list
   rowid_to_column("id") %>%
   select(id, name) %>%
   TNRS::TNRS(
@@ -273,7 +277,7 @@ data <- readxl::read_excel(
 
 # Calculate just once to save time
 
-# data <- redlist %>%
+# harmonized_names <- data %>%
 #   rowid_to_column("id") %>%
 #   select(id, name) %>%
 #   TNRS::TNRS(
@@ -282,7 +286,9 @@ data <- readxl::read_excel(
 #     mode = "resolve"
 #   )
 # 
-# write_csv(data, here("data", "processed", "data_processed_redlist_tnrs.csv"))
+# write_csv(
+#   harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
+#   )
 
 redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
@@ -294,13 +300,18 @@ redlist <- read_csv(
     Accepted_family
     ) %>%
   rename_with(tolower) %>%
-  rename(name = name_submitted) %>%
+  rename(name = accepted_name, family = accepted_family) #%>%
   full_join(data, by = "name")
 
 
 ### b Combine red list status and traits --------------------------------------
 
 # Merge in traits table. Wait for step 3
+data2 <- traits %>%
+  left_join(
+    redlist %>% select(name, family, status, redlist_germany), by = "name"
+    )
+traits <- data2
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -316,14 +327,14 @@ trait_ids <- c("1.6.3", "3.2.3", "4.1.3")
 GIFT::GIFT_traits_meta() %>%
   filter(Lvl3 %in% trait_ids) # Get an overview of selected traits
 
-# Get traits and run name harmonization once to save time
+# Get traits and run name harmonization just once to save time
 
-# data <- GIFT::GIFT_traits(
-#   trait_IDs = trait_ids,
-#   agreement = 0.66, bias_ref = FALSE, bias_deriv = FALSE
-# )
+data <- GIFT::GIFT_traits(
+  trait_IDs = trait_ids,
+  agreement = 0.66, bias_ref = FALSE, bias_deriv = FALSE
+)
 
-# data <- data %>%
+# harmonized_names <- data %>%
 #   rowid_to_column("id") %>%
 #   select(id, work_species) %>%
 #   TNRS::TNRS(
@@ -332,21 +343,20 @@ GIFT::GIFT_traits_meta() %>%
 #     mode = "resolve"
 #   )
 # 
-# write_csv(data, here("data", "processed", "data_processed_traits_tnrs.csv"))
+# write_csv(
+#   harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+#   )
 
-# Markus: change from read_csv() to fread()
-gift <- read_csv(
-  here("data", "processed", "data_processed_traits_tnrs.csv"),
-  col_names = TRUE, na = c("", "NA", "na"), col_types =
-    cols(.default = "?")
-) %>%
+gift <- data.table::fread(
+  here("data", "processed", "data_processed_traits_tnrs.csv")
+  ) %>%
   select(
     Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
     Accepted_family
   ) %>%
   rename_with(tolower) %>%
   rename(name = name_submitted) %>%
-  full_join(data, by = "name")
+  full_join(data %>% rename(name = work_species), by = "name")
 
 
 ### b Combine red list status and traits --------------------------------------
@@ -443,9 +453,6 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 # Markus: Calculate again with harmonized species names
 
-sites_coordinates <- sites %>%
-  left_join(coordinates %>% select(-plot), by = "id")
-
 expertfile <- "EUNIS-ESy-2020-06-08.txt" ### file of 2021 is not working
 
 obs <- species %>%
@@ -459,6 +466,7 @@ obs <- species %>%
     TaxonName = str_replace_all(TaxonName, "_", " "),
     TaxonName = str_replace_all(TaxonName, "ssp", "subsp."),
     TaxonName = as.factor(TaxonName),
+    RELEVE_NR = as.factor(RELEVE_NR),
     TaxonName = fct_recode(
      TaxonName,
      "Centaurea pannonica" = "Centaurea angustifolia",
@@ -474,7 +482,8 @@ obs <- species %>%
 
 
 # Coordinates are in WGS84
-header <- sites_coordinates %>%
+header <- sites %>%
+  left_join(coordinates %>% select(-plot), by = "id") %>%
   rename(
     RELEVE_NR = id,
     Latitude = latitude,
@@ -482,6 +491,7 @@ header <- sites_coordinates %>%
     "Altitude (m)" = elevation
   ) %>%
   mutate(
+    RELEVE_NR = as.factor(RELEVE_NR),
     Country = "Germany",
     Coast_EEA = "N_COAST",
     Dunes_Bohn = "N_DUNES",
@@ -531,22 +541,19 @@ source(
   )
 )
 
-# warning: 1: In max(Cover_Perc) : kein nicht-fehlendes Argument für max; gebe -Inf zurück
-max(obs$Cover_Perc)
 
 ### c Summary and integration --------------------------------------------------
 
 table(result.classification)
-eval.EUNIS(which(result.classification == "V39")[1], "V39")
+eval.EUNIS(which(result.classification == "//?")[2], "//?")
 
-sites_coordinates2 <- sites_coordinates %>%
+data <- sites %>%
   mutate(
     esy = result.classification#,
-    # esy = if_else(id == "X05_m_2021", "R1A", esy),
-    # esy = if_else(id == "X62_m_2019", "R", esy),
-    # esy = if_else(id == "X67_o_2021", "R", esy)
+    # esy = if_else(id == "X05_xxx", "R1A", esy) # nothing to change
   )
-table(sites$esy)
+table(data$esy)
+sites <- data
 
 rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
