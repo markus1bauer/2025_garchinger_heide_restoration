@@ -183,6 +183,13 @@ data2 <- data %>%
 
 data2 %>% filter(duplicated(accepted_name))
 
+species <- data2
+rm(data2, data)
+#Sina, works
+
+
+### c Harmonize names in traits
+
 
 
 ## 4 Get red list status ######################################################
@@ -193,7 +200,7 @@ redlist <- readxl::read_excel(here("data", "raw",
                               col_names = TRUE, na = c("", "NA", "na"))
 #Sina, imported the red list species
 
-redlist_names <- TNRS(redlist$Name)
+redlist_names <- TNRS(redlist$name)
 redlist[1:5312,]$Name <- redlist_names[1:5312,]$Accepted_name
 
 #Sina, same names for species in redlist and species table, does not work
