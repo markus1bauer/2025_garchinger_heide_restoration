@@ -137,7 +137,7 @@ traits <- data %>%
 
 
 species <- species_reference %>%
-  left_join(species_restoration, by = "name")
+  full_join(species_restoration, by = "name")
 
 sites <- sites_reference %>%
   full_join(sites_restoration, by = "plot")
