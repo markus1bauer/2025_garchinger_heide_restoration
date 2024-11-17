@@ -188,32 +188,112 @@ rm(data2, data)
 #Sina, works
 
 
-### c Harmonize names in traits
-
-
 
 ## 4 Get red list status ######################################################
 
 ### a Select red list status ---------------------------------------------------
 redlist <- readxl::read_excel(here("data", "raw",
                                    "data_raw_species_redlist_2018.xlsx"),
-                              col_names = TRUE, na = c("", "NA", "na"))
+                              col_names = TRUE, na = c("", "NA", "na")) %>%
+  select(name, `RL Kat.`)
+
 #Sina, imported the red list species
 
-redlist_names <- TNRS(redlist$name)
-redlist[1:5312,]$Name <- redlist_names[1:5312,]$Accepted_name
+### b Harmonize names ----------------------------------------------------------
 
-#Sina, same names for species in redlist and species table, does not work
+data <- redlist %>%
+  full_join(traits, by = "name") %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+  )
 
-### b Combine red list status and traits
+names <- data %>%
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+  ) %>%
+  rename_with(tolower)
+
+
+### c Check and summarize duplicates -------------------------------------------
+
+data <- redlist %>% 
+  rename(name_submitted = name) %>%
+  full_join(
+    names %>% select(name_submitted, accepted_name), by = "name_submitted"
+  )
+
+data %>% filter(duplicated(accepted_name))
+
+data2 <- data %>%
+  group_by(accepted_name) %>%
+  summarize(across(where(is.numeric), ~ sum(.x, na.rm = TRUE)))
+
+data2 %>% filter(duplicated(accepted_name))
+
+traits <- data2
+rm(data2, data)
 
 
 
 ## 5 Traits from GIFT database ################################################
-traits_meta <- GIFT_traits_meta()
-trait_values <- GIFT_traits(trait_IDs=c("1.6.3", "3.2.3", "4.1.3"))
 
-#Sina, download the traits from GIFT database, no selecting of required species
+### a Download traits ----------------------------------------------------------
+traits_meta <- GIFT_traits_meta()
+trait_values <- GIFT_traits(trait_IDs=c("1.6.3", "3.2.3", "4.1.3")) %>%
+  select(
+    work_species, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3) %>%
+  rename(name = work_species)
+
+#Sina, download the traits from GIFT database
+
+### b Harmonize names ----------------------------------------------------------
+
+data <- trait_values %>%
+  full_join(traits, by = "name") %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+  )
+
+names <- data %>%
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+  ) %>%
+  rename_with(tolower)
+
+
+### c Check and summarize duplicates -------------------------------------------
+
+data <- trait_values %>% 
+  rename(name_submitted = name) %>%
+  full_join(
+    names %>% select(name_submitted, accepted_name), by = "name_submitted"
+  )
+
+data %>% filter(duplicated(accepted_name))
+
+data2 <- data %>%
+  group_by(accepted_name) %>%
+  summarize(across(where(is.numeric), ~ sum(.x, na.rm = TRUE)))
+
+data2 %>% filter(duplicated(accepted_name))
+
+traits <- data2
+rm(data2, data)
+
+
+
+
+
 
 ## 6 Alpha diversity ##########################################################
 
