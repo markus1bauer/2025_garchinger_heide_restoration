@@ -218,6 +218,8 @@ names <- data %>%
   ) %>%
   rename_with(tolower)
 
+write.csv2()
+
 
 ### c Check and summarize duplicates -------------------------------------------
 
