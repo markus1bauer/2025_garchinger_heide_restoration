@@ -320,6 +320,8 @@ redlist <- read_csv(
   rename(name = accepted_name, family = accepted_family) #%>%
   full_join(data, by = "name")
 
+write.csv2()
+
 
 ### b Combine red list status and traits --------------------------------------
 
