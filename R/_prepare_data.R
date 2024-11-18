@@ -218,7 +218,19 @@ traits <- data %>%
 
 
 
-## 3 Malte?: Names from TNRS database #################################################
+
+## 2 Combine reference and restoration plots ##################################
+
+
+species <- species_reference %>%
+  full_join(species_restoration, by = "name")
+
+sites <- sites_reference %>%
+  full_join(sites_restoration, by = "plot")
+
+
+
+## 3 Names from TNRS database #################################################
 
 
 ### a Harmonize names ----------------------------------------------------------
@@ -246,10 +258,11 @@ names <- data %>%
 
 ### b Check and summarize duplicates -------------------------------------------
 
-data <- species_ammer %>% 
+
+data <- species %>% 
   rename(name_submitted = name) %>%
   full_join(
-    data_names %>% select(name_submitted, accepted_name), by = "name_submitted"
+    names %>% select(name_submitted, accepted_name), by = "name_submitted"
   )
 
 data %>% filter(duplicated(accepted_name))
@@ -259,6 +272,10 @@ data2 <- data %>%
   summarize(across(where(is.numeric), ~ sum(.x, na.rm = TRUE)))
 
 data2 %>% filter(duplicated(accepted_name))
+
+species <- data2
+rm(data2, data)
+#Sina, works
 
 
 
@@ -320,6 +337,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 ## 5 Traits from GIFT database ################################################
 
 
+
 ### a Load traits from GIFT ---------------------------------------------------
 
 trait_ids <- c("1.6.3", "3.2.3", "4.1.3")
@@ -364,6 +382,7 @@ gift <- data.table::fread(
 # Merge in traits table. Wait for step 3
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
+
 
 
 
