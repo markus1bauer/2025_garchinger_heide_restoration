@@ -3,7 +3,7 @@
 # Prepare data ####
 #
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Sina Appeltauer, Markus bauer
+# Sina Appeltauer, Markus Bauer
 # 2024-10-09
 
 
@@ -217,6 +217,7 @@ traits <- data %>%
 ## 3 Malte?: Names from TNRS database #################################################
 
 
+
 ### a Harmonize names ----------------------------------------------------------
 
 # Markus: Habe die kartierten Arten und die Zielarten zusammengefügt. Es läuft,
@@ -242,20 +243,15 @@ names <- data %>%
 
 ### b Check and summarize duplicates -------------------------------------------
 
-data <- species_ammer %>% 
-  rename(name_submitted = name) %>%
-  full_join(
-    data_names %>% select(name_submitted, accepted_name), by = "name_submitted"
-  )
+# Maren: hab die Duplikate rausgelöscht
 
-data %>% filter(duplicated(accepted_name))
+names %>% filter(duplicated(accepted_name))
 
-data2 <- data %>%
+data2 <- names %>%
   group_by(accepted_name) %>%
-  summarize(across(where(is.numeric), ~ sum(.x, na.rm = TRUE)))
+  summarize(across(everything(), ~ paste(unique(.), collapse = ";")))
 
 data2 %>% filter(duplicated(accepted_name))
-
 
 
 ## 4 Get red list status ######################################################
