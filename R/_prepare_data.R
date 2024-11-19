@@ -222,11 +222,11 @@ traits <- data %>%
 ## 2 Combine reference and restoration plots ##################################
 
 
-species <- species_reference %>%
-  full_join(species_restoration, by = "name")
+# species <- species_reference %>%
+#  full_join(species_restoration, by = "name")
 
-sites <- sites_reference %>%
-  full_join(sites_restoration, by = "plot")
+#sites <- sites_reference %>%
+#  full_join(sites_restoration, by = "plot")
 
 
 
