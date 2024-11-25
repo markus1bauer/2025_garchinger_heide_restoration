@@ -287,7 +287,9 @@ missing <- species %>%
   rename(names = accepted_name)
 
 traits <- x %>%
-  bind_rows(missing) 
+  bind_rows(missing) %>%
+  select(-name) %>%
+  select(names, everything())
   
 
 ### 4 Get red list status ######################################################
