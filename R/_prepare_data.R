@@ -218,18 +218,6 @@ traits <- data %>%
 
 
 
-
-## 2 Combine reference and restoration plots ##################################
-
-
-# species <- species_reference %>%
-#  full_join(species_restoration, by = "name")
-
-#sites <- sites_reference %>%
-#  full_join(sites_restoration, by = "plot")
-
-
-
 ## 3 Names from TNRS database #################################################
 
 
@@ -274,8 +262,19 @@ data2 <- data %>%
 data2 %>% filter(duplicated(accepted_name))
 
 species <- data2
-rm(data2, data)
+# rm(data2, data)
 #Sina, works
+
+
+### c Traits TNRS --------------------------------------------------------------
+
+x <- traits %>%
+  left_join(
+    name %>% select(name_submitted, accepted_name),
+    by = c("name" = "name_submitted")
+  ) %>%
+  mutate(names = if_else(!is.na(accepted_name), accepted_name, name)) %>%
+  select(-accepted_name)
 
 
 
@@ -307,20 +306,20 @@ data <- readxl::read_excel(
 #   harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
 #   )
 
-redlist <- read_csv(
-  here("data", "processed", "data_processed_redlist_tnrs.csv"),
-  col_names = TRUE, na = c("", "NA", "na"), col_types =
-    cols(.default = "?")
-  ) %>%
-  select(
-    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
-    Accepted_family
-    ) %>%
-  rename_with(tolower) %>%
-  rename(name = accepted_name, family = accepted_family) #%>%
-  full_join(data, by = "name")
-
-write.csv2()
+# redlist <- read_csv(
+#   here("data", "processed", "data_processed_redlist_tnrs.csv"),
+#   col_names = TRUE, na = c("", "NA", "na"), col_types =
+#     cols(.default = "?")
+#   ) %>%
+#   select(
+#     Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+#     Accepted_family
+#     ) %>%
+#   rename_with(tolower) %>%
+#   rename(name = accepted_name, family = accepted_family) #%>%
+#   full_join(data, by = "name")
+# 
+# write.csv2()
 
 
 ### b Combine red list status and traits --------------------------------------
@@ -328,7 +327,7 @@ write.csv2()
 # Merge in traits table. Wait for step 3
 data2 <- traits %>%
   left_join(
-    redlist %>% select(name, family, status, redlist_germany), by = "name"
+    data %>% select(name, family, status, redlist_germany), by = "name"
     )
 traits <- data2
 
