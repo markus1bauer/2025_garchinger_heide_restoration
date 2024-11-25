@@ -270,15 +270,27 @@ species <- data2
 
 x <- traits %>%
   left_join(
-    name %>% select(name_submitted, accepted_name),
+    names %>% select(name_submitted, accepted_name),
     by = c("name" = "name_submitted")
   ) %>%
   mutate(names = if_else(!is.na(accepted_name), accepted_name, name)) %>%
   select(-accepted_name)
 
+missing <- species %>%
+  filter(!accepted_name %in% x$names) %>%
+  distinct(accepted_name) %>%
+  mutate(
+    R1A = 0,
+    R22 = 0,
+    both = 0
+  ) %>%
+  rename(names = accepted_name)
 
+traits <- x %>%
+  bind_rows(missing) 
+  
 
-## 4 Get red list status ######################################################
+### 4 Get red list status ######################################################
 
 
 ### a Load red list ------------------------------------------------------------
