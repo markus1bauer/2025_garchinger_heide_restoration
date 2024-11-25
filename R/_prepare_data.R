@@ -218,18 +218,6 @@ traits <- data %>%
 
 
 
-
-## 2 Combine reference and restoration plots ##################################
-
-
-# species <- species_reference %>%
-#  full_join(species_restoration, by = "name")
-
-#sites <- sites_reference %>%
-#  full_join(sites_restoration, by = "plot")
-
-
-
 ## 3 Names from TNRS database #################################################
 
 
@@ -274,12 +262,38 @@ data2 <- data %>%
 data2 %>% filter(duplicated(accepted_name))
 
 species <- data2
-rm(data2, data)
+# rm(data2, data)
 #Sina, works
 
 
+### c Traits TNRS --------------------------------------------------------------
 
-## 4 Get red list status ######################################################
+x <- traits %>%
+  left_join(
+    names %>% select(name_submitted, accepted_name),
+    by = c("name" = "name_submitted")
+  ) %>%
+  mutate(names = if_else(!is.na(accepted_name), accepted_name, name)) %>%
+  select(-accepted_name)
+
+missing <- species %>%
+  filter(!accepted_name %in% x$names) %>%
+  distinct(accepted_name) %>%
+  mutate(
+    R1A = 0,
+    R22 = 0,
+    both = 0
+  ) %>%
+  rename(names = accepted_name)
+
+traits <- x %>%
+  bind_rows(missing) %>%
+  select(-name) %>%
+  select(names, everything()) %>%
+  rename(name = names)
+  
+
+### 4 Get red list status ######################################################
 
 
 ### a Load red list ------------------------------------------------------------
@@ -320,7 +334,7 @@ redlist <- read_csv(
   rename(name = accepted_name, family = accepted_family) #%>%
   full_join(data, by = "name")
 
-write.csv2()
+# write.csv2()
 
 
 ### b Combine red list status and traits --------------------------------------
@@ -328,7 +342,7 @@ write.csv2()
 # Merge in traits table. Wait for step 3
 data2 <- traits %>%
   left_join(
-    redlist %>% select(name, family, status, redlist_germany), by = "name"
+    data %>% select(name, family, status, redlist_germany), by = "name"
     )
 traits <- data2
 
