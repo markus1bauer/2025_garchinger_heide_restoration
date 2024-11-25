@@ -289,7 +289,8 @@ missing <- species %>%
 traits <- x %>%
   bind_rows(missing) %>%
   select(-name) %>%
-  select(names, everything())
+  select(names, everything()) %>%
+  rename(name = names)
   
 
 ### 4 Get red list status ######################################################
@@ -320,19 +321,19 @@ data <- readxl::read_excel(
 #   harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
 #   )
 
-# redlist <- read_csv(
-#   here("data", "processed", "data_processed_redlist_tnrs.csv"),
-#   col_names = TRUE, na = c("", "NA", "na"), col_types =
-#     cols(.default = "?")
-#   ) %>%
-#   select(
-#     Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
-#     Accepted_family
-#     ) %>%
-#   rename_with(tolower) %>%
-#   rename(name = accepted_name, family = accepted_family) #%>%
-#   full_join(data, by = "name")
-# 
+redlist <- read_csv(
+  here("data", "processed", "data_processed_redlist_tnrs.csv"),
+  col_names = TRUE, na = c("", "NA", "na"), col_types =
+    cols(.default = "?")
+  ) %>%
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+    ) %>%
+  rename_with(tolower) %>%
+  rename(name = accepted_name, family = accepted_family) #%>%
+  full_join(data, by = "name")
+
 # write.csv2()
 
 
