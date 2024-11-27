@@ -331,7 +331,7 @@ redlist <- read_csv(
     Accepted_family
     ) %>%
   rename_with(tolower) %>%
-  rename(name = accepted_name, family = accepted_family) #%>%
+  rename(name = accepted_name, family = accepted_family) %>%
   full_join(data, by = "name")
 
 # write.csv2()
@@ -342,7 +342,7 @@ redlist <- read_csv(
 # Merge in traits table. Wait for step 3
 data2 <- traits %>%
   left_join(
-    data %>% select(name, family, status, redlist_germany), by = "name"
+    redlist %>% select(name, family, status, redlist_germany), by = "name"
     )
 traits <- data2
 
@@ -393,9 +393,17 @@ gift <- data.table::fread(
   full_join(data %>% rename(name = work_species), by = "name")
 
 
-### b Combine red list status and traits --------------------------------------
+### b Combine gift and traits --------------------------------------
 
 # Merge in traits table. Wait for step 3
+
+data2 <- traits %>%
+  left_join(
+    gift %>% select(trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3), by = "name"
+  )
+traits <- data2
+
+
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
