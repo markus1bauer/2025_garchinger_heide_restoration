@@ -328,18 +328,18 @@ data <- readxl::read_excel(
 
 # Calculate just once to save time
 
-# harmonized_names <- data %>%
-#   rowid_to_column("id") %>%
-#   select(id, name) %>%
-#   TNRS::TNRS(
-#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-#     classification = "wfo", # family classification
-#     mode = "resolve"
-#   )
-# 
-# write_csv(
-#   harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
-#   )
+harmonized_names <- data %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+  )
+
+write_csv(
+  harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
+  )
 
 redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
@@ -354,7 +354,7 @@ redlist <- read_csv(
   rename(name = accepted_name, family = accepted_family) %>%
   full_join(data, by = "name")
 
-# write.csv2()
+
 
 
 ### b Combine red list status and traits --------------------------------------
