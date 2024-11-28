@@ -226,15 +226,19 @@ traits <- data %>%
 # Markus: Habe die kartierten Arten und die Zielarten zusammengefügt. Es läuft,
 # glaube ich noch nicht. Malte, kannst du das prüfen?
 
-data <- species %>%
-  full_join(traits, by = "name") %>% # combine with target species list
-  rowid_to_column("id") %>%
-  select(id, name) %>%
-  TNRS::TNRS(
-    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-    classification = "wfo", # family classification
-    mode = "resolve"
-  )
+# data <- species %>%
+#   full_join(traits, by = "name") %>% # combine with target species list
+#   rowid_to_column("id") %>%
+#   select(id, name) %>%
+#   TNRS::TNRS(
+#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#     classification = "wfo", # family classification
+#     mode = "resolve"
+#   )
+# 
+# write.csv2(data, "TNRS_Species.csv")
+data <- read.csv2("TNRS_Species.csv")
+
 
 names <- data %>%
   select(
@@ -268,30 +272,46 @@ species <- data2
 
 ### c Traits TNRS --------------------------------------------------------------
 
-x <- traits %>%
+# harmonized_names <- traits %>%
+#     rowid_to_column("id") %>%
+#     select(id, name) %>%
+#     TNRS::TNRS(
+#       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#       classification = "wfo", # family classification
+#       mode = "resolve"
+#     )
+# 
+# write_csv(
+#     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+#     )
+
+names_traits <- read.csv("data/processed/data_processed_traits_tnrs.csv")
+
+
+traits <- traits %>%
   left_join(
-    names %>% select(name_submitted, accepted_name),
-    by = c("name" = "name_submitted")
+    names_traits %>% select(Name_submitted, Name_matched),
+    by = c("name" = "Name_submitted")
   ) %>%
-  mutate(names = if_else(!is.na(accepted_name), accepted_name, name)) %>%
-  select(-accepted_name)
+  select(- name) %>%
+  rename(name = Name_matched)%>%
+  select(name, everything()) 
 
-missing <- species %>%
-  filter(!accepted_name %in% x$names) %>%
-  distinct(accepted_name) %>%
-  mutate(
-    R1A = 0,
-    R22 = 0,
-    both = 0
-  ) %>%
-  rename(names = accepted_name)
+traits <- traits %>%
+  merge(
+    names %>% select(accepted_name), 
+    by.x = "name", by.y = "accepted_name", all.y = T
+  )
 
-traits <- x %>%
-  bind_rows(missing) %>%
-  select(-name) %>%
-  select(names, everything()) %>%
-  rename(name = names)
-  
+traits %>% filter(duplicated(name))
+
+traits <- traits %>%
+  group_by(name) %>%
+  summarize(across(where(is.numeric), ~ first(.x)))
+
+traits[is.na(traits)] <- 0
+
+
 
 ### 4 Get red list status ######################################################
 
@@ -308,18 +328,18 @@ data <- readxl::read_excel(
 
 # Calculate just once to save time
 
-# harmonized_names <- data %>%
-#   rowid_to_column("id") %>%
-#   select(id, name) %>%
-#   TNRS::TNRS(
-#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-#     classification = "wfo", # family classification
-#     mode = "resolve"
-#   )
-# 
-# write_csv(
-#   harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
-#   )
+harmonized_names <- data %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+  )
+
+write_csv(
+  harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
+  )
 
 redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
@@ -334,7 +354,7 @@ redlist <- read_csv(
   rename(name = accepted_name, family = accepted_family) %>%
   full_join(data, by = "name")
 
-# write.csv2()
+
 
 
 ### b Combine red list status and traits --------------------------------------
