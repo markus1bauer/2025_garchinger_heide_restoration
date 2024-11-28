@@ -226,15 +226,19 @@ traits <- data %>%
 # Markus: Habe die kartierten Arten und die Zielarten zusammengefügt. Es läuft,
 # glaube ich noch nicht. Malte, kannst du das prüfen?
 
-data <- species %>%
-  full_join(traits, by = "name") %>% # combine with target species list
-  rowid_to_column("id") %>%
-  select(id, name) %>%
-  TNRS::TNRS(
-    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-    classification = "wfo", # family classification
-    mode = "resolve"
-  )
+# data <- species %>%
+#   full_join(traits, by = "name") %>% # combine with target species list
+#   rowid_to_column("id") %>%
+#   select(id, name) %>%
+#   TNRS::TNRS(
+#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#     classification = "wfo", # family classification
+#     mode = "resolve"
+#   )
+# 
+# write.csv2(data, "TNRS_Species.csv")
+data <- read.csv2("TNRS_Species.csv")
+
 
 names <- data %>%
   select(
@@ -268,13 +272,32 @@ species <- data2
 
 ### c Traits TNRS --------------------------------------------------------------
 
-x <- traits %>%
+# harmonized_names <- traits %>%
+#     rowid_to_column("id") %>%
+#     select(id, name) %>%
+#     TNRS::TNRS(
+#       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#       classification = "wfo", # family classification
+#       mode = "resolve"
+#     )
+# 
+# write_csv(
+#     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+#     )
+
+names_traits <- read.csv("data/processed/data_processed_traits_tnrs.csv")
+
+
+traits <- traits %>%
   left_join(
-    names %>% select(name_submitted, accepted_name),
-    by = c("name" = "name_submitted")
+    names_traits %>% select(Name_submitted, Name_matched),
+    by = c("name" = "Name_submitted")
   ) %>%
-  mutate(names = if_else(!is.na(accepted_name), accepted_name, name)) %>%
-  select(-accepted_name)
+  select(- name) %>%
+  rename(name = Name_matched)%>%
+  select(name, everything()) 
+
+
 
 missing <- species %>%
   filter(!accepted_name %in% x$names) %>%
