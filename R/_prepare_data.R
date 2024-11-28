@@ -297,24 +297,21 @@ traits <- traits %>%
   rename(name = Name_matched)%>%
   select(name, everything()) 
 
+traits <- traits %>%
+  merge(
+    names %>% select(accepted_name), 
+    by.x = "name", by.y = "accepted_name", all.y = T
+  )
+
+traits %>% filter(duplicated(name))
+
+traits <- traits %>%
+  group_by(name) %>%
+  summarize(across(where(is.numeric), ~ first(.x)))
+
+traits[is.na(traits)] <- 0
 
 
-missing <- species %>%
-  filter(!accepted_name %in% x$names) %>%
-  distinct(accepted_name) %>%
-  mutate(
-    R1A = 0,
-    R22 = 0,
-    both = 0
-  ) %>%
-  rename(names = accepted_name)
-
-traits <- x %>%
-  bind_rows(missing) %>%
-  select(-name) %>%
-  select(names, everything()) %>%
-  rename(name = names)
-  
 
 ### 4 Get red list status ######################################################
 
