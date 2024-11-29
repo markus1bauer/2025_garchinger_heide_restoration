@@ -328,18 +328,18 @@ data <- readxl::read_excel(
 
 # Calculate just once to save time
 
-harmonized_names <- data %>%
-  rowid_to_column("id") %>%
-  select(id, name) %>%
-  TNRS::TNRS(
-    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-    classification = "wfo", # family classification
-    mode = "resolve"
-  )
-
-write_csv(
-  harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
-  )
+# harmonized_names <- data %>%
+#   rowid_to_column("id") %>%
+#   select(id, name) %>%
+#   TNRS::TNRS(
+#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#     classification = "wfo", # family classification
+#     mode = "resolve"
+#   )
+# 
+# write_csv(
+#   harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
+#   )
 
 redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
@@ -354,17 +354,17 @@ redlist <- read_csv(
   rename(name = accepted_name, family = accepted_family) %>%
   full_join(data, by = "name")
 
-
+# irgendwas passt hier nicht
 
 
 ### b Combine red list status and traits --------------------------------------
 
 # Merge in traits table. Wait for step 3
-data2 <- traits %>%
-  left_join(
-    redlist %>% select(name, family, status, redlist_germany), by = "name"
-    )
-traits <- data2
+# data2 <- traits %>%
+#   left_join(
+#     redlist %>% select(name, family, status, redlist_germany), by = "name"
+#     )
+# traits <- data2
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -404,12 +404,9 @@ data <- GIFT::GIFT_traits(
 gift <- data.table::fread(
   here("data", "processed", "data_processed_traits_tnrs.csv")
   ) %>%
-  select(
-    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
-    Accepted_family
-  ) %>%
+  select(Name_matched) %>%
   rename_with(tolower) %>%
-  rename(name = name_submitted) %>%
+  rename(name = name_matched) %>%
   full_join(data %>% rename(name = work_species), by = "name")
 
 
@@ -417,11 +414,11 @@ gift <- data.table::fread(
 
 # Merge in traits table. Wait for step 3
 
-data2 <- traits %>%
+traits <- traits %>%
   left_join(
-    gift %>% select(trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3), by = "name"
+    gift %>% select(name, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3), by = "name"
   )
-traits <- data2
+
 
 
 
