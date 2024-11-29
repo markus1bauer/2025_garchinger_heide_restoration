@@ -420,8 +420,6 @@ traits <- traits %>%
   )
 
 
-
-
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
@@ -434,6 +432,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ### a Species richness -------------------------------------------------------
 
+# warum nutzen wir nicht einfach die traits tabelle?
 richness <- species %>%
   left_join(traits, by = "name") %>%
   select(
@@ -455,15 +454,14 @@ richness_rlg <- richness %>%
   ungroup()
 
 #### Target species (species richness) ###
-richness_ellenberg <- richness %>%
+richness_target <- richness %>%
   filter(target != "no") %>%
-  summarise(ellenberg_richness = sum(n, na.rm = TRUE)) %>%
+  summarise(target_richness = sum(n, na.rm = TRUE)) %>%
   ungroup()
 
 sites_dikes <- sites_dikes %>%
   right_join(richness_total, by = "id") %>%
   right_join(richness_rlg, by = "id") %>%
-  right_join(richness_rlb, by = "id") %>%
   right_join(richness_target, by = "id")
   mutate(
     target_richness_ratio = target_richness / species_richness
