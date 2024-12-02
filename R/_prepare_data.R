@@ -229,6 +229,7 @@ traits <- data %>%
 harmonized_names <- species %>%
   full_join(traits, by = "name") %>% # combine with target species list
   rowid_to_column("id") %>%
+  mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule")) %>%
   select(id, name) %>%
   TNRS::TNRS(
     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
