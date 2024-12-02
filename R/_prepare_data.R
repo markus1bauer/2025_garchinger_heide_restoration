@@ -221,26 +221,27 @@ traits <- data %>%
 ## 3 Names from TNRS database #################################################
 
 
-### a Harmonize names ----------------------------------------------------------
+### a Harmonize names of species and traits matrices ---------------------------
 
-# Markus: Habe die kartierten Arten und die Zielarten zusammengefügt. Es läuft,
-# glaube ich noch nicht. Malte, kannst du das prüfen?
+# Markus: API of TNRS was not reached. Run TNRS first once successfully
 
-# data <- species %>%
-#   full_join(traits, by = "name") %>% # combine with target species list
-#   rowid_to_column("id") %>%
-#   select(id, name) %>%
-#   TNRS::TNRS(
-#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-#     classification = "wfo", # family classification
-#     mode = "resolve"
-#   )
-# 
-# write.csv2(data, "TNRS_Species.csv")
-data <- read.csv2("TNRS_Species.csv")
+# Run only once to save time (following times load the file):
+harmonized_names <- species %>%
+  full_join(traits, by = "name") %>% # combine with target species list
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification WFO
+    mode = "resolve"
+  )
+write.csv(
+  harmonized_names, here("data", "processed", "data_processed_names_tnrs.csv")
+  )
 
-
-names <- data %>%
+names_species <- read.csv(
+  here("data", "processed", "data_processed_names_tnrs.csv")
+  ) %>%
   select(
     Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
     Accepted_family
@@ -248,13 +249,14 @@ names <- data %>%
   rename_with(tolower)
 
 
-### b Check and summarize duplicates -------------------------------------------
+### b Summarize duplicates of species matrix -----------------------------------
 
-
+#Sina: works
 data <- species %>% 
   rename(name_submitted = name) %>%
   full_join(
-    names %>% select(name_submitted, accepted_name), by = "name_submitted"
+    names_species %>% select(name_submitted, accepted_name),
+    by = "name_submitted"
   )
 
 data %>% filter(duplicated(accepted_name))
@@ -266,46 +268,53 @@ data2 <- data %>%
 data2 %>% filter(duplicated(accepted_name))
 
 species <- data2
-# rm(data2, data)
-#Sina, works
+rm(data2, data)
 
 
-### c Traits TNRS --------------------------------------------------------------
+### c Harmonize names of traits matrix -----------------------------------------
 
-# harmonized_names <- traits %>%
-#     rowid_to_column("id") %>%
-#     select(id, name) %>%
-#     TNRS::TNRS(
-#       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-#       classification = "wfo", # family classification
-#       mode = "resolve"
-#     )
-# 
-# write_csv(
-#     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
-#     )
+harmonized_names <- traits %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule")) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+    )
+write_csv(
+    harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+    )
 
-names_traits <- read.csv("data/processed/data_processed_traits_tnrs.csv")
-
-
-traits <- traits %>%
-  left_join(
-    names_traits %>% select(Name_submitted, Name_matched),
-    by = c("name" = "Name_submitted")
+names_traits <- read.csv(
+  here("data", "processed", "data_processed_traits_tnrs.csv")
   ) %>%
-  select(- name) %>%
-  rename(name = Name_matched)%>%
-  select(name, everything()) 
+  select(
+    Name_submitted, Taxonomic_status, Accepted_name, Accepted_name_url,
+    Accepted_family
+  ) %>%
+  rename_with(tolower)
 
-traits <- traits %>%
+
+### d Summarize duplicates of traits matrix -----------------------------------
+
+data <- traits %>%
+  full_join(
+    names_traits, by = c("name" = "name_submitted")
+  ) %>%
+  select(name, everything())
+
+data %>% filter(duplicated(name))
+
+data2 <- data %>%
   merge(
-    names %>% select(accepted_name), 
-    by.x = "name", by.y = "accepted_name", all.y = T
+    names_traits %>% select(accepted_name), 
+    by.x = "name", by.y = "accepted_name", all.y = TRUE
   )
 
 traits %>% filter(duplicated(name))
 
-traits <- traits %>%
+data3 <- data2 %>%
   group_by(name) %>%
   summarize(across(where(is.numeric), ~ first(.x)))
 
@@ -313,7 +322,7 @@ traits[is.na(traits)] <- 0
 
 
 
-### 4 Get red list status ######################################################
+## 4 Get red list status ######################################################
 
 
 ### a Load red list ------------------------------------------------------------
@@ -338,7 +347,8 @@ data <- readxl::read_excel(
 #   )
 # 
 # write_csv(
-#   harmonized_names, here("data", "processed", "data_processed_redlist_tnrs.csv")
+#   harmonized_names,
+#   here("data", "processed", "data_processed_redlist_tnrs.csv")
 #   )
 
 redlist <- read_csv(
@@ -372,7 +382,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 5 Traits from GIFT database ################################################
 
-
+#Markus: Works BUT see b)
 
 ### a Load traits from GIFT ---------------------------------------------------
 
@@ -381,13 +391,13 @@ trait_ids <- c("1.6.3", "3.2.3", "4.1.3")
 GIFT::GIFT_traits_meta() %>%
   filter(Lvl3 %in% trait_ids) # Get an overview of selected traits
 
-# Get traits and run name harmonization just once to save time
 
 data <- GIFT::GIFT_traits(
   trait_IDs = trait_ids,
   agreement = 0.66, bias_ref = FALSE, bias_deriv = FALSE
 )
 
+# Run name harmonization just once to save time (following time load file)
 # harmonized_names <- data %>%
 #   rowid_to_column("id") %>%
 #   select(id, work_species) %>%
@@ -410,7 +420,7 @@ gift <- data.table::fread(
   full_join(data %>% rename(name = work_species), by = "name")
 
 
-### b Combine gift and traits --------------------------------------
+### b Combine gift and traits -------------------------------------------------
 
 # Merge in traits table. Wait for step 3
 
