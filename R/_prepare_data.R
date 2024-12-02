@@ -336,21 +336,19 @@ data <- readxl::read_excel(
   rename_with(tolower) %>%
   select(name, status, redlist_germany)
 
-# Calculate just once to save time
-
-# harmonized_names <- data %>%
-#   rowid_to_column("id") %>%
-#   select(id, name) %>%
-#   TNRS::TNRS(
-#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-#     classification = "wfo", # family classification
-#     mode = "resolve"
-#   )
-# 
-# write_csv(
-#   harmonized_names,
-#   here("data", "processed", "data_processed_redlist_tnrs.csv")
-#   )
+# Calculate just once to save time (afterwards load file)
+harmonized_names <- data %>%
+  rowid_to_column("id") %>%
+  select(id, name) %>%
+  TNRS::TNRS(
+    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+    classification = "wfo", # family classification
+    mode = "resolve"
+  )
+write_csv(
+  harmonized_names,
+  here("data", "processed", "data_processed_redlist_tnrs.csv")
+  )
 
 redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
