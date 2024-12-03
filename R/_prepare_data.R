@@ -223,13 +223,20 @@ traits <- data %>%
 
 ### a Harmonize names of species and traits matrices ---------------------------
 
-# Markus: API of TNRS was not reached. Run TNRS first once successfully
+# Markus: API of TNRS was not reached. Run TNRS first once successfully.
+# Test with following lines:
+fulldata <- tnrs_testfile[1:10,]
+results <- TNRS::TNRS(fulldata);head(results)
+
+metadata <- TNRS_metadata()
+metadata$version
+metadata$sources
 
 # Run only once to save time (following times load the file):
 harmonized_names <- species %>%
   full_join(traits, by = "name") %>% # combine with target species list
-  rowid_to_column("id") %>%
   mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule")) %>%
+  rowid_to_column("id") %>%
   select(id, name) %>%
   TNRS::TNRS(
     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
