@@ -15,6 +15,7 @@ library(here)
 library(tidyverse)
 library(TNRS)
 library(GIFT)
+library(FD)
 
 ### Start ###
 # Create hashtag infront of a line: shift + strg + c
@@ -514,12 +515,28 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 7 ?: Calculation of CWMs ######################################################
+## 7: Calculation of CWMs ######################################################
 
-dbFD()
-# dbFD(traits, species, w.abun = T, corr = "lingoes", calc.Fric = F, calc.CWM = T)
-#Sina, It is better to calculate it with dbFD than as in the old script, 
-# I have to look something up again 
+# CWM Plant height 1.6.3
+# funktioniert noch nicht
+
+traits_height <- traits[,c("name", "trait_value_1.6.3")]
+traits_height <- na.omit(traits_height)
+traits_height <- traits_height[-1,]
+
+species_height <- t(species[species$accepted_name %in% traits_height$name, ])
+colnames(species_height) <- species_height[1,] 
+species_height <- species_height[-1,]
+
+CWM.Height <- dbFD(traits_height["trait_value_1.6.3"], 
+                   species_height, 
+                   w.abun=T, corr="lingoes", calc.FRic=F, calc.CWM=T)
+
+# Mean value
+CWM_Height <- CWM.Height$CWM; colnames(CWM_Height) <- "CWM_Height"; CWM_Height$ID_plot <- row.names(CWM_Height)
+rm("data.trait_SLA", "data.flore_SLA", "CWM.SLA")
+
+ 
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
