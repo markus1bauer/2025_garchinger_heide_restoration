@@ -480,12 +480,8 @@ sites_dikes <- sites_dikes %>%
   )
 
 
-### b Species eveness and shannon ---------------------------------------------
+### b Species eveness ---------------------------------------------
 
-# Calculate Hill numbers with hillR-package and hill_taxa function
-# of Chao et al. (2014) Annu Rev
-# https://doi.org/10.1146/annurev-ecolsys-120213-091540
-  
 data <- species_dikes %>%
   mutate(across(where(is.numeric), ~ replace(., is.na(.), 0))) %>%
   pivot_longer(-name, names_to = "id", values_to = "value") %>%
