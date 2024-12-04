@@ -223,11 +223,6 @@ traits <- data %>%
 
 ### a Harmonize names of species and traits matrices ---------------------------
 
-# Markus: API of TNRS was not reached. Run TNRS first once successfully.
-# Test with following lines:
-# fulldata <- tnrs_testfile[1:10,]
-# results <- TNRS::TNRS(fulldata);head(results)
-
 # If one needs the metadata:
 # metadata <- TNRS_metadata()
 # metadata$version
