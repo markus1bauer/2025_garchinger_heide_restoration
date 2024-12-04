@@ -223,21 +223,13 @@ traits <- data %>%
 
 ### a Harmonize names of species and traits matrices ---------------------------
 
-# Markus: API of TNRS was not reached. Run TNRS first once successfully.
-# Test with following lines:
-# fulldata <- tnrs_testfile[1:10,]
-# results <- TNRS::TNRS(fulldata);head(results)
-
-# If one needs the metadata:
-# metadata <- TNRS_metadata()
-# metadata$version
-# metadata$sources
+metadata <- TNRS_metadata()
+metadata$version
+metadata$sources
 
 # Harmonization ran once and were than saved --> load below
-
 # harmonized_names <- species %>%
 #   full_join(traits, by = "name") %>% # combine with target species list
-#   mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule")) %>%
 #   rowid_to_column("id") %>%
 #   select(id, name) %>%
 #   TNRS::TNRS(
@@ -294,7 +286,11 @@ data %>% filter(duplicated(accepted_name))
 
 data_summarized <- data %>%
   group_by(accepted_name) %>%
-  summarize(across(everything(), ~ first(.x)))
+  summarize(across(everything(), ~ first(.x))) %>%
+  select(
+    name_submitted, accepted_name, taxonomic_status, accepted_family,
+    everything()
+    )
 
 traits <- data
 
@@ -304,30 +300,36 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 4 Get red list status ######################################################
 
+# Markus: Works
 
 ### a Load red list ------------------------------------------------------------
 
-data <- readxl::read_excel(
+data_redlist <- readxl::read_excel(
   here("data", "raw", "data_raw_species_redlist_2018.xlsx"),
   col_names = TRUE, na = c("", "NA", "na")
   ) %>%
   rename(redlist_germany = "RL Kat.", responsibility = Verantwortlichkeit) %>%
   rename_with(tolower) %>%
-  select(name, status, redlist_germany)
+  select(name, status, redlist_germany) %>%
+  mutate(
+    name = str_replace(
+      name, "Cirsium acaulon \\(L\\.\\) Scop\\.", "Cirsium acaule"
+      )
+    )
 
 # Calculate just once to save time (afterwards load file)
-harmonized_names <- data %>%
-  rowid_to_column("id") %>%
-  select(id, name) %>%
-  TNRS::TNRS(
-    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-    classification = "wfo", # family classification
-    mode = "resolve"
-  )
-write_csv(
-  harmonized_names,
-  here("data", "processed", "data_processed_redlist_tnrs.csv")
-  )
+# harmonized_names <- data %>%
+#   rowid_to_column("id") %>%
+#   select(id, name) %>%
+#   TNRS::TNRS(
+#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#     classification = "wfo", # family classification
+#     mode = "resolve"
+#   )
+# write_csv(
+#   harmonized_names,
+#   here("data", "processed", "data_processed_redlist_tnrs.csv")
+#   )
 
 redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
@@ -339,20 +341,20 @@ redlist <- read_csv(
     Accepted_family
     ) %>%
   rename_with(tolower) %>%
-  rename(name = accepted_name, family = accepted_family) %>%
-  full_join(data, by = "name")
-
-# irgendwas passt hier nicht
+  full_join(
+    data_redlist %>% rename(name_submitted = name), by = "name_submitted"
+    )
 
 
 ### b Combine red list status and traits --------------------------------------
 
-# Merge in traits table. Wait for step 3
-# data2 <- traits %>%
-#   left_join(
-#     redlist %>% select(name, family, status, redlist_germany), by = "name"
-#     )
-# traits <- data2
+data <- traits %>%
+  left_join(
+    redlist %>% select(accepted_name, status, redlist_germany),
+    by = "accepted_name"
+  )
+
+traits <- data
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
