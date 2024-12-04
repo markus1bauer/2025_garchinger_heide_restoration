@@ -103,7 +103,8 @@ species_reference <- read_csv2(
     cols(
       .default = "?"
     )
-)
+  ) %>%
+  mutate(name = str_replace_all(name, "_", " "))
 
 species_restoration <- read_csv(
   here("data", "raw", "data_raw_species_restoration.csv"),
@@ -196,7 +197,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 2 Select target species from FloraVeg.EU ###################################
 
-# Markus: get target species and put them in 'traits' matrix. Works.
+# Get target species and put them in 'traits' matrix. Markus: Works
 
 data <- traits %>%
   rename_with(~ tolower(gsub(" ", "_", .x))) %>%
@@ -217,22 +218,26 @@ traits <- data %>%
   rename(name = species)
 
 
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
+
+
 
 ## 3 Names from TNRS database #################################################
 
+#Sina + Markus: works
 
 ### a Harmonize names of species and traits matrices ---------------------------
 
-# If one needs the metadata:
-# metadata <- TNRS_metadata()
-# metadata$version
-# metadata$sources
+metadata <- TNRS_metadata()
+metadata$version
+metadata$sources %>% tibble()
+
+traits <- traits %>%
+  mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule"))
 
 # Harmonization ran once and were than saved --> load below
-
 # harmonized_names <- species %>%
 #   full_join(traits, by = "name") %>% # combine with target species list
-#   mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule")) %>%
 #   rowid_to_column("id") %>%
 #   select(id, name) %>%
 #   TNRS::TNRS(
@@ -256,7 +261,6 @@ data_names <- read.csv(
 
 ### b Summarize duplicates of species matrix -----------------------------------
 
-#Sina + Markus: works
 data <- species %>% 
   rename(name_submitted = name) %>%
   left_join(
@@ -276,9 +280,7 @@ data_summarized %>% filter(duplicated(accepted_name))
 species <- data_summarized
 
 
-### c Summarize duplicates of traits matrix -----------------------------------------
-
-# Markus: Works
+### c Summarize duplicates of traits matrix ------------------------------------
 
 data <- traits %>% 
   rename(name_submitted = name) %>%
@@ -289,7 +291,13 @@ data %>% filter(duplicated(accepted_name))
 
 data_summarized <- data %>%
   group_by(accepted_name) %>%
-  summarize(across(everything(), ~ first(.x)))
+  summarize(across(everything(), ~ first(.x))) %>%
+  select(
+    name_submitted, accepted_name, taxonomic_status, accepted_family,
+    everything()
+    )
+
+data_summarized %>% filter(duplicated(accepted_name))
 
 traits <- data
 
@@ -299,30 +307,36 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 4 Get red list status ######################################################
 
+# Markus: Works
 
 ### a Load red list ------------------------------------------------------------
 
-data <- readxl::read_excel(
+data_redlist <- readxl::read_excel(
   here("data", "raw", "data_raw_species_redlist_2018.xlsx"),
   col_names = TRUE, na = c("", "NA", "na")
   ) %>%
   rename(redlist_germany = "RL Kat.", responsibility = Verantwortlichkeit) %>%
   rename_with(tolower) %>%
-  select(name, status, redlist_germany)
+  select(name, status, redlist_germany) %>%
+  mutate(
+    name = str_replace(
+      name, "Cirsium acaulon \\(L\\.\\) Scop\\.", "Cirsium acaule"
+      )
+    )
 
 # Calculate just once to save time (afterwards load file)
-harmonized_names <- data %>%
-  rowid_to_column("id") %>%
-  select(id, name) %>%
-  TNRS::TNRS(
-    sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-    classification = "wfo", # family classification
-    mode = "resolve"
-  )
-write_csv(
-  harmonized_names,
-  here("data", "processed", "data_processed_redlist_tnrs.csv")
-  )
+# harmonized_names <- data_redlist %>%
+#   rowid_to_column("id") %>%
+#   select(id, name) %>%
+#   TNRS::TNRS(
+#     sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#     classification = "wfo", # family classification
+#     mode = "resolve"
+#   )
+# write_csv(
+#   harmonized_names,
+#   here("data", "processed", "data_processed_redlist_tnrs.csv")
+#   )
 
 redlist <- read_csv(
   here("data", "processed", "data_processed_redlist_tnrs.csv"),
@@ -334,20 +348,20 @@ redlist <- read_csv(
     Accepted_family
     ) %>%
   rename_with(tolower) %>%
-  rename(name = accepted_name, family = accepted_family) %>%
-  full_join(data, by = "name")
-
-# irgendwas passt hier nicht
+  full_join(
+    data_redlist %>% rename(name_submitted = name), by = "name_submitted"
+    )
 
 
 ### b Combine red list status and traits --------------------------------------
 
-# Merge in traits table. Wait for step 3
-# data2 <- traits %>%
-#   left_join(
-#     redlist %>% select(name, family, status, redlist_germany), by = "name"
-#     )
-# traits <- data2
+data <- traits %>%
+  left_join(
+    redlist %>% select(accepted_name, status, redlist_germany),
+    by = "accepted_name"
+  )
+
+traits <- data
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -362,7 +376,8 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 trait_ids <- c("1.2.2", "1.6.3", "3.2.3", "4.1.3")
 
 GIFT::GIFT_traits_meta() %>%
-  filter(Lvl3 %in% trait_ids)
+  filter(Lvl3 %in% trait_ids) %>%
+  tibble()
 
 data_gift <- GIFT::GIFT_traits(
   trait_IDs = trait_ids,
@@ -371,7 +386,7 @@ data_gift <- GIFT::GIFT_traits(
 
 # Harmonization ran once and were than saved --> load below
 
-# harmonized_names <- data %>%
+# harmonized_names <- data_gift %>%
 #   rowid_to_column("id") %>%
 #   select(id, work_species) %>%
 #   TNRS::TNRS(
@@ -392,7 +407,7 @@ gift <- data.table::fread(
   select(Name_matched) %>%
   rename_with(tolower) %>%
   rename(name = name_matched) %>%
-  full_join(
+  left_join(
     data_gift %>%
       rename(name = work_species) %>%
       mutate(
@@ -411,17 +426,15 @@ gift <- data.table::fread(
     ) %>%
   rename(accepted_name = name)
 
+gift %>% filter(duplicated(accepted_name)) %>% tibble()
+gift %>% filter(str_detect(accepted_name, "Dactylis g")) %>% select(1:2)
+
 
 ### b Combine gift and traits -------------------------------------------------
 
 # Markus: Solve C. acaulon problem
 
 data <- traits %>%
-  mutate(
-    name_submitted = str_replace(
-      name_submitted, "Cirsium acaulon", "Cirsium acaule"
-      )
-    ) %>%
   left_join(
     gift %>%
       select(
