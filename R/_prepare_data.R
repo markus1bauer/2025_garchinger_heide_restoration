@@ -373,7 +373,7 @@ data_summarized <- data %>%
     everything()
   )
 
-data_summarized %>% filter(duplicated(accepted_name))
+data_summarized  %>% filter(duplicated(accepted_name))
 
 traits <- data_summarized
 
@@ -458,7 +458,20 @@ data <- traits %>%
     by = "accepted_name"
   )
 
-traits <- data
+data %>% filter(duplicated(accepted_name))
+
+data_summarized <- data %>%
+  group_by(accepted_name) %>%
+  summarize(across(everything(), ~ first(.x))) %>%
+  select(
+    accepted_name, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3,
+    everything()
+  )
+
+data_summarized  %>% filter(duplicated(accepted_name))
+
+traits <- data_summarized
+
 
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
