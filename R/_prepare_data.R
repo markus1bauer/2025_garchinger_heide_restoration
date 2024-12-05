@@ -218,6 +218,29 @@ data <- traits %>%
 traits <- data %>%
   rename(name = species)
 
+# harmonized_names <- traits %>%
+#     rowid_to_column("id") %>%
+#     select(id, name) %>%
+#     TNRS::TNRS(
+#       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#       classification = "wfo", # family classification
+#       mode = "resolve"
+#     )
+ 
+# write_csv(
+#     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+#     )
+
+names_traits <- read.csv("data/processed/data_processed_traits_tnrs.csv")
+
+traits <- traits %>%
+  rename("Name_submitted" = "name") %>%
+  left_join(
+    names_traits %>% select(Name_submitted, Name_matched)
+    , by = "Name_submitted") %>%
+  select(Name_submitted, Name_matched, everything())
+
+
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -234,7 +257,7 @@ metadata$version
 metadata$sources %>% tibble()
 
 traits <- traits %>%
-  mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule"))
+  mutate(Name_submitted = str_replace(Name_submitted, "Cirsium acaulon", "Cirsium acaule"))
 
 # Harmonization ran once and were than saved --> load below
 # harmonized_names <- species %>%
@@ -282,10 +305,16 @@ species <- data_summarized
 
 
 ### c Summarize duplicates of traits matrix ------------------------------------
+# wichtig fuer unten bitte nicht loeschen! # 
+traits <- traits %>%
+  merge(
+    species %>% select(accepted_name), 
+    by.x = "Name_matched", by.y ="accepted_name", all.y = T
+  )
 
 data <- traits %>% 
-  rename(name_submitted = name) %>%
-  left_join(data_names, by = "name_submitted") %>%
+  rename(accepted_name = Name_matched) %>%
+  left_join(data_names, by = "accepted_name") %>%
   select(name_submitted, accepted_name, everything())
 
 data %>% filter(duplicated(accepted_name))
@@ -300,23 +329,13 @@ data_summarized <- data %>%
 
 data_summarized %>% filter(duplicated(accepted_name))
 
-traits <- data_summarized
-
-traits <- traits %>%
-  merge(
-    data_names %>% select(accepted_name), 
-    by.x = "name", by.y = "accepted_name", all.y = T
-  )
-
-traits %>% filter(duplicated(name))
-
-traits <- traits %>%
-  group_by(name) %>%
-  summarize(across(where(is.numeric), ~ first(.x)))
+traits <- data_summarized %>%
+  select(accepted_name, taxonomic_status, accepted_family, 
+         R1A, R22, both)
 
 traits[is.na(traits)] <- 0
 
-
+write.csv2(traits,"data/processed/data_processed_traits_tnrs_alle.csv")
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -385,7 +404,7 @@ data_summarized <- data %>%
   group_by(accepted_name) %>%
   summarize(across(everything(), ~ first(.x))) %>%
   select(
-    name_submitted, accepted_name, taxonomic_status, accepted_family,
+    accepted_name, taxonomic_status, accepted_family,
     everything()
   )
 
@@ -433,11 +452,11 @@ data_gift <- GIFT::GIFT_traits(
 data_gift %>% filter(str_detect(work_species, "Cerastium f")) %>% select(1:2)
 
 gift <- data.table::fread(
-  here("data", "processed", "data_processed_traits_tnrs.csv")
+  here("data", "processed", "data_processed_traits_tnrs_alle.csv")
   ) %>%
-  select(Name_matched) %>%
+  select(accepted_name) %>%
   rename_with(tolower) %>%
-  rename(name = name_matched) %>%
+  rename(name = accepted_name) %>%
   left_join(
     data_gift %>%
       rename(name = work_species) %>%
@@ -561,25 +580,79 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 ## 7: Calculation of CWMs ######################################################
 
 # CWM Plant height 1.6.3
-# funktioniert noch nicht
 
 traits_height <- traits[,c("accepted_name", "trait_value_1.6.3")]
 traits_height <- na.omit(traits_height)
-traits_height <- traits_height[-1,]
 
-species_height <- t(species[species$accepted_name %in% traits_height$accepted_name, ])
+species_height <- species[species$accepted_name %in% traits_height$accepted_name, ]
+species_height <- as.data.frame(t(species_height))
 colnames(species_height) <- species_height[1,] 
 species_height <- species_height[-1,]
+species_height <- species_height %>% mutate_all(as.numeric)
 
-CWM.Height <- dbFD(traits_height["trait_value_1.6.3"], 
-                   species_height, 
+traits_height <- traits_height %>%
+  column_to_rownames(var="accepted_name")
+
+CWM.Height <- dbFD(traits_height, species_height, 
                    w.abun=T, corr="lingoes", calc.FRic=F, calc.CWM=T)
 
 # Mean value
-CWM_Height <- CWM.Height$CWM; colnames(CWM_Height) <- "CWM_Height"; CWM_Height$ID_plot <- row.names(CWM_Height)
-rm("data.trait_SLA", "data.flore_SLA", "CWM.SLA")
+CWM_Height <- CWM.Height$CWM
+colnames(CWM_Height) <- "CWM_Height"
+CWM_Height$id <- row.names(CWM_Height)
 
+# CWM Seed mass 3.2.3
+
+traits_seed <- traits[,c("accepted_name", "trait_value_3.2.3")]
+traits_seed <- na.omit(traits_seed)
+
+species_seed <- species[species$accepted_name %in% traits_seed$accepted_name, ]
+species_seed <- as.data.frame(t(species_seed))
+colnames(species_seed) <- species_seed[1,] 
+species_seed <- species_seed[-1,]
+species_seed <- species_seed %>% mutate_all(as.numeric)
+
+traits_seed <- traits_seed %>%
+  column_to_rownames(var="accepted_name")
+
+CWM.Seed <- dbFD(traits_seed, species_seed, 
+                   w.abun=T, corr="lingoes", calc.FRic=F, calc.CWM=T)
+
+# Mean value
+CWM_Seed <- CWM.Seed$CWM
+colnames(CWM_Seed) <- "CWM_Seed"
+CWM_Seed$id <- row.names(CWM_Seed)
+
+
+# CWM SLA 4.1.3
+
+traits_SLA <- traits[,c("accepted_name", "trait_value_4.1.3")]
+traits_SLA <- na.omit(traits_SLA)
+
+species_SLA <- species[species$accepted_name %in% traits_SLA$accepted_name, ]
+species_SLA <- as.data.frame(t(species_SLA))
+colnames(species_SLA) <- species_SLA[1,] 
+species_SLA <- species_SLA[-1,]
+species_SLA <- species_SLA %>% mutate_all(as.numeric)
+
+traits_SLA <- traits_SLA %>%
+  column_to_rownames(var="accepted_name")
+
+CWM.SLA <- dbFD(traits_SLA, species_SLA, 
+                 w.abun=T, corr="lingoes", calc.FRic=F, calc.CWM=T)
+
+# Mean value
+CWM_SLA <- CWM.SLA$CWM
+colnames(CWM_SLA) <- "CWM_SLA"
+CWM_SLA$id <- row.names(CWM_SLA)
  
+### b: Add to sites table ------------------------------------------------------
+
+CWM <- full_join(CWM_Height, CWM_Seed, by = "id")
+CWM <- full_join(CWM, CWM_SLA, by = "id")
+
+sites <- sites %>%
+  left_join(CWM)
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
