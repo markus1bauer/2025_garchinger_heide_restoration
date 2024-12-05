@@ -362,7 +362,21 @@ data <- traits %>%
     by = "accepted_name"
   )
 
-traits <- data
+
+data %>% filter(duplicated(accepted_name))
+
+data_summarized <- data %>%
+  group_by(accepted_name) %>%
+  summarize(across(everything(), ~ first(.x))) %>%
+  select(
+    name_submitted, accepted_name, taxonomic_status, accepted_family,
+    everything()
+  )
+
+data_summarized %>% filter(duplicated(accepted_name))
+
+traits <- data_summarized
+
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -520,11 +534,11 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 # CWM Plant height 1.6.3
 # funktioniert noch nicht
 
-traits_height <- traits[,c("name", "trait_value_1.6.3")]
+traits_height <- traits[,c("accepted_name", "trait_value_1.6.3")]
 traits_height <- na.omit(traits_height)
 traits_height <- traits_height[-1,]
 
-species_height <- t(species[species$accepted_name %in% traits_height$name, ])
+species_height <- t(species[species$accepted_name %in% traits_height$accepted_name, ])
 colnames(species_height) <- species_height[1,] 
 species_height <- species_height[-1,]
 
