@@ -218,6 +218,29 @@ data <- traits %>%
 traits <- data %>%
   rename(name = species)
 
+# harmonized_names <- traits %>%
+#     rowid_to_column("id") %>%
+#     select(id, name) %>%
+#     TNRS::TNRS(
+#       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#       classification = "wfo", # family classification
+#       mode = "resolve"
+#     )
+ 
+# write_csv(
+#     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+#     )
+
+names_traits <- read.csv("data/processed/data_processed_traits_tnrs.csv")
+
+traits <- traits %>%
+  rename("Name_submitted" = "name") %>%
+  left_join(
+    names_traits %>% select(Name_submitted, Name_matched)
+    , by = "Name_submitted") %>%
+  select(Name_submitted, Name_matched, everything())
+
+
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -234,7 +257,7 @@ metadata$version
 metadata$sources %>% tibble()
 
 traits <- traits %>%
-  mutate(name = str_replace(name, "Cirsium acaulon", "Cirsium acaule"))
+  mutate(Name_submitted = str_replace(Name_submitted, "Cirsium acaulon", "Cirsium acaule"))
 
 # Harmonization ran once and were than saved --> load below
 # harmonized_names <- species %>%
@@ -283,9 +306,15 @@ species <- data_summarized
 
 ### c Summarize duplicates of traits matrix ------------------------------------
 
+traits <- traits %>%
+  merge(
+    species %>% select(accepted_name), 
+    by.x = "Name_matched", by.y ="accepted_name", all.y = T
+  )
+
 data <- traits %>% 
-  rename(name_submitted = name) %>%
-  left_join(data_names, by = "name_submitted") %>%
+  rename(accepted_name = Name_matched) %>%
+  left_join(data_names, by = "accepted_name") %>%
   select(name_submitted, accepted_name, everything())
 
 data %>% filter(duplicated(accepted_name))
@@ -300,19 +329,9 @@ data_summarized <- data %>%
 
 data_summarized %>% filter(duplicated(accepted_name))
 
-traits <- data_summarized
-
-traits <- traits %>%
-  merge(
-    data_names %>% select(accepted_name), 
-    by.x = "name", by.y = "accepted_name", all.y = T
-  )
-
-traits %>% filter(duplicated(name))
-
-traits <- traits %>%
-  group_by(name) %>%
-  summarize(across(where(is.numeric), ~ first(.x)))
+traits <- data_summarized %>%
+  select(accepted_name, taxonomic_status, accepted_family, 
+         R1A, R22, both)
 
 traits[is.na(traits)] <- 0
 
