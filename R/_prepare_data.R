@@ -300,7 +300,23 @@ data_summarized <- data %>%
 
 data_summarized %>% filter(duplicated(accepted_name))
 
-traits <- data
+traits <- data_summarized
+
+traits <- traits %>%
+  merge(
+    data_names %>% select(accepted_name), 
+    by.x = "name", by.y = "accepted_name", all.y = T
+  )
+
+traits %>% filter(duplicated(name))
+
+traits <- traits %>%
+  group_by(name) %>%
+  summarize(across(where(is.numeric), ~ first(.x)))
+
+traits[is.na(traits)] <- 0
+
+
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
