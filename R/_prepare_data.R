@@ -16,6 +16,7 @@ library(tidyverse)
 library(TNRS)
 library(GIFT)
 library(FD)
+library(vegan)
 
 ### Start ###
 # Create hashtag infront of a line: shift + strg + c
@@ -521,14 +522,73 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 ### a Species richness -------------------------------------------------------
 
 # warum nutzen wir nicht einfach die traits tabelle?
-richness <- species %>%
-  left_join(traits, by = "name") %>%
+# richness <- species %>%
+#  left_join(traits, by = "accepted_name") %>%
+#  select(
+#    accepted_name, status, redlist_germany, target, starts_with("X") # was ist target (gewesen)?
+#  ) %>%
+#  pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
+#  mutate(n = if_else(n > 0, 1, 0)) %>%
+#  group_by(id)
+
+rm(richness2)
+
+richness2 <- species %>%
+  left_join(traits, by = "accepted_name") %>%
   select(
-    name, status, redlist_germany, target, starts_with("X")
+    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
+
+richness2 <- t(species)
+  colnames(richness2) <- richness2[1, ]
+richness2 <- richness2[-1, ]
+richness2 <- as.data.frame(richness2)
+  richness2$specnumber <- specnumber(richness2)
+
+richness2 <- species %>%
+  t() %>%                               
+  as.data.frame() %>%                   
+  {                                     
+    colnames(.) <- .[1, ]
+    .[-1, ]                             
+  } %>%
+  mutate(specnumber = specnumber(.))
+
+
+filtered_richness2 <- richness2 %>%
+  filter(specnumber == 190)  # Filtere nach Bedingung
+
+print(filtered_richness2)
+
+# richness <- species %>%
+#   left_join(traits, by = "accepted_name") %>%
+#   select(
+#     accepted_name, status, redlist_germany, target, starts_with("X") # was ist target (gewesen)?
+#   ) %>%
+#   pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
+#   mutate(n = if_else(n > 0, 1, 0)) %>%
+#   group_by(id)
+
+richness <- species %>%
+  left_join(traits, by = "accepted_name") %>%
+  select(
+    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
   ) %>%
-  pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
+  pivot_longer(
+    cols = starts_with("X"),  
+    names_to = "plot_id",     
+    values_to = "n"           
+  ) %>%
   mutate(n = if_else(n > 0, 1, 0)) %>%
-  group_by(id)
+  group_by(plot_id)
+
+
+
+richness <- species %>%
+  
+
+print(richness)
+
+
 
 #### Total species richness ###
 richness_total <- richness %>%
