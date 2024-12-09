@@ -16,6 +16,7 @@ library(tidyverse)
 library(TNRS)
 library(GIFT)
 library(FD)
+library(vegan)
 
 ### Start ###
 # Create hashtag infront of a line: shift + strg + c
@@ -521,14 +522,80 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 ### a Species richness -------------------------------------------------------
 
 # warum nutzen wir nicht einfach die traits tabelle?
+# richness <- species %>%
+#  left_join(traits, by = "accepted_name") %>%
+#  select(
+#    accepted_name, status, redlist_germany, target, starts_with("X") # was ist target (gewesen)?
+#  ) %>%
+#  pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
+#  mutate(n = if_else(n > 0, 1, 0)) %>%
+#  group_by(id)
+
 richness <- species %>%
-  left_join(traits, by = "name") %>%
+  left_join(traits, by = "accepted_name") %>%
   select(
-    name, status, redlist_germany, target, starts_with("X")
+    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
   ) %>%
-  pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
+  pivot_longer(
+    cols = starts_with("X"),  
+    names_to = "plot_id",     
+    values_to = "n"           
+  ) %>%
   mutate(n = if_else(n > 0, 1, 0)) %>%
-  group_by(id)
+  group_by(plot_id)
+# Problem: diese Tabelle führt alle Arten mehrmals auf für jeden Plot, in dem sie 
+# vorkommen -> für unsere Zwecke eigtl nicht sinnvoll
+
+richness2 <- species %>%
+  left_join(traits, by = "accepted_name") %>%
+  select(
+    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
+  ) %>% 
+  t() %>%                               
+  as.data.frame() %>% 
+  {                                     
+    colnames(.) <- .[1, ]
+    .[-1, ]                             
+  }
+
+richness_total <- richness2 %>% 
+  mutate(specnumber_total = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_R1A <- richness2 %>% 
+  select(which(richness2["R1A", ] == 1)) %>% 
+  mutate(specnumber_R1A = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_R22 <- richness2 %>% 
+  select(which(richness2["R22", ] == 1)) %>% 
+  mutate(specnumber_R22 = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_R_both <- richness2 %>% 
+  select(which(richness2["both", ] == 1)) %>% 
+  mutate(specnumber_R_both = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_rlg <- richness2 %>% 
+  select(which(richness2["redlist_germany", ] %in% c(1, 2, 3, "V"))) %>%
+  mutate(specnumber_rlg = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness <- richness_total %>% 
+  # hier alle Arten raushauen
+  left_join(richness_R1A %>% select(ID, specnumber_R1A), by = "ID") %>% 
+  left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>% 
+  left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>% 
+  left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>% 
+  slice(-(1:5))  
+  
+###############################
+
+filtered_richness <- richness %>%
+  filter(specnumber_total == 190)  # Filtere nach Bedingung
+
+print(filtered_richness)
 
 #### Total species richness ###
 richness_total <- richness %>%
