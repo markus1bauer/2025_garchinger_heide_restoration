@@ -30,7 +30,11 @@ rm(list = ls())
 ## 1 Load data ################################################################
 
 
-world <- ne_countries(scale = 110) 
+europe <- ne_countries(scale = 50, continent = "Europe") %>%
+  summarise()
+rivers <- ne_download(
+  scale = 50, type = 'rivers_lake_centerlines', category = 'physical'
+)
 
 
 
@@ -59,13 +63,9 @@ theme_mb <- function() {
 # B Plot ################################################################
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-europe <- ne_countries(scale = 50, continent = "Europe") %>%
-  summarise()
-rivers <- ne_download(
-  scale = 50, type = 'rivers_lake_centerlines', category = 'physical'
-  )
 
-graph_europe <- ggplot() +
+
+ggplot() +
   geom_sf(data = europe, color = "black", fill = "grey95", linewidth = .2) +
   geom_sf(data = rivers, color = "#38afcd", linewidth = 0.2) +
   # annotate(
@@ -84,9 +84,7 @@ graph_europe <- ggplot() +
   theme_mb() +
   theme(
     plot.background = element_blank()
-  );graph_europe
-
-### c Save --------------------------------------------------------------
+  )
 
 ggsave(
   "figure_1_map_ggplot_300dpi_2x2cm.tiff",
