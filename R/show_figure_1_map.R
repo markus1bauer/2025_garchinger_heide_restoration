@@ -80,7 +80,7 @@ ggplot() +
   geom_point(aes(x = 11.65286, y = 48.29032), size = .3) +
   geom_label(aes(x = 13.365, y = 52.523), label = "B", shape = 0, size = 1.2) +
   geom_label(aes(x = 2.3442, y = 48.8543), label = "P", shape = 0, size = 1.2) +
-  geom_label(aes(x = 16.3882, y = 48.21), label = "W", shape = 0, size = 1.2) +
+  geom_label(aes(x = 16.3882, y = 48.21), label = "V", shape = 0, size = 1.2) +
   theme_mb() +
   theme(
     plot.background = element_blank()
