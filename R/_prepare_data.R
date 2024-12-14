@@ -16,6 +16,7 @@ library(tidyverse)
 library(TNRS)
 library(GIFT)
 library(FD)
+library(vegan)
 
 ### Start ###
 # Create hashtag infront of a line: shift + strg + c
@@ -306,16 +307,19 @@ species <- data_summarized
 
 ### c Summarize duplicates of traits matrix ------------------------------------
 # wichtig fuer unten bitte nicht loeschen! # 
-traits <- traits %>%
-  merge(
-    species %>% select(accepted_name), 
-    by.x = "Name_matched", by.y ="accepted_name", all.y = T
-  )
-
-data <- traits %>% 
+data <- traits %>%
+  right_join(
+    species %>% select(accepted_name), by = c("Name_matched" = "accepted_name")
+    ) %>%
   rename(accepted_name = Name_matched) %>%
   left_join(data_names, by = "accepted_name") %>%
   select(name_submitted, accepted_name, everything())
+
+# traits <- traits %>%
+#   merge(
+#     species %>% select(accepted_name), 
+#     by.x = "Name_matched", by.y ="accepted_name", all.y = T
+#   )
 
 data %>% filter(duplicated(accepted_name))
 
@@ -330,12 +334,13 @@ data_summarized <- data %>%
 data_summarized %>% filter(duplicated(accepted_name))
 
 traits <- data_summarized %>%
-  select(accepted_name, taxonomic_status, accepted_family, 
-         R1A, R22, both)
+  select(
+    accepted_name, taxonomic_status, accepted_family, R1A, R22, both,
+    accepted_name_url
+    ) %>%
+  mutate(across(where(is.numeric), replace_na, 0))
 
-traits[is.na(traits)] <- 0
-
-write.csv2(traits,"data/processed/data_processed_traits_tnrs_alle.csv")
+# write.csv2(traits,"data/processed/data_processed_traits_tnrs_alle.csv")
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -397,7 +402,6 @@ data <- traits %>%
     by = "accepted_name"
   )
 
-
 data %>% filter(duplicated(accepted_name))
 
 data_summarized <- data %>%
@@ -446,38 +450,33 @@ data_gift <- GIFT::GIFT_traits(
 #   )
 # 
 # write_csv(
-#   harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+#   harmonized_names, here("data", "processed", "data_processed_gift_tnrs.csv")
 #   )
 
 data_gift %>% filter(str_detect(work_species, "Cerastium f")) %>% select(1:2)
 
 gift <- data.table::fread(
-  here("data", "processed", "data_processed_traits_tnrs_alle.csv")
+  # here("data", "processed", "data_processed_traits_tnrs_alle.csv")
+  here("data", "processed", "data_processed_gift_tnrs.csv")
   ) %>%
-  select(accepted_name) %>%
   rename_with(tolower) %>%
-  rename(name = accepted_name) %>%
+  select(accepted_name) %>%
   left_join(
     data_gift %>%
-      rename(name = work_species) %>%
       mutate(
-        name = str_replace(name, "Betonica officinalis", "Stachys officinalis"),
-        name = str_replace(
-          name, "Cerastium fontanum", "Cerastium fontanum subsp. vulgare"
+        work_species = str_replace(work_species, "Betonica officinalis", "Stachys officinalis"),
+        work_species = str_replace(
+          work_species, "Cerastium fontanum", "Cerastium fontanum subsp. vulgare"
           ),
-        name = str_replace(
-          name, "Asperula cynanchica", "Cynanchica pyrenaica subsp. cynanchica"
+        work_species = str_replace(
+          work_species, "Asperula cynanchica", "Cynanchica pyrenaica subsp. cynanchica"
           ),
-        name = str_replace(
-          name, "Potentilla verna", "Potentilla tabernaemontani"
+        work_species = str_replace(
+          work_species, "Potentilla verna", "Potentilla tabernaemontani"
           ),
       ),
-    by = "name"
-    ) %>%
-  rename(accepted_name = name)
-
-gift %>% filter(duplicated(accepted_name)) %>% tibble()
-gift %>% filter(str_detect(accepted_name, "Dactylis g")) %>% select(1:2)
+    by = c("accepted_name" = "work_species")
+    )
 
 
 ### b Combine gift and traits -------------------------------------------------
@@ -521,14 +520,80 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 ### a Species richness -------------------------------------------------------
 
 # warum nutzen wir nicht einfach die traits tabelle?
+# richness <- species %>%
+#  left_join(traits, by = "accepted_name") %>%
+#  select(
+#    accepted_name, status, redlist_germany, target, starts_with("X") # was ist target (gewesen)?
+#  ) %>%
+#  pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
+#  mutate(n = if_else(n > 0, 1, 0)) %>%
+#  group_by(id)
+
 richness <- species %>%
-  left_join(traits, by = "name") %>%
+  left_join(traits, by = "accepted_name") %>%
   select(
-    name, status, redlist_germany, target, starts_with("X")
+    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
   ) %>%
-  pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
+  pivot_longer(
+    cols = starts_with("X"),  
+    names_to = "plot_id",     
+    values_to = "n"           
+  ) %>%
   mutate(n = if_else(n > 0, 1, 0)) %>%
-  group_by(id)
+  group_by(plot_id)
+# Problem: diese Tabelle führt alle Arten mehrmals auf für jeden Plot, in dem sie 
+# vorkommen -> für unsere Zwecke eigtl nicht sinnvoll
+
+richness2 <- species %>%
+  left_join(traits, by = "accepted_name") %>%
+  select(
+    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
+  ) %>% 
+  t() %>%                               
+  as.data.frame() %>% 
+  {                                     
+    colnames(.) <- .[1, ]
+    .[-1, ]                             
+  }
+
+richness_total <- richness2 %>% 
+  mutate(specnumber_total = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_R1A <- richness2 %>% 
+  select(which(richness2["R1A", ] == 1)) %>% 
+  mutate(specnumber_R1A = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_R22 <- richness2 %>% 
+  select(which(richness2["R22", ] == 1)) %>% 
+  mutate(specnumber_R22 = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_R_both <- richness2 %>% 
+  select(which(richness2["both", ] == 1)) %>% 
+  mutate(specnumber_R_both = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness_rlg <- richness2 %>% 
+  select(which(richness2["redlist_germany", ] %in% c(1, 2, 3, "V"))) %>%
+  mutate(specnumber_rlg = specnumber(., MARGIN = 1)) %>% 
+  tibble::rownames_to_column(var = "ID")
+
+richness <- richness_total %>% 
+  # hier alle Arten raushauen
+  left_join(richness_R1A %>% select(ID, specnumber_R1A), by = "ID") %>% 
+  left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>% 
+  left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>% 
+  left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>% 
+  slice(-(1:5))  
+  
+###############################
+
+filtered_richness <- richness %>%
+  filter(specnumber_total == 190)  # Filtere nach Bedingung
+
+print(filtered_richness)
 
 #### Total species richness ###
 richness_total <- richness %>%
@@ -576,10 +641,10 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
+## 7 Calculation of CWMs ######################################################
 
-## 7: Calculation of CWMs ######################################################
 
-# CWM Plant height 1.6.3
+### a CWM Plant height 1.6.3 --------------------------------------------------
 
 traits_height <- traits[,c("accepted_name", "trait_value_1.6.3")]
 traits_height <- na.omit(traits_height)
@@ -601,7 +666,8 @@ CWM_Height <- CWM.Height$CWM
 colnames(CWM_Height) <- "CWM_Height"
 CWM_Height$id <- row.names(CWM_Height)
 
-# CWM Seed mass 3.2.3
+
+### b CWM Seed mass 3.2.3 -----------------------------------------------------
 
 traits_seed <- traits[,c("accepted_name", "trait_value_3.2.3")]
 traits_seed <- na.omit(traits_seed)
@@ -624,7 +690,7 @@ colnames(CWM_Seed) <- "CWM_Seed"
 CWM_Seed$id <- row.names(CWM_Seed)
 
 
-# CWM SLA 4.1.3
+### c CWM SLA 4.1.3 -----------------------------------------------------------
 
 traits_SLA <- traits[,c("accepted_name", "trait_value_4.1.3")]
 traits_SLA <- na.omit(traits_SLA)
@@ -645,8 +711,9 @@ CWM.SLA <- dbFD(traits_SLA, species_SLA,
 CWM_SLA <- CWM.SLA$CWM
 colnames(CWM_SLA) <- "CWM_SLA"
 CWM_SLA$id <- row.names(CWM_SLA)
- 
-### b: Add to sites table ------------------------------------------------------
+
+
+### d Add to sites table ------------------------------------------------------
 
 CWM <- full_join(CWM_Height, CWM_Seed, by = "id")
 CWM <- full_join(CWM, CWM_SLA, by = "id")
@@ -778,6 +845,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
 
 ### b Final selection of variables --------------------------------------------
+
 
 
 
