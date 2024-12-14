@@ -17,6 +17,7 @@ library(TNRS)
 library(GIFT)
 library(FD)
 library(vegan)
+library(indicspecies)
 
 ### Start ###
 # Create hashtag infront of a line: shift + strg + c
@@ -219,18 +220,18 @@ data <- traits %>%
 traits <- data %>%
   rename(name = species)
 
-# harmonized_names <- traits %>%
-#     rowid_to_column("id") %>%
-#     select(id, name) %>%
-#     TNRS::TNRS(
-#       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
-#       classification = "wfo", # family classification
-#       mode = "resolve"
-#     )
- 
-# write_csv(
-#     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
-#     )
+ # harmonized_names <- traits %>%
+ #     rowid_to_column("id") %>%
+ #     select(id, name) %>%
+ #     TNRS::TNRS(
+ #       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+ #       classification = "wfo", # family classification
+ #       mode = "resolve"
+ #     )
+ # 
+ # write_csv(
+ #     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+ #     )
 
 names_traits <- read.csv("data/processed/data_processed_traits_tnrs.csv")
 
@@ -838,7 +839,24 @@ rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
 
 
-## 9 Finalization ############################################################
+## 9 Species ##################################################################
+
+species_pa <- species
+species_pa[,-1] <- ifelse(species[, -1] > 0, 1, 0) 
+
+phi_taxa <- multipatt(species_pa, sites$treatment, 
+                      func="r.g", duleg=T, control=how(nperm=999))
+summary(phi_taxa)
+
+
+# phi_taxa <- as.data.frame(phi_taxa$sign)
+# phi_taxa$code_sp <- row.names(phi_taxa)
+# phi_taxa <- merge(data.trait[,c("code_sp", "Taxa")], phi_taxa, by="code_sp")
+# phi_taxa <- subset(phi_taxa, p.value<=0.051)
+# write.table(phi_taxa,"output/Phi_individual_Taxa_by_Type.csv", sep=";", row.names=F, col.names=T)
+
+
+## 10 Finalization ############################################################
 
 
 ### a Rounding ----------------------------------------------------------------
