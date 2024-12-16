@@ -555,7 +555,32 @@ richness2 <- species %>%
   {                                     
     colnames(.) <- .[1, ]
     .[-1, ]                             
-  }
+  } %>% 
+  mutate(across(c(starts_with("X")), as.numeric))
+# Problem: wegen der "Character" am Anfang jeder Zeile sind die Zeilen als 
+# character gesetzt, umwandeln der Zeilen zu numerisch scheint nicht zu klappen
+# - daher ergeben sich im Folgenden falsche Werte bei der Berechnug mit 
+# specnumber()
+
+richness3 <- species %>%
+  left_join(traits, by = "accepted_name") %>%
+  select(
+    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
+  ) %>% 
+  rownames_to_column(var = "column1") %>% 
+  pivot_longer(
+    cols = -column1,
+    names_to = "ID",     
+    values_to = "n") %>% 
+  pivot_wider(
+    names_from = column1,
+    values_from = n
+  ) %>%
+  mutate(n = if_else(n > 0, 1, 0)) %>%
+  group_by(plot_id)
+# Transponieren mit pivot_longer/wider war ebenfalls nicht erfolgreich
+
+str(richness2)
 
 richness_total <- richness2 %>% 
   mutate(specnumber_total = specnumber(., MARGIN = 1)) %>% 
@@ -587,8 +612,12 @@ richness <- richness_total %>%
   left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>% 
   left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>% 
   left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>% 
-  slice(-(1:5))  
+  slice(-(1:5)) %>% 
+  column_to_rownames(var = "ID") %>% 
+  select(-(1:190))
   
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates", "richness")))
+    
 ###############################
 
 filtered_richness <- richness %>%
