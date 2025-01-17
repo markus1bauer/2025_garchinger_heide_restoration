@@ -488,7 +488,7 @@ data <- traits %>%
   left_join(
     gift %>%
       select(
-        accepted_name, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3
+        accepted_name, trait_value_1.2.2, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3
         ),
     by = "accepted_name"
   )
@@ -499,7 +499,7 @@ data_summarized <- data %>%
   group_by(accepted_name) %>%
   summarize(across(everything(), ~ first(.x))) %>%
   select(
-    accepted_name, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3,
+    accepted_name, trait_value_1.2.2, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3,
     everything()
   )
 
@@ -541,25 +541,27 @@ richness <- species %>%
     values_to = "n"           
   ) %>%
   mutate(n = if_else(n > 0, 1, 0)) %>%
-  group_by(plot_id)
+  group_by(plot_id) %>%
+  summarise(richness_total = sum(n, na.rm = T))
+
 # Problem: diese Tabelle führt alle Arten mehrmals auf für jeden Plot, in dem sie 
 # vorkommen -> für unsere Zwecke eigtl nicht sinnvoll
 
-richness2 <- species %>%
-  left_join(traits, by = "accepted_name") %>%
-  select(
-    accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
-  ) %>% 
-  t() %>%                               
-  as.data.frame() %>% 
-  {                                     
-    colnames(.) <- .[1, ]
-    .[-1, ]                             
-  }
+# richness2 <- species %>%
+#   left_join(traits, by = "accepted_name") %>%
+#   select(
+#     accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
+#   ) %>% 
+#   t() %>%                               
+#   as.data.frame() %>% 
+#   {                                     
+#     colnames(.) <- .[1, ]
+#     .[-1, ]                             
+#   }
 
-richness_total <- richness2 %>% 
-  mutate(specnumber_total = specnumber(., MARGIN = 1)) %>% 
-  tibble::rownames_to_column(var = "ID")
+# richness_total <- richness2 %>% 
+#   mutate(specnumber_total = specnumber(., MARGIN = 1)) %>% 
+#   tibble::rownames_to_column(var = "ID")
 
 richness_R1A <- richness2 %>% 
   select(which(richness2["R1A", ] == 1)) %>% 
