@@ -541,8 +541,11 @@ richness <- species %>%
     values_to = "n"           
   ) %>%
   mutate(n = if_else(n > 0, 1, 0)) %>%
-  group_by(plot_id) %>%
-  summarise(richness_total = sum(n, na.rm = T))
+  group_by(plot_id) 
+
+
+# %>%
+#  summarise(richness_total = sum(n, na.rm = T))
 
 # Problem: diese Tabelle führt alle Arten mehrmals auf für jeden Plot, in dem sie 
 # vorkommen -> für unsere Zwecke eigtl nicht sinnvoll
@@ -562,6 +565,11 @@ richness <- species %>%
 # richness_total <- richness2 %>% 
 #   mutate(specnumber_total = specnumber(., MARGIN = 1)) %>% 
 #   tibble::rownames_to_column(var = "ID")
+
+# richness_total <- summarise(richness, richness_total = sum(n, na.rm = TRUE))
+
+# richness_R1A   <- summarise(richness, richness_R1A = sum(R1A, na.rm = TRUE))
+
 
 richness_R1A <- richness2 %>% 
   select(which(richness2["R1A", ] == 1)) %>% 
@@ -583,13 +591,15 @@ richness_rlg <- richness2 %>%
   mutate(specnumber_rlg = specnumber(., MARGIN = 1)) %>% 
   tibble::rownames_to_column(var = "ID")
 
-richness <- richness_total %>% 
-  # hier alle Arten raushauen
-  left_join(richness_R1A %>% select(ID, specnumber_R1A), by = "ID") %>% 
-  left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>% 
-  left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>% 
-  left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>% 
-  slice(-(1:5))  
+# richness <- richness_total %>% 
+#   # hier alle Arten raushauen
+#   left_join(richness_R1A %>% select(ID, specnumber_R1A), by = "ID") %>% 
+#   left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>% 
+#   left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>% 
+#   left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>% 
+#   slice(-(1:5))  
+
+richness <- left_join(richness_total, by = "plot_id")
   
 ###############################
 
