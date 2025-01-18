@@ -692,6 +692,28 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 #   left_join(data, by = "id") %>%
 #   mutate(eveness = shannon / log(species_richness))
 
+data <- as.data.frame(t(species))
+colnames(data) <- data[1,]
+data <- data[-1,]
+
+data <- data %>% 
+  mutate(across(where(is.character), str_trim)) %>%
+  rownames_to_column(var = "id")
+
+data <- data.frame(data[1], sapply(data[-1], as.numeric)) %>%
+  column_to_rownames(var = "id")
+
+shannon <- data %>%
+  diversity(index = "shannon") %>%
+  as.data.frame() %>%
+  rownames_to_column(var = "id") %>%
+  rename(shannon = ".")
+
+sites <- sites %>%
+  left_join(shannon, by = "id")
+
+sites$evenness <- sites$shannon / log(sites$richness_total)
+
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
