@@ -439,8 +439,8 @@ data_gift <- GIFT::GIFT_traits(
   agreement = 0.66, bias_ref = FALSE, bias_deriv = FALSE
 )
 
-# Harmonization ran once and were than saved --> load below
-
+# # Harmonization ran once and were than saved --> load below
+# 
 # harmonized_names <- data_gift %>%
 #   rowid_to_column("id") %>%
 #   select(id, work_species) %>%
@@ -454,7 +454,7 @@ data_gift <- GIFT::GIFT_traits(
 #   harmonized_names, here("data", "processed", "data_processed_gift_tnrs.csv")
 #   )
 
-data_gift %>% filter(str_detect(work_species, "Cerastium f")) %>% select(1:2)
+# data_gift %>% filter(str_detect(work_species, "Cerastium f")) %>% select(1:2)
 
 gift <- data.table::fread(
   # here("data", "processed", "data_processed_traits_tnrs_alle.csv")
@@ -540,105 +540,157 @@ richness <- species %>%
     names_to = "plot_id",     
     values_to = "n"           
   ) %>%
-  mutate(n = if_else(n > 0, 1, 0)) %>%
-  group_by(plot_id) %>%
-  summarise(richness_total = sum(n, na.rm = T))
+  mutate(n = if_else(n > 0, 1, 0))
+
 
 # Problem: diese Tabelle führt alle Arten mehrmals auf für jeden Plot, in dem sie 
 # vorkommen -> für unsere Zwecke eigtl nicht sinnvoll
 
 # richness2 <- species %>%
-#   left_join(traits, by = "accepted_name") %>%
-#   select(
-#     accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
-#   ) %>% 
-#   t() %>%                               
-#   as.data.frame() %>% 
-#   {                                     
-#     colnames(.) <- .[1, ]
-#     .[-1, ]                             
-#   }
-
-# richness_total <- richness2 %>% 
-#   mutate(specnumber_total = specnumber(., MARGIN = 1)) %>% 
+#    left_join(traits, by = "accepted_name") %>%
+#    select(
+#      accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
+#    ) %>%
+#    t() %>%
+#    as.data.frame() %>%
+#    {
+#      colnames(.) <- .[1, ]
+#      .[-1, ]
+#    }
+# 
+#  richness_total <- richness2 %>%
+#    mutate(specnumber_total = specnumber(., MARGIN = 1)) %>%
+#    tibble::rownames_to_column(var = "ID")
+#
+# richness_R1A <- richness2 %>% 
+#   select(which(richness2["R1A", ] == 1)) %>% 
+#   mutate(specnumber_R1A = specnumber(., MARGIN = 1)) %>% 
 #   tibble::rownames_to_column(var = "ID")
+# 
+# richness_R22 <- richness2 %>% 
+#   select(which(richness2["R22", ] == 1)) %>% 
+#   mutate(specnumber_R22 = specnumber(., MARGIN = 1)) %>% 
+#   tibble::rownames_to_column(var = "ID")
+# 
+# richness_R_both <- richness2 %>% 
+#   select(which(richness2["both", ] == 1)) %>% 
+#   mutate(specnumber_R_both = specnumber(., MARGIN = 1)) %>% 
+#   tibble::rownames_to_column(var = "ID")
+# 
+# richness_rlg <- richness2 %>% 
+#   select(which(richness2["redlist_germany", ] %in% c(1, 2, 3, "V"))) %>%
+#   mutate(specnumber_rlg = specnumber(., MARGIN = 1)) %>% 
+#   tibble::rownames_to_column(var = "ID")
+#
+# richness <- richness_total %>%
+#   # hier alle Arten raushauen
+#   left_join(richness_R1A %>% select(ID, specnumber_R1A), by = "ID") %>%
+#   left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>%
+#   left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>%
+#   left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>%
+#   slice(-(1:5))
 
-richness_R1A <- richness2 %>% 
-  select(which(richness2["R1A", ] == 1)) %>% 
-  mutate(specnumber_R1A = specnumber(., MARGIN = 1)) %>% 
-  tibble::rownames_to_column(var = "ID")
+richness_total <- richness %>%
+  group_by(plot_id) %>%
+  summarise(richness_total = sum(n, na.rm = TRUE))
 
-richness_R22 <- richness2 %>% 
-  select(which(richness2["R22", ] == 1)) %>% 
-  mutate(specnumber_R22 = specnumber(., MARGIN = 1)) %>% 
-  tibble::rownames_to_column(var = "ID")
+richness_R1A <- richness %>%
+  mutate(R1A_occ = R1A * n) %>%
+  group_by(plot_id) %>%
+  summarise(richness_R1A = sum(R1A_occ, na.rm = TRUE)) 
+  
+richness_R22 <- richness %>%
+  mutate(R22_occ = R22 * n) %>%
+  group_by(plot_id) %>%
+  summarise(richness_R22 = sum(R22_occ, na.rm = TRUE)) 
 
-richness_R_both <- richness2 %>% 
-  select(which(richness2["both", ] == 1)) %>% 
-  mutate(specnumber_R_both = specnumber(., MARGIN = 1)) %>% 
-  tibble::rownames_to_column(var = "ID")
+richness_both <- richness %>%
+  mutate(both_occ = both * n) %>%
+  group_by(plot_id) %>%
+  summarise(richness_both = sum(both_occ, na.rm = TRUE))
 
-richness_rlg <- richness2 %>% 
-  select(which(richness2["redlist_germany", ] %in% c(1, 2, 3, "V"))) %>%
-  mutate(specnumber_rlg = specnumber(., MARGIN = 1)) %>% 
-  tibble::rownames_to_column(var = "ID")
+richness_rlg <- richness %>%
+  filter(n != 0) %>%
+  group_by(plot_id, redlist_germany) %>%
+  summarise(richness_rlg = n()) %>%
+  pivot_wider(names_from = redlist_germany, values_from = richness_rlg) 
 
-richness <- richness_total %>% 
-  # hier alle Arten raushauen
-  left_join(richness_R1A %>% select(ID, specnumber_R1A), by = "ID") %>% 
-  left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>% 
-  left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>% 
-  left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>% 
-  slice(-(1:5))  
+richness_rlg[is.na(richness_rlg)] <- 0
+
+richness_rlg <- richness_rlg %>%
+  rename(rlg_LC = `*`, 
+         rlg_VU = `3`,
+         rlg_EN = `2`,
+         rlg_CR = `1`,
+         rlg_NT = `V`,
+         rlg_NE = `nb`,
+         rlg_NA = `NA`)
+         
+  
+full_richness <- full_join(richness_total, richness_R1A, by = "plot_id")
+full_richness <- full_join(full_richness, richness_R22, by = "plot_id")
+full_richness <- full_join(full_richness, richness_both, by = "plot_id")
+full_richness <- full_join(full_richness, richness_rlg, by = "plot_id")
+
+full_richness <- full_richness %>%
+  rename(id = plot_id)
+
+
+sites <- sites %>%
+  left_join(full_richness, by = "id")
+
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
+
+
   
 ###############################
-
-filtered_richness <- richness %>%
-  filter(specnumber_total == 190)  # Filtere nach Bedingung
-
-print(filtered_richness)
-
-#### Total species richness ###
-richness_total <- richness %>%
-  summarise(species_richness = sum(n, na.rm = TRUE)) %>%
-  ungroup()
-
-#### Red list Germany (species richness) ###
-richness_rlg <- richness %>%
-  filter(rlg == "1" | rlg == "2" | rlg == "3" | rlg == "V") %>%
-  summarise(rlg_richness = sum(n, na.rm = TRUE)) %>%
-  ungroup()
-
-#### Target species (species richness) ###
-richness_target <- richness %>%
-  filter(target != "no") %>%
-  summarise(target_richness = sum(n, na.rm = TRUE)) %>%
-  ungroup()
-
-sites_dikes <- sites_dikes %>%
-  right_join(richness_total, by = "id") %>%
-  right_join(richness_rlg, by = "id") %>%
-  right_join(richness_target, by = "id")
-  mutate(
-    target_richness_ratio = target_richness / species_richness
-  )
+# 
+# filtered_richness <- richness %>%
+#   filter(specnumber_total == 190)  # Filtere nach Bedingung
+# 
+# print(filtered_richness)
+# 
+# #### Total species richness ###
+# richness_total <- richness %>%
+#   summarise(species_richness = sum(n, na.rm = TRUE)) %>%
+#   ungroup()
+# 
+# #### Red list Germany (species richness) ###
+# richness_rlg <- richness %>%
+#   filter(rlg == "1" | rlg == "2" | rlg == "3" | rlg == "V") %>%
+#   summarise(rlg_richness = sum(n, na.rm = TRUE)) %>%
+#   ungroup()
+# 
+# #### Target species (species richness) ###
+# richness_target <- richness %>%
+#   filter(target != "no") %>%
+#   summarise(target_richness = sum(n, na.rm = TRUE)) %>%
+#   ungroup()
+# 
+# sites_dikes <- sites_dikes %>%
+#   right_join(richness_total, by = "id") %>%
+#   right_join(richness_rlg, by = "id") %>%
+#   right_join(richness_target, by = "id")
+#   mutate(
+#     target_richness_ratio = target_richness / species_richness
+#   )
 
 
 ### b Species eveness ---------------------------------------------
 
-data <- species_dikes %>%
-  mutate(across(where(is.numeric), ~ replace(., is.na(.), 0))) %>%
-  pivot_longer(-name, names_to = "id", values_to = "value") %>%
-  pivot_wider(names_from = "name", values_from = "value") %>%
-  column_to_rownames("id") %>%
-  diversity(index = "shannon") %>%
-  as_tibble(rownames = NA) %>%
-  rownames_to_column(var = "id") %>%
-  mutate(id = factor(id)) %>%
-  rename(shannon = value)
-sites_dikes <- sites_dikes %>%
-  left_join(data, by = "id") %>%
-  mutate(eveness = shannon / log(species_richness))
+# data <- species_dikes %>%
+#   mutate(across(where(is.numeric), ~ replace(., is.na(.), 0))) %>%
+#   pivot_longer(-name, names_to = "id", values_to = "value") %>%
+#   pivot_wider(names_from = "name", values_from = "value") %>%
+#   column_to_rownames("id") %>%
+#   diversity(index = "shannon") %>%
+#   as_tibble(rownames = NA) %>%
+#   rownames_to_column(var = "id") %>%
+#   mutate(id = factor(id)) %>%
+#   rename(shannon = value)
+# sites_dikes <- sites_dikes %>%
+#   left_join(data, by = "id") %>%
+#   mutate(eveness = shannon / log(species_richness))
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -646,10 +698,13 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 7 Calculation of CWMs ######################################################
 
+traits_without_trees <- traits %>%
+  filter(is.na(trait_value_1.2.2) | trait_value_1.2.2 != "tree") %>%
+  filter(accepted_name != "Prunus spinosa")
 
 ### a CWM Plant height 1.6.3 --------------------------------------------------
 
-traits_height <- traits[,c("accepted_name", "trait_value_1.6.3")]
+traits_height <- traits_without_trees[,c("accepted_name", "trait_value_1.6.3")]
 traits_height <- na.omit(traits_height)
 
 species_height <- species[species$accepted_name %in% traits_height$accepted_name, ]
@@ -672,7 +727,7 @@ CWM_Height$id <- row.names(CWM_Height)
 
 ### b CWM Seed mass 3.2.3 -----------------------------------------------------
 
-traits_seed <- traits[,c("accepted_name", "trait_value_3.2.3")]
+traits_seed <- traits_without_trees[,c("accepted_name", "trait_value_3.2.3")]
 traits_seed <- na.omit(traits_seed)
 
 species_seed <- species[species$accepted_name %in% traits_seed$accepted_name, ]
@@ -695,7 +750,7 @@ CWM_Seed$id <- row.names(CWM_Seed)
 
 ### c CWM SLA 4.1.3 -----------------------------------------------------------
 
-traits_SLA <- traits[,c("accepted_name", "trait_value_4.1.3")]
+traits_SLA <- traits_without_trees[,c("accepted_name", "trait_value_4.1.3")]
 traits_SLA <- na.omit(traits_SLA)
 
 species_SLA <- species[species$accepted_name %in% traits_SLA$accepted_name, ]
