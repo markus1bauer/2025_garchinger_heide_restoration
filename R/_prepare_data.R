@@ -920,12 +920,12 @@ rm(list = setdiff(ls(), c("species", "sites", "traits")))
 
 ## 9 Species ##################################################################
 
-species_pa <- species
-species_pa[,-1] <- ifelse(species[, -1] > 0, 1, 0) 
-
-phi_taxa <- multipatt(species_pa, sites$treatment, 
-                      func="r.g", duleg=T, control=how(nperm=999))
-summary(phi_taxa)
+# species_pa <- species
+# species_pa[,-1] <- ifelse(species[, -1] > 0, 1, 0) 
+# 
+# phi_taxa <- multipatt(species_pa, sites$treatment, 
+#                       func="r.g", duleg=T, control=how(nperm=999))
+# summary(phi_taxa)
 
 
 # phi_taxa <- as.data.frame(phi_taxa$sign)
