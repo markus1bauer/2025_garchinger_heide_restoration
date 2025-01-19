@@ -45,15 +45,24 @@ sites <- read_csv(
 
 ### a Graphs of raw data -------------------------------------------------------
 
-plot1 <- ggplot(sites %>% filter(survey_year == 2021),
-                aes(y = n, x = sand_ratio)) +
-  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent") +
-  facet_grid(~ survey_year_fct) +
-  labs(title = "Sand ratio [vol%]")
+# plot1 <- ggplot(sites %>% filter(survey_year == 2021),
+#                 aes(y = n, x = sand_ratio)) +
+#   geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent") +
+#   facet_grid(~ survey_year_fct) +
+#   labs(title = "Sand ratio [vol%]")
+
+plot1 <- ggplot(sites, aes(y = richness_total, x = treatment)) +
+  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent")
 
 ### b Outliers, zero-inflation, transformations? ----------------------------
 
-sites %>% group_by(exposition) %>% count(site)
+# sites %>% group_by(exposition) %>% count(site)
+# boxplot(sites$n)
+# ggplot(sites, aes(x = exposition, y = n)) + geom_quasirandom()
+# ggplot(sites, aes(x = n)) + geom_histogram(binwidth = 0.03)
+# ggplot(sites, aes(x = n)) + geom_density()
+
+sites %>% group_by(treatment) %>% count(id)
 boxplot(sites$n)
 ggplot(sites, aes(x = exposition, y = n)) + geom_quasirandom()
 ggplot(sites, aes(x = n)) + geom_histogram(binwidth = 0.03)
