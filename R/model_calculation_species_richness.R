@@ -63,10 +63,10 @@ plot1 <- ggplot(sites, aes(y = richness_total, x = treatment)) +
 # ggplot(sites, aes(x = n)) + geom_density()
 
 sites %>% group_by(treatment) %>% count(id)
-boxplot(sites$n)
-ggplot(sites, aes(x = exposition, y = n)) + geom_quasirandom()
-ggplot(sites, aes(x = n)) + geom_histogram(binwidth = 0.03)
-ggplot(sites, aes(x = n)) + geom_density()
+boxplot(sites$richness_total)
+ggplot(sites, aes(x = treatment, y = richness_total)) + geom_quasirandom()
+ggplot(sites, aes(x = richness_total)) + geom_histogram(binwidth = 0.03)
+ggplot(sites, aes(x = richness_total)) + geom_density()
 
 ### c Check collinearity ------------------------------------------------------
 
