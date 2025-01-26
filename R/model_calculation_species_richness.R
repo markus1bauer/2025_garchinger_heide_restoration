@@ -20,6 +20,7 @@ library(tidyverse)
 library(ggbeeswarm)
 library(patchwork)
 library(brms)
+library(blme)
 
 ### Start ###
 rm(list = ls())
@@ -70,15 +71,22 @@ ggplot(sites, aes(x = richness_total)) + geom_density()
 
 ### c Check collinearity ------------------------------------------------------
 
-sites %>%
-  select(where(is.numeric), -b, -c, -d, -y, -ends_with("scaled")) %>%
-  GGally::ggpairs(lower = list(continuous = "smooth_loess")) +
-  theme(strip.text = element_text(size = 7))
-sites <- sites %>%
-  select(-biotope_area)
+# sites %>%
+#   select(where(is.numeric), -b, -c, -d, -y, -ends_with("scaled")) %>%
+#   GGally::ggpairs(lower = list(continuous = "smooth_loess")) +
+#   theme(strip.text = element_text(size = 7))
+# sites <- sites %>%
+#   select(-biotope_area)
 #--> exclude r > 0.7
 # Dormann et al. 2013 Ecography
 # https://doi.org/10.1111/j.1600-0587.2012.07348.x
+
+sites %>%
+  select(where(is.numeric), -(4:12), -14) %>%
+  GGally::ggpairs(lower = list(continuous = "smooth_loess")) +
+  theme(strip.text = element_text(size = 7))
+sites <- sites %>%
+  select(-shannon)
 
 
 ## 2 Model building ###########################################################
@@ -86,12 +94,13 @@ sites <- sites %>%
 ### a Random structure ---------------------------------------------------------
 
 m1a <- blmer(
-  y ~ 1 + (1 | location_construction_year), data = sites, REML = TRUE
+  richness_total ~ 1 + (1 | treatment), data = sites, REML = TRUE
 )
 m1b <- blmer(
-  y ~ 1 + (1 | location_construction_year / plot), data = sites, REML = TRUE
+  richness_total ~ 1 + (1 | treatment / id), data = sites, REML = TRUE
 )
-m1c <- blmer(y ~ 1 + (1 | plot), data = sites, REML = TRUE)
+m1c <- blmer(richness_total ~ 1 + (1 | id), data = sites, REML = TRUE)
+
 MuMIn::AICc(m1a, m1b, m1c) %>%
   arrange(AICc)
 
@@ -99,10 +108,7 @@ MuMIn::AICc(m1a, m1b, m1c) %>%
 ### b Fixed effects ------------------------------------------------------------
 
 m1 <- blmer(
-  log(y) ~ (comparison + exposition + pc1_soil)^2 + pc2_soil + pc3_soil +
-    orientation + river_distance_scaled + river_km_scaled +
-    biotope_distance_scaled +
-    (1 | plot),
+  richness_total ~ treatment + (1 | id),
   REML = FALSE,
   control = lmerControl(optimizer = "Nelder_Mead"),
   cov.prior = wishart,
