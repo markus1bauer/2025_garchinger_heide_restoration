@@ -31,7 +31,8 @@ sites <- read_csv(
   here("data", "processed", "data_processed_sites.csv"),
   col_names = TRUE, na = c("na", "NA", ""), col_types =
     cols(
-      .default = "?"
+      .default = "?",
+      treatment = "f"
     )
 ) %>%
   rename(y = CWM_Height)
