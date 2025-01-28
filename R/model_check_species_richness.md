@@ -67,7 +67,10 @@ library(emmeans)
 sites <- read_csv(
   here("data", "processed", "data_processed_sites.csv"),
   col_names = TRUE, na = c("", "na", "NA"), col_types = cols(
-    .default = "?"
+    .default = "?",
+      treatment = col_factor(
+        levels = c("control", "cut_summer", "cut_autumn", "grazing")
+      )
     )
   ) %>%
   rename(y = richness_total)
@@ -113,10 +116,10 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 
     ## # A tibble: 4 × 2
     ##   treatment      n
-    ##   <chr>      <int>
+    ##   <fct>      <int>
     ## 1 control       68
-    ## 2 cut_autumn    30
-    ## 3 cut_summer    30
+    ## 2 cut_summer    30
+    ## 3 cut_autumn    30
     ## 4 grazing       30
 
 ![](model_check_species_richness_files/figure-gfm/outliers-1.png)<!-- -->
@@ -169,20 +172,12 @@ simulation_output_2 <- simulateResiduals(m_2, plot = TRUE)
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$treatment)
-## Warning in ensurePredictor(simulationOutput, form): DHARMa:::ensurePredictor:
-## character string was provided as predictor. DHARMa has converted to factor
-## automatically. To remove this warning, please convert to factor before
-## attempting to plot with DHARMa.
 ```
 
 ![](model_check_species_richness_files/figure-gfm/dharma_single-1.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$treatment)
-## Warning in ensurePredictor(simulationOutput, form): DHARMa:::ensurePredictor:
-## character string was provided as predictor. DHARMa has converted to factor
-## automatically. To remove this warning, please convert to factor before
-## attempting to plot with DHARMa.
 ```
 
 ![](model_check_species_richness_files/figure-gfm/dharma_single-2.png)<!-- -->
