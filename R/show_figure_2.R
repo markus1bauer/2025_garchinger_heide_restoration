@@ -1,16 +1,17 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Garchinger Heide
-# Species richness ####
-# Show figure 2
+# Canopy height ####
+# Show figure 3b
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Sina Appeltauer, Markus Bauer
-# 2024-10-09
+# Markus Bauer
+# 2025-01-28
 
 
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # A Preparation ###############################################################
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 
 
 ### Packages ###
@@ -43,36 +44,28 @@ theme_mb <- function() {
 
 ### Load data ###
 sites <- read_csv(
-  here("data", "processed", "data_processed_sites_temporal.csv"),
+  here("data", "processed", "data_processed_sites.csv"),
   col_names = TRUE, na = c("", "na", "NA"), col_types = cols(
     .default = "?",
-    plot = "f",
-    block = "f",
-    comparison = "f",
-    exposition = "f",
-    orientation = "f",
-    location_construction_year = "f"
+    treatment = "f"
   )
 ) %>%
-  filter(
-    (comparison == "1718" | comparison == "1819" | comparison == "1921") &
-      pool == "all" & presabu == "presence") %>%
+  rename(y = richness_total) %>%
   mutate(
-    y = d,
-    comparison = factor(comparison),
-    location_construction_year = fct_relevel(
-      location_construction_year, "HOF-2012", after = Inf
+    treatment = fct_relevel(
+      treatment, "control", "cut_summer", "cut_autumn", "grazing"
     ),
-    river_km_scaled = scale(river_km),
-    river_distance_scaled = scale(river_distance),
-    biotope_distance_scaled = scale(biotope_distance),
-    biotope_area_scaled = scale(biotope_area)
+    treatment = fct_recode(
+      treatment, "Control" = "control", "Mowing\nsummer" = "cut_summer",
+      "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
+    )
   )
 
 ### * Model ####
-load(file = here("outputs", "models", "model_tbi_d_all_5.Rdata"))
-m <- m5
-m@call
+load(file = here("outputs", "models", "model_species_richness_1.Rdata"))
+m <- m1
+m #m@call
+
 
 
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -82,31 +75,18 @@ m@call
 
 
 data_model <- ggeffect(
-  m, type = "emm", c("comparison"), back.transform = TRUE
+  m, terms = c("treatment"), back.transform = TRUE, ci_level = .95
 ) %>%
   mutate(
-    predicted = exp(predicted),
-    conf.low = exp(conf.low),
-    conf.high = exp(conf.high),
-    cross = if_else(x %in% c("1819"), "filled", "open"),
     x = fct_recode(
-      x,
-      "2017 vs 2018" = "1718",
-      "2018 vs 2019" = "1819",
-      "2019 vs 2021" = "1921"
+      x, "Control" = "control", "Mowing\nsummer" = "cut_summer",
+      "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
     )
-  )
+  ) %>%
+  slice(1:4)
 
 data <- sites %>%
-  rename(predicted = y, x = comparison) %>%
-  mutate(
-    x = fct_recode(
-      x,
-      "2017 vs 2018" = "1718",
-      "2018 vs 2019" = "1819",
-      "2019 vs 2021" = "1921"
-    )
-  )
+  rename(predicted = y, x = treatment)
 
 (graph_a <- ggplot() +
     geom_quasirandom(
@@ -115,11 +95,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16, color = "grey70"
     ) +
     geom_hline(
-      yintercept = c(
-        mean(sites$y),
-        mean(sites$y) + 0.5 * sd(sites$y),
-        mean(sites$y) - 0.5 * sd(sites$y)
-      ),
+      yintercept = c(33.176, 31.866, 34.486),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
@@ -130,19 +106,18 @@ data <- sites %>%
     ) +
     geom_point(
       data = data_model,
-      aes(x, predicted, shape = cross),
+      aes(x, predicted),
       size = 2
     ) +
-    scale_y_continuous(limits = c(0, .83), breaks = seq(-100, 400, .1)) +
-    scale_shape_manual(values = c("circle", "circle open")) +
+    scale_y_continuous(limits = c(0, 50), breaks = seq(-100, 400, 5)) +
     labs(x = "",
          y = expression(
-           Temporal ~ "beta" ~ diversity ~ "[" * italic("D")[sor] * "]")
+           Species ~ richness ~ "[" * '#' * "]")
     ) +
     theme_mb())
 
 ### Save ###
-# ggsave(
-#   here("outputs", "figures", "figure_4a_800dpi_8x8cm.tiff"),
-#   dpi = 800, width = 8, height = 8, units = "cm"
-#   )
+ggsave(
+  here("outputs", "figures", "figure_2_800dpi_8x8cm.tiff"),
+  dpi = 800, width = 8, height = 8, units = "cm"
+)
