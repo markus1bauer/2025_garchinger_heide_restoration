@@ -31,9 +31,12 @@ sites <- read_csv(
   here("data", "processed", "data_processed_sites.csv"),
   col_names = TRUE, na = c("na", "NA", ""), col_types =
     cols(
-      .default = "?"
+      .default = "?",
+      treatment = col_factor(
+        levels = c("control", "cut_summer", "cut_autumn", "grazing")
+      )
     )
-) %>%
+  ) %>%
   rename(y = richness_total)
 
 
