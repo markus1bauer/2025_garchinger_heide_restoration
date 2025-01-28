@@ -1,6 +1,6 @@
 ---
 title: "Garchinger Heide and restoration sites: <br> Species richness"
-author: "<b>Markus Bauer</b> <br>"
+author: "<b>Sina Appeltauer</b> <br>"
 date: "<b>`r format(Sys.time(), '%Y-%m-%d')`</b>"
 output:
   github_document:
@@ -22,12 +22,12 @@ knitr::opts_chunk$set(
 
 <br/>
 <br/>
-<b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren Teschauer</b> & <b>Markus Bauer</b>
+<b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren Teschauer</b> & <b>Markus Bauer</b>*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
 
-[markus1.bauer\@tum.de](mailto:markus1.bauer@tum.de)
+*[markus1.bauer\@tum.de](mailto:markus1.bauer@tum.de)
 
 ORCiD ID: [0000-0001-5372-4174](https://orcid.org/0000-0001-5372-4174)
 <br>
@@ -62,11 +62,15 @@ rm(list = ls())
 
 ```{r load-data}
 sites <- read_csv(
-  here("data", "processed", "data_processed_sites_temporal.csv"),
+  here("data", "processed", "data_processed_sites.csv"),
   col_names = TRUE, na = c("", "na", "NA"), col_types = cols(
-    .default = "?"
+    .default = "?",
+      treatment = col_factor(
+        levels = c("control", "cut_summer", "cut_autumn", "grazing")
+      )
     )
-  )
+  ) %>%
+  rename(y = richness_total)
 ```
 
 # Statistics
@@ -85,70 +89,28 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 ### Graphs of raw data (Step 2, 6, 7)
 
 ```{r data-exploration, echo = FALSE, warning = FALSE, message = FALSE}
-plot1 <- ggplot(sites, aes(x = comparison, y = y)) +
+ggplot(sites, aes(y = y, x = treatment)) +
   geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent") +
-  labs(title = "Comparison of consecutive surveys")
-plot2 <- ggplot(sites, aes(x = exposition, y = y)) +
-  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent") +
-  labs(title = "Exposition of dike slopes")
-plot3 <- ggplot(sites, aes(x = orientation, y = y)) +
-  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent") +
-  labs(title = "Orientation of dike slopes")
-plot4 <- ggplot(sites, aes(x = river_km, y = (y))) +
-  geom_point() +  geom_smooth(method = "lm") +
-  labs(title = "Position along the river")
-(plot1 + plot2) / (plot3 + plot4)
-plot1 <- ggplot(sites, aes(x = location_construction_year, y = y)) +
-  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent") +
-  labs(title = "Location and construction year of the dike")
-plot2 <- ggplot(sites, aes(x = (river_distance), y = (y))) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "Distance to river course")
-plot3 <- ggplot(sites, aes(x = (biotope_distance), y = (y))) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "Distance to closest grassland biotope")
-plot4 <- ggplot(sites, aes(x = (biotope_area), y = (y))) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "Amount of grassland biotopes with 500 m radius")
-(plot1 + plot2) / (plot3 + plot4)
-plot1 <- ggplot(sites, aes(x = pc1_soil, y = (y))) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "PC1 (soil)")
-plot2 <- ggplot(sites, aes(x = (pc2_soil), y = y)) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "PC2 (soil)")
-plot3 <- ggplot(sites, aes(x = (pc3_soil), y = y)) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "PC3 (soil)")
-plot4 <- ggplot(sites, aes(x = comparison, y = y)) +
-  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent") +
-  facet_grid(~exposition) +
-  labs(title = "Exposion x Comparison of consecutive surveys")
-(plot1 + plot2) / (plot3 + plot4)
-plot1 <- ggplot(sites, aes(x = pc1_soil, y = y, color = comparison)) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "PC1 x Comparison of consecutive surveys")
-plot2 <- ggplot(sites, aes(x = pc2_soil, y = y, color = comparison)) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "PC2 x Comparison of consecutive surveys")
-plot3 <- ggplot(sites, aes(x = pc1_soil, y = y, color = exposition)) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "PC1 x Exposition")
-plot4 <- ggplot(sites, aes(x = (pc2_soil), y = y, color = exposition)) +
-  geom_point() + geom_smooth(method = "lm") +
-  labs(title = "PC2 x Exposition")
-(plot1 + plot2) / (plot3 + plot4)
+  labs(title = "Comparison of treatments")
+ggplot(sites, aes(y = y, x = cover_vegetation)) +
+  geom_quasirandom(color = "grey") + geom_smooth(method = "lm") +
+  facet_grid(~treatment) +
+  labs(title = "Treatmens x Vegetation cover")
+ggplot(sites, aes(y = y, x = height_vegetation)) +
+  geom_quasirandom(color = "grey") + geom_smooth(method = "lm") +
+  facet_grid(~treatment) +
+  labs(title = "Treatmens x Vegetation height")
 ```
 
 ### Outliers, zero-inflation, transformations? (Step 1, 3, 4)
 
 ```{r outliers, echo = FALSE, warning = FALSE}
 sites %>%
-  count(location_construction_year)
-plot1 <- ggplot(sites, aes(x = exposition, y = y)) +
+  count(treatment)
+plot1 <- ggplot(sites, aes(x = treatment, y = y)) +
   geom_quasirandom()
 plot2 <- ggplot(sites, aes(x = y)) +
-  geom_histogram(binwidth = 0.03)
+  geom_histogram(binwidth = 1)
 plot3 <- ggplot(sites, aes(x = y)) +
   geom_density()
 plot4 <- ggplot(sites, aes(x = log(y))) +
@@ -164,13 +126,9 @@ Dormann et al. 2013 Ecography [DOI: 10.1111/j.1600-0587.2012.07348.x](https://do
 
 ```{r collinearity, warning = FALSE, message = FALSE}
 sites %>%
-  select(where(is.numeric), -b, -c, -d, -y, -ends_with("scaled")) %>%
-  GGally::ggpairs(
-    lower = list(continuous = "smooth_loess")
-    ) +
+  select(height_vegetation, cover_vegetation) %>%
+  GGally::ggpairs(lower = list(continuous = "smooth_loess")) +
   theme(strip.text = element_text(size = 7))
-sites <- sites %>%
-  select(-biotope_area)
 ```
 
 ## Models
@@ -178,15 +136,15 @@ sites <- sites %>%
 Only here you have to modify the script to compare other models
 
 ```{r load-models, collapse = TRUE}
-load(file = here("outputs", "models", "model_tbi_d_all_3.Rdata"))
-load(file = here("outputs", "models", "model_tbi_d_all_5.Rdata"))
-m_1 <- m3
-m_2 <- m5
+load(file = here("outputs", "models", "model_species_richness_1.Rdata"))
+load(file = here("outputs", "models", "model_species_richness_2.Rdata"))
+m_1 <- m1
+m_2 <- m2
 ```
 
 ```{r formulas, collapse = TRUE}
-m_1@call
-m_2@call
+#m_1@call
+#m_2@call
 ```
 
 ## Model check
@@ -199,40 +157,22 @@ simulation_output_2 <- simulateResiduals(m_2, plot = TRUE)
 ```
 
 ```{r dharma_single, collapse = TRUE, fig.height = 3, fig.width = 4.5}
-plotResiduals(simulation_output_1$scaledResiduals, sites$plot)
-plotResiduals(simulation_output_2$scaledResiduals, sites$plot)
-plotResiduals(simulation_output_1$scaledResiduals, sites$location)
-plotResiduals(simulation_output_2$scaledResiduals, sites$location)
-plotResiduals(simulation_output_1$scaledResiduals, sites$location_construction_year)
-plotResiduals(simulation_output_2$scaledResiduals, sites$location_construction_year)
-plotResiduals(simulation_output_1$scaledResiduals, sites$comparison)
-plotResiduals(simulation_output_2$scaledResiduals, sites$comparison)
-plotResiduals(simulation_output_1$scaledResiduals, sites$exposition)
-plotResiduals(simulation_output_2$scaledResiduals, sites$exposition)
-plotResiduals(simulation_output_1$scaledResiduals, sites$orientation)
-plotResiduals(simulation_output_2$scaledResiduals, sites$orientation)
-plotResiduals(simulation_output_1$scaledResiduals, sites$pc1_soil)
-plotResiduals(simulation_output_2$scaledResiduals, sites$pc1_soil)
-plotResiduals(simulation_output_1$scaledResiduals, sites$pc2_soil)
-plotResiduals(simulation_output_2$scaledResiduals, sites$pc2_soil)
-plotResiduals(simulation_output_1$scaledResiduals, sites$pc3_soil)
-plotResiduals(simulation_output_2$scaledResiduals, sites$pc3_soil)
-plotResiduals(simulation_output_1$scaledResiduals, sites$river_km_scaled)
-plotResiduals(simulation_output_2$scaledResiduals, sites$river_km_scaled)
-plotResiduals(simulation_output_1$scaledResiduals, sites$river_distance_scaled)
-plotResiduals(simulation_output_2$scaledResiduals, sites$river_distance_scaled)
-plotResiduals(simulation_output_1$scaledResiduals, sites$biotope_distance_scaled)
-plotResiduals(simulation_output_2$scaledResiduals, sites$biotope_distance_scaled)
+plotResiduals(simulation_output_1$scaledResiduals, sites$treatment)
+plotResiduals(simulation_output_2$scaledResiduals, sites$treatment)
+plotResiduals(simulation_output_1$scaledResiduals, sites$cover_vegetation)
+plotResiduals(simulation_output_2$scaledResiduals, sites$cover_vegetation)
+plotResiduals(simulation_output_1$scaledResiduals, sites$height_vegetation)
+plotResiduals(simulation_output_2$scaledResiduals, sites$height_vegetation)
 ```
 
 ### Check collinearity part 2 (Step 5)
 
-Remove VIF > 3 or > 10 --> location_construction_year removed
+Remove VIF > 3 or > 10
 <br>
 Zuur et al. 2010 Methods Ecol Evol [DOI: 10.1111/j.2041-210X.2009.00001.x](https://doi.org/10.1111/j.2041-210X.2009.00001.x)
 
 ```{r vif}
-car::vif(m_1)
+#car::vif(m_1)
 car::vif(m_2)
 ```
 
@@ -285,7 +225,7 @@ necessary.
 ```{r effect-sizes, message = FALSE}
 (emm <- emmeans(
   m_2,
-  revpairwise ~ comparison,
+  revpairwise ~ treatment,
   type = "response"
   ))
 plot(emm, comparison = TRUE)

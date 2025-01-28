@@ -25,10 +25,13 @@ rm(list = ls())
 #### * Load data sites ####
 
 sites <- read_csv(
-  here("data", "processed", "data_processed_sites_spatial.csv"),
+  here("data", "processed", "data_processed_sites.csv"),
   col_names = TRUE, na = c("na", "NA", ""), col_types =
     cols(
-    .default = "?"
+    .default = "?",
+    treatment = col_factor(
+      levels = c("control", "cut_summer", "cut_autumn", "grazing")
+      )
     )
   )
 

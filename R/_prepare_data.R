@@ -3,8 +3,8 @@
 # Prepare data ####
 #
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Sina Appeltauer, Markus bauer
-# 2024-10-09
+# Sina Appeltauer, Markus Bauer
+# 2025-01-28
 
 
 
@@ -154,7 +154,6 @@ rm(
 
 ## 1 Combine reference and restoration plots ##################################
 
-# Markus: combination works
 
 species <- species_reference %>%
   full_join(species_restoration, by = "name") %>%
@@ -200,7 +199,8 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 2 Select target species from FloraVeg.EU ###################################
 
-# Get target species and put them in 'traits' matrix. Markus: Works
+
+# Get target species and put them in 'traits' matrix.
 
 data <- traits %>%
   rename_with(~ tolower(gsub(" ", "_", .x))) %>%
@@ -220,6 +220,8 @@ data <- traits %>%
 traits <- data %>%
   rename(name = species)
 
+# Harmonization ran once and were than saved --> load below
+
  # harmonized_names <- traits %>%
  #     rowid_to_column("id") %>%
  #     select(id, name) %>%
@@ -233,13 +235,15 @@ traits <- data %>%
  #     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
  #     )
 
-names_traits <- read.csv("data/processed/data_processed_traits_tnrs.csv")
+names_traits <- read.csv(
+  here("data", "processed", "data_processed_traits_tnrs.csv")
+  )
 
 traits <- traits %>%
   rename("Name_submitted" = "name") %>%
   left_join(
-    names_traits %>% select(Name_submitted, Name_matched)
-    , by = "Name_submitted") %>%
+    names_traits %>% select(Name_submitted, Name_matched), by = "Name_submitted"
+    ) %>%
   select(Name_submitted, Name_matched, everything())
 
 
@@ -250,7 +254,6 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 3 Names from TNRS database #################################################
 
-#Sina + Markus: works
 
 ### a Harmonize names of species and traits matrices ---------------------------
 
@@ -259,9 +262,14 @@ metadata$version
 metadata$sources %>% tibble()
 
 traits <- traits %>%
-  mutate(Name_submitted = str_replace(Name_submitted, "Cirsium acaulon", "Cirsium acaule"))
+  mutate(
+    Name_submitted = str_replace(
+      Name_submitted, "Cirsium acaulon", "Cirsium acaule"
+      )
+    )
 
 # Harmonization ran once and were than saved --> load below
+
 # harmonized_names <- species %>%
 #   full_join(traits, by = "name") %>% # combine with target species list
 #   rowid_to_column("id") %>%
@@ -307,7 +315,7 @@ species <- data_summarized
 
 
 ### c Summarize duplicates of traits matrix ------------------------------------
-# wichtig fuer unten bitte nicht loeschen! # 
+
 data <- traits %>%
   right_join(
     species %>% select(accepted_name), by = c("Name_matched" = "accepted_name")
@@ -349,7 +357,6 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 4 Get red list status ######################################################
 
-# Markus: Works
 
 ### a Load red list ------------------------------------------------------------
 
@@ -424,7 +431,6 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 5 Traits from GIFT database ################################################
 
-#Markus: Works BUT see b)
 
 ### a Load traits from GIFT ---------------------------------------------------
 
@@ -465,12 +471,16 @@ gift <- data.table::fread(
   left_join(
     data_gift %>%
       mutate(
-        work_species = str_replace(work_species, "Betonica officinalis", "Stachys officinalis"),
         work_species = str_replace(
-          work_species, "Cerastium fontanum", "Cerastium fontanum subsp. vulgare"
+          work_species, "Betonica officinalis", "Stachys officinalis"
           ),
         work_species = str_replace(
-          work_species, "Asperula cynanchica", "Cynanchica pyrenaica subsp. cynanchica"
+          work_species, "Cerastium fontanum",
+          "Cerastium fontanum subsp. vulgare"
+          ),
+        work_species = str_replace(
+          work_species, "Asperula cynanchica",
+          "Cynanchica pyrenaica subsp. cynanchica"
           ),
         work_species = str_replace(
           work_species, "Potentilla verna", "Potentilla tabernaemontani"
@@ -482,13 +492,12 @@ gift <- data.table::fread(
 
 ### b Combine gift and traits -------------------------------------------------
 
-# Markus: Solve C. acaulon problem
-
 data <- traits %>%
   left_join(
     gift %>%
       select(
-        accepted_name, trait_value_1.2.2, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3
+        accepted_name, trait_value_1.2.2, trait_value_1.6.3, trait_value_3.2.3,
+        trait_value_4.1.3
         ),
     by = "accepted_name"
   )
@@ -627,14 +636,11 @@ richness_rlg <- richness_rlg %>%
          rlg_NA = `NA`)
          
   
-full_richness <- full_join(richness_total, richness_R1A, by = "plot_id")
-full_richness <- full_join(full_richness, richness_R22, by = "plot_id")
-full_richness <- full_join(full_richness, richness_both, by = "plot_id")
-full_richness <- full_join(full_richness, richness_rlg, by = "plot_id")
-
-full_richness <- full_richness %>%
+full_richness <- full_join(richness_total, richness_R1A, by = "plot_id") %>%
+  full_join(richness_R22, by = "plot_id") %>%
+  full_join(richness_both, by = "plot_id") %>%
+  full_join(richness_rlg, by = "plot_id") %>%
   rename(id = plot_id)
-
 
 sites <- sites %>%
   left_join(full_richness, by = "id")
@@ -795,8 +801,8 @@ CWM_SLA$id <- row.names(CWM_SLA)
 
 ### d Add to sites table ------------------------------------------------------
 
-CWM <- full_join(CWM_Height, CWM_Seed, by = "id")
-CWM <- full_join(CWM, CWM_SLA, by = "id")
+CWM <- full_join(CWM_Height, CWM_Seed, by = "id") %>%
+  full_join(CWM_SLA, by = "id")
 
 sites <- sites %>%
   left_join(CWM)
@@ -816,25 +822,25 @@ expertfile <- "EUNIS-ESy-2020-06-08.txt" ### file of 2021 is not working
 
 obs <- species %>%
   pivot_longer(
-    cols = -name,
+    cols = -accepted_name,
     names_to = "RELEVE_NR",
     values_to = "Cover_Perc"
   ) %>%
-  rename(TaxonName = "name") %>%
+  rename(TaxonName = "accepted_name") %>%
   mutate(
     TaxonName = str_replace_all(TaxonName, "_", " "),
     TaxonName = str_replace_all(TaxonName, "ssp", "subsp."),
     TaxonName = as.factor(TaxonName),
-    RELEVE_NR = as.factor(RELEVE_NR),
-    TaxonName = fct_recode(
-     TaxonName,
-     "Centaurea pannonica" = "Centaurea angustifolia",
-     "Euphrasia picta" = "Euphrasia officinalis subsp. picta",
-     "Euphrasia officinalis subsp. pratensis" =
-       "Euphrasia officinalis subsp. rostkoviana"#,
+    RELEVE_NR = as.factor(RELEVE_NR)#,
+    # TaxonName = fct_recode(
+    #  TaxonName,
+    #  "Centaurea pannonica" = "Centaurea angustifolia",
+    #  "Euphrasia picta" = "Euphrasia officinalis subsp. picta",
+    #  "Euphrasia officinalis subsp. pratensis" =
+    #    "Euphrasia officinalis subsp. rostkoviana",
      # "Lotus corniculatus" = "Lotus corniculatus var corniculatus",
      # "Lotus corniculatus" = "Lotus corniculatus var hirsutus"
-     )
+     # )
   ) %>%
   filter(!is.na(Cover_Perc)) %>%
   data.table::as.data.table()
