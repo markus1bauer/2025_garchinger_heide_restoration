@@ -21,6 +21,7 @@ library(ggbeeswarm)
 library(patchwork)
 library(brms)
 library(blme)
+library(DHARMa)
 
 ### Start ###
 rm(list = ls())
@@ -33,6 +34,7 @@ sites <- read_csv(
       .default = "?"
     )
 )
+
 
 
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -53,7 +55,7 @@ sites <- read_csv(
 #   labs(title = "Sand ratio [vol%]")
 
 plot1 <- ggplot(sites, aes(y = richness_total, x = treatment)) +
-  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent")
+  geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent");plot1
 
 ### b Outliers, zero-inflation, transformations? ----------------------------
 
@@ -63,10 +65,10 @@ plot1 <- ggplot(sites, aes(y = richness_total, x = treatment)) +
 # ggplot(sites, aes(x = n)) + geom_histogram(binwidth = 0.03)
 # ggplot(sites, aes(x = n)) + geom_density()
 
-sites %>% group_by(treatment) %>% count(id)
+sites %>% group_by(treatment) %>% count(treatment)
 boxplot(sites$richness_total)
 ggplot(sites, aes(x = treatment, y = richness_total)) + geom_quasirandom()
-ggplot(sites, aes(x = richness_total)) + geom_histogram(binwidth = 0.03)
+ggplot(sites, aes(x = richness_total)) + geom_histogram(binwidth = 1)
 ggplot(sites, aes(x = richness_total)) + geom_density()
 
 ### c Check collinearity ------------------------------------------------------
@@ -94,12 +96,8 @@ sites <- sites %>%
 ### a Random structure ---------------------------------------------------------
 
 m1a <- blmer(
-  richness_total ~ 1 + (1 | treatment), data = sites, REML = TRUE
+  richness_total ~ 1 + (1 | patch), data = sites, REML = TRUE
 )
-m1b <- blmer(
-  richness_total ~ 1 + (1 | treatment / id), data = sites, REML = TRUE
-)
-m1c <- blmer(richness_total ~ 1 + (1 | id), data = sites, REML = TRUE)
 
 MuMIn::AICc(m1a, m1b, m1c) %>%
   arrange(AICc)
@@ -108,13 +106,23 @@ MuMIn::AICc(m1a, m1b, m1c) %>%
 ### b Fixed effects ------------------------------------------------------------
 
 m1 <- blmer(
-  richness_total ~ treatment + (1 | id),
+  richness_total ~ treatment,
   REML = FALSE,
   control = lmerControl(optimizer = "Nelder_Mead"),
   cov.prior = wishart,
   data = sites
 )
+m1 <- lm(
+  richness_total ~ treatment,
+  data = sites
+)
 simulateResiduals(m1, plot = TRUE)
+
+m2 <- lm(
+  richness_total ~ treatment + cover_vegetation,
+  data = sites
+)
+simulateResiduals(m2, plot = TRUE)
 
 
 
