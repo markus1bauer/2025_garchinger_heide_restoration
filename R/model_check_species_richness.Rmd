@@ -67,7 +67,12 @@ sites <- read_csv(
     .default = "?"
     )
   ) %>%
-  rename(y = richness_total)
+  rename(y = richness_total) %>%
+  mutate(
+  treatment = fct_relevel(
+    treatment, "control", "cut_summer", "cut_autumn", "grazing"
+    )
+  )
 ```
 
 # Statistics
