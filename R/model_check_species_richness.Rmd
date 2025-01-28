@@ -1,6 +1,6 @@
 ---
 title: "Garchinger Heide and restoration sites: <br> Species richness"
-author: "<b>Markus Bauer</b> <br>"
+author: "<b>Sina Appeltauer</b> <br>"
 date: "<b>`r format(Sys.time(), '%Y-%m-%d')`</b>"
 output:
   github_document:
