@@ -63,8 +63,8 @@ sites <- read_csv(
     )
 
 ### * Model ####
-load(file = here("outputs", "models", "model_plant_height_2.Rdata"))
-m <- m2
+load(file = here("outputs", "models", "model_plant_height_1.Rdata"))
+m <- m1
 m #m@call
 
 
@@ -96,7 +96,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16, color = "grey70"
     ) +
     geom_hline(
-      yintercept = c(0.2198491, 0.2029876, 0.2367106),
+      yintercept = c(0.2569847, 0.2448479, 0.2691215),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +

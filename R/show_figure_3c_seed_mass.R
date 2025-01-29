@@ -51,6 +51,12 @@ sites <- read_csv(
   )
 ) %>%
   rename(y = CWM_Seed) %>%
+  filter(
+    is.na(location) | location != "Rollfeld" &
+      !(id %in% c(
+        "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
+      )) # Plots with >=10% of Polygonatum odoratum (seed mass = 0.08 g)
+    ) %>%
   mutate(
     treatment = fct_relevel(
       treatment, "control", "cut_summer", "cut_autumn", "grazing"
@@ -58,7 +64,8 @@ sites <- read_csv(
     treatment = fct_recode(
       treatment, "Control" = "control", "Mowing\nsummer" = "cut_summer",
       "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
-      )
+      ),
+    y = 100 * y
     )
 
 ### * Model ####
@@ -83,14 +90,15 @@ data_model <- ggeffect(
       "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
     )
   ) %>%
-  mutate(
-    predicted = exp(predicted),
-    conf.low = exp(conf.low),
-    conf.high = exp(conf.high)
-  ) %>%
+  # mutate(
+  #   predicted = exp(predicted),
+  #   conf.low = exp(conf.low),
+  #   conf.high = exp(conf.high)
+  # ) %>%
   slice(1:4)
 
 data <- sites %>%
+  #mutate(y = exp(y)) %>%
   rename(predicted = y, x = treatment)
 
 (graph_c <- ggplot() +
@@ -100,7 +108,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16, color = "grey70"
     ) +
     geom_hline(
-      yintercept = c(0.003211998, 0.002901189, 0.003556105),
+      yintercept = c(0.2974702, 0.2768726, 0.3180678),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
@@ -114,7 +122,11 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    scale_y_continuous(limits = c(0, .025), breaks = seq(-100, 400, .005)) +
+    annotate("text", label = "a", x = 1, y = .8) +
+    annotate("text", label = "b", x = 2, y = .8) +
+    annotate("text", label = "b", x = 3, y = .8) +
+    annotate("text", label = "ab", x = 4, y = .8) +
+    scale_y_continuous(limits = c(0, .8), breaks = seq(-100, 400, .1)) +
     labs(x = "", y = expression(CWM ~ seed ~ mass ~ "[" * mg * "]")
     ) +
     theme_mb())
