@@ -1,8 +1,10 @@
-# Beta diversity on dike grasslands
-# Plot Fig 4 completely ####
-
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# Management Garchinger Heide restoration sites
+# Functional plant traits ####
+# Show figure 3
+#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
-# 2023-01-17
+# 2025-01-28
 
 
 
@@ -28,16 +30,13 @@ rm(list = setdiff(ls(), c("graph_a", "graph_b", "graph_c", "graph_d")))
 
 
 
-((graph_a + theme(legend.position = "none")) |
-   graph_b) /
-  ((graph_c + theme(legend.position = c(.19, .88))) |
-     (graph_d + theme(legend.position = "none"))) +
+graph_b + graph_c +
   plot_layout(guides = "keep") +
   plot_annotation(tag_levels = "A", tag_prefix = "", tag_suffix = "") &
   theme(plot.tag = element_text(size = 10, face = "bold"))
 
 ### Save ###
-# ggsave(
-#   here("outputs", "figures", "figure_4_800dpi_17x17cm.tiff"),
-#   dpi = 800, width = 17, height = 17, units = "cm"
-#   )
+ggsave(
+  here("outputs", "figures", "figure_3_800dpi_17x10cm.tiff"),
+  dpi = 800, width = 17, height = 10, units = "cm"
+  )
