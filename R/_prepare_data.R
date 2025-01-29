@@ -616,9 +616,22 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 7 Calculation of CWMs ######################################################
 
+
+trait_ids <- c("1.2.2", "1.6.3", "3.2.3", "4.1.3")
+
+GIFT::GIFT_traits_meta() %>%
+  filter(Lvl3 %in% trait_ids) %>%
+  tibble()
+
 traits_without_trees <- traits %>%
   filter(is.na(trait_value_1.2.2) | trait_value_1.2.2 != "tree") %>%
-  filter(accepted_name != "Prunus spinosa")
+  filter(accepted_name != "Prunus spinosa") %>%
+  mutate(
+    trait_value_1.6.3 = log(trait_value_1.6.3),
+    trait_value_3.2.3 = log(trait_value_3.2.3),
+    trait_value_4.1.3 = log(trait_value_4.1.3)
+      )
+
 
 ### a CWM Plant height 1.6.3 --------------------------------------------------
 
