@@ -133,9 +133,6 @@ traits <- readxl::read_excel(
   col_names = TRUE, na = c("", "NA", "na")
 )
 
-# Bisher nur Zielarten in traits-Tabelle --> später müssen noch alle kartierten Arten
-# eingefügt werden und die dazugehörigen Traits und Rote-Liste-Status. Aber das
-# passiert weiter unten
 
 rm(
   list = setdiff(ls(), c(
@@ -221,19 +218,19 @@ traits <- data %>%
   rename(name = species)
 
 # Harmonization ran once and were than saved --> load below
-
- # harmonized_names <- traits %>%
- #     rowid_to_column("id") %>%
- #     select(id, name) %>%
- #     TNRS::TNRS(
- #       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
- #       classification = "wfo", # family classification
- #       mode = "resolve"
- #     )
- # 
- # write_csv(
- #     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
- #     )
+#
+# harmonized_names <- traits %>%
+#     rowid_to_column("id") %>%
+#     select(id, name) %>%
+#     TNRS::TNRS(
+#       sources = c("wcvp", "wfo"), # first use WCVP and alternatively WFO
+#       classification = "wfo", # family classification
+#       mode = "resolve"
+#     )
+# 
+# write_csv(
+#     harmonized_names, here("data", "processed", "data_processed_traits_tnrs.csv")
+#     )
 
 names_traits <- read.csv(
   here("data", "processed", "data_processed_traits_tnrs.csv")
@@ -269,7 +266,7 @@ traits <- traits %>%
     )
 
 # Harmonization ran once and were than saved --> load below
-
+#
 # harmonized_names <- species %>%
 #   full_join(traits, by = "name") %>% # combine with target species list
 #   rowid_to_column("id") %>%
@@ -374,6 +371,7 @@ data_redlist <- readxl::read_excel(
     )
 
 # Calculate just once to save time (afterwards load file)
+#
 # harmonized_names <- data_redlist %>%
 #   rowid_to_column("id") %>%
 #   select(id, name) %>%
@@ -524,20 +522,8 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 ## 6 Alpha diversity ##########################################################
 
-# Dieser Code ist noch nciht auf unseren Datensatz abgestimmt. (Wenn das gemacht
-# ist kann man die Sätze hier löschen)
 
 ### a Species richness -------------------------------------------------------
-
-# warum nutzen wir nicht einfach die traits tabelle?
-# richness <- species %>%
-#  left_join(traits, by = "accepted_name") %>%
-#  select(
-#    accepted_name, status, redlist_germany, target, starts_with("X") # was ist target (gewesen)?
-#  ) %>%
-#  pivot_longer(names_to = "id", values_to = "n", cols = starts_with("X")) %>%
-#  mutate(n = if_else(n > 0, 1, 0)) %>%
-#  group_by(id)
 
 richness <- species %>%
   left_join(traits, by = "accepted_name") %>%
@@ -550,54 +536,6 @@ richness <- species %>%
     values_to = "n"           
   ) %>%
   mutate(n = if_else(n > 0, 1, 0))
-
-
-# Problem: diese Tabelle führt alle Arten mehrmals auf für jeden Plot, in dem sie 
-# vorkommen -> für unsere Zwecke eigtl nicht sinnvoll
-
-# richness2 <- species %>%
-#    left_join(traits, by = "accepted_name") %>%
-#    select(
-#      accepted_name, status, redlist_germany, R1A, R22, both, starts_with("X")
-#    ) %>%
-#    t() %>%
-#    as.data.frame() %>%
-#    {
-#      colnames(.) <- .[1, ]
-#      .[-1, ]
-#    }
-# 
-#  richness_total <- richness2 %>%
-#    mutate(specnumber_total = specnumber(., MARGIN = 1)) %>%
-#    tibble::rownames_to_column(var = "ID")
-#
-# richness_R1A <- richness2 %>% 
-#   select(which(richness2["R1A", ] == 1)) %>% 
-#   mutate(specnumber_R1A = specnumber(., MARGIN = 1)) %>% 
-#   tibble::rownames_to_column(var = "ID")
-# 
-# richness_R22 <- richness2 %>% 
-#   select(which(richness2["R22", ] == 1)) %>% 
-#   mutate(specnumber_R22 = specnumber(., MARGIN = 1)) %>% 
-#   tibble::rownames_to_column(var = "ID")
-# 
-# richness_R_both <- richness2 %>% 
-#   select(which(richness2["both", ] == 1)) %>% 
-#   mutate(specnumber_R_both = specnumber(., MARGIN = 1)) %>% 
-#   tibble::rownames_to_column(var = "ID")
-# 
-# richness_rlg <- richness2 %>% 
-#   select(which(richness2["redlist_germany", ] %in% c(1, 2, 3, "V"))) %>%
-#   mutate(specnumber_rlg = specnumber(., MARGIN = 1)) %>% 
-#   tibble::rownames_to_column(var = "ID")
-#
-# richness <- richness_total %>%
-#   # hier alle Arten raushauen
-#   left_join(richness_R1A %>% select(ID, specnumber_R1A), by = "ID") %>%
-#   left_join(richness_R22 %>% select(ID, specnumber_R22), by = "ID") %>%
-#   left_join(richness_R_both %>% select(ID, specnumber_R_both), by = "ID") %>%
-#   left_join(richness_rlg %>% select(ID, specnumber_rlg), by = "ID") %>%
-#   slice(-(1:5))
 
 richness_total <- richness %>%
   group_by(plot_id) %>%
@@ -648,55 +586,7 @@ sites <- sites %>%
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
-  
-###############################
-# 
-# filtered_richness <- richness %>%
-#   filter(specnumber_total == 190)  # Filtere nach Bedingung
-# 
-# print(filtered_richness)
-# 
-# #### Total species richness ###
-# richness_total <- richness %>%
-#   summarise(species_richness = sum(n, na.rm = TRUE)) %>%
-#   ungroup()
-# 
-# #### Red list Germany (species richness) ###
-# richness_rlg <- richness %>%
-#   filter(rlg == "1" | rlg == "2" | rlg == "3" | rlg == "V") %>%
-#   summarise(rlg_richness = sum(n, na.rm = TRUE)) %>%
-#   ungroup()
-# 
-# #### Target species (species richness) ###
-# richness_target <- richness %>%
-#   filter(target != "no") %>%
-#   summarise(target_richness = sum(n, na.rm = TRUE)) %>%
-#   ungroup()
-# 
-# sites_dikes <- sites_dikes %>%
-#   right_join(richness_total, by = "id") %>%
-#   right_join(richness_rlg, by = "id") %>%
-#   right_join(richness_target, by = "id")
-#   mutate(
-#     target_richness_ratio = target_richness / species_richness
-#   )
-
-
 ### b Species eveness ---------------------------------------------
-
-# data <- species_dikes %>%
-#   mutate(across(where(is.numeric), ~ replace(., is.na(.), 0))) %>%
-#   pivot_longer(-name, names_to = "id", values_to = "value") %>%
-#   pivot_wider(names_from = "name", values_from = "value") %>%
-#   column_to_rownames("id") %>%
-#   diversity(index = "shannon") %>%
-#   as_tibble(rownames = NA) %>%
-#   rownames_to_column(var = "id") %>%
-#   mutate(id = factor(id)) %>%
-#   rename(shannon = value)
-# sites_dikes <- sites_dikes %>%
-#   left_join(data, by = "id") %>%
-#   mutate(eveness = shannon / log(species_richness))
 
 data <- as.data.frame(t(species))
 colnames(data) <- data[1,]
