@@ -293,33 +293,29 @@ MuMIn::AICc(m_1, m_2) %>%
 ### Summary table
 
 ``` r
-summary(m_2)
+summary(m_1)
 ```
 
     ## 
     ## Call:
-    ## lm(formula = y ~ treatment * cover_vegetation, data = sites)
+    ## lm(formula = y ~ treatment, data = sites)
     ## 
     ## Residuals:
     ##       Min        1Q    Median        3Q       Max 
-    ## -0.104179 -0.022881 -0.002104  0.021046  0.195950 
+    ## -0.133468 -0.023562 -0.003175  0.022226  0.211437 
     ## 
     ## Coefficients:
-    ##                                        Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                          -0.0012083  0.0451797  -0.027 0.978700    
-    ## treatmentcut_summer                   0.4778605  0.0584674   8.173 1.16e-13 ***
-    ## treatmentcut_autumn                   0.4305363  0.0623535   6.905 1.33e-10 ***
-    ## treatmentgrazing                      0.2072108  0.0517063   4.007 9.64e-05 ***
-    ## cover_vegetation                      0.0037435  0.0006500   5.759 4.63e-08 ***
-    ## treatmentcut_summer:cover_vegetation -0.0037987  0.0008785  -4.324 2.78e-05 ***
-    ## treatmentcut_autumn:cover_vegetation -0.0030798  0.0009067  -3.397 0.000873 ***
-    ## treatmentgrazing:cover_vegetation    -0.0025664  0.0010965  -2.340 0.020578 *  
+    ##                      Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)          0.256985   0.006144  41.829   <2e-16 ***
+    ## treatmentcut_summer  0.216290   0.011104  19.478   <2e-16 ***
+    ## treatmentcut_autumn  0.216591   0.011104  19.506   <2e-16 ***
+    ## treatmentgrazing    -0.019396   0.011104  -1.747   0.0827 .  
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.04609 on 150 degrees of freedom
-    ## Multiple R-squared:  0.858,  Adjusted R-squared:  0.8513 
-    ## F-statistic: 129.4 on 7 and 150 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.05066 on 154 degrees of freedom
+    ## Multiple R-squared:  0.8238, Adjusted R-squared:  0.8204 
+    ## F-statistic:   240 on 3 and 154 DF,  p-value: < 2.2e-16
 
 ### Forest plot
 
@@ -342,7 +338,7 @@ necessary.
 
 ``` r
 (emm <- emmeans(
-  m_2,
+  m_1,
   revpairwise ~ treatment,
   type = "response"
   ))
@@ -350,21 +346,21 @@ necessary.
 
     ## $emmeans
     ##  treatment  emmean      SE  df lower.CL upper.CL
-    ##  control     0.220 0.00853 150    0.203    0.237
-    ##  cut_summer  0.473 0.00851 150    0.457    0.490
-    ##  cut_autumn  0.469 0.00970 150    0.449    0.488
-    ##  grazing     0.276 0.02970 150    0.217    0.334
+    ##  control     0.257 0.00614 154    0.245    0.269
+    ##  cut_summer  0.473 0.00925 154    0.455    0.492
+    ##  cut_autumn  0.474 0.00925 154    0.455    0.492
+    ##  grazing     0.238 0.00925 154    0.219    0.256
     ## 
     ## Confidence level used: 0.95 
     ## 
     ## $contrasts
-    ##  contrast                estimate     SE  df t.ratio p.value
-    ##  cut_summer - control     0.25354 0.0120 150  21.041  <.0001
-    ##  cut_autumn - control     0.24867 0.0129 150  19.253  <.0001
-    ##  cut_autumn - cut_summer -0.00487 0.0129 150  -0.378  0.9816
-    ##  grazing - control        0.05566 0.0309 150   1.803  0.2760
-    ##  grazing - cut_summer    -0.19788 0.0309 150  -6.411  <.0001
-    ##  grazing - cut_autumn    -0.19301 0.0312 150  -6.184  <.0001
+    ##  contrast                 estimate     SE  df t.ratio p.value
+    ##  cut_summer - control     0.216290 0.0111 154  19.478  <.0001
+    ##  cut_autumn - control     0.216591 0.0111 154  19.506  <.0001
+    ##  cut_autumn - cut_summer  0.000301 0.0131 154   0.023  1.0000
+    ##  grazing - control       -0.019396 0.0111 154  -1.747  0.3033
+    ##  grazing - cut_summer    -0.235686 0.0131 154 -18.017  <.0001
+    ##  grazing - cut_autumn    -0.235987 0.0131 154 -18.040  <.0001
     ## 
     ## P value adjustment: tukey method for comparing a family of 4 estimates
 

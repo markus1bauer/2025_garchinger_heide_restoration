@@ -71,7 +71,14 @@ sites <- read_csv(
       )
     )
   ) %>%
-  rename(y = CWM_Seed)
+  rename(y = CWM_Seed) %>%
+  mutate(y = 100 * y) %>%
+  filter(
+    is.na(location) | location != "Rollfeld" &
+      !(id %in% c(
+        "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
+        )) # Plots with >=10% of Polygonatum odoratum (seed mass = 0.08 g)
+    )
 ```
 
 # Statistics
@@ -107,7 +114,7 @@ sites %>%
 plot1 <- ggplot(sites, aes(x = treatment, y = y)) +
   geom_quasirandom()
 plot2 <- ggplot(sites, aes(x = y)) +
-  geom_histogram(binwidth = 0.001)
+  geom_histogram(binwidth = 0.0001)
 plot3 <- ggplot(sites, aes(x = y)) +
   geom_density()
 plot4 <- ggplot(sites, aes(x = log(y))) +

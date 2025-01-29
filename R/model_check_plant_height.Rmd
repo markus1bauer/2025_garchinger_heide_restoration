@@ -204,7 +204,7 @@ MuMIn::AICc(m_1, m_2) %>%
 ### Summary table
 
 ```{r summary}
-summary(m_2)
+summary(m_1)
 ```
 
 ### Forest plot
@@ -226,7 +226,7 @@ necessary.
 
 ```{r effect-sizes, message = FALSE}
 (emm <- emmeans(
-  m_2,
+  m_1,
   revpairwise ~ treatment,
   type = "response"
   ))
