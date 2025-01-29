@@ -93,27 +93,27 @@ sites <- read_csv(
 Rmisc::CI(sites$y, ci = .95)
 ```
 
-    ##       upper        mean       lower 
-    ## 0.003160867 0.002994722 0.002828577
+    ##     upper      mean     lower 
+    ## -6.213159 -6.278489 -6.343818
 
 ``` r
 median(sites$y)
 ```
 
-    ## [1] 0.00310387
+    ## [1] -6.214908
 
 ``` r
 sd(sites$y)
 ```
 
-    ## [1] 0.001040192
+    ## [1] 0.4090089
 
 ``` r
 quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 ```
 
-    ##          5%         95% 
-    ## 0.001465411 0.004540762
+    ##        5%       95% 
+    ## -6.885702 -5.695782
 
 ### Graphs of raw data (Step 2, 6, 7)
 
@@ -166,9 +166,9 @@ m_1
 ## 
 ## Coefficients:
 ##         (Intercept)  treatmentcut_summer     treatmentgrazing  
-##           0.0029747            0.0005489           -0.0011408  
+##             -6.3727               0.4227              -0.3823  
 ## treatmentcut_autumn  
-##           0.0006940
+##              0.4402
 m_2
 ## 
 ## Call:
@@ -176,13 +176,13 @@ m_2
 ## 
 ## Coefficients:
 ##                          (Intercept)                   treatmentcut_summer  
-##                            2.111e-03                             1.477e-03  
+##                            -7.128437                              1.146526  
 ##                     treatmentgrazing                   treatmentcut_autumn  
-##                           -8.064e-04                             2.560e-03  
+##                             0.179087                              1.792961  
 ##                     cover_vegetation  treatmentcut_summer:cover_vegetation  
-##                            1.253e-05                            -1.360e-05  
+##                             0.010970                             -0.010449  
 ##    treatmentgrazing:cover_vegetation  treatmentcut_autumn:cover_vegetation  
-##                            7.181e-06                            -2.757e-05
+##                            -0.003728                             -0.019926
 ```
 
 ## Model check
@@ -274,10 +274,10 @@ car::vif(m_2)
 ``` r
 MuMIn::r.squaredGLMM(m_1)
 ##            R2m       R2c
-## [1,] 0.3751448 0.3751448
+## [1,] 0.5534671 0.5534671
 MuMIn::r.squaredGLMM(m_2)
 ##            R2m       R2c
-## [1,] 0.3869826 0.3869826
+## [1,] 0.5923313 0.5923313
 ```
 
 ### AICc
@@ -288,9 +288,9 @@ p. 66 ISBN: 978-0-387-95364-9
 ``` r
 MuMIn::AICc(m_1, m_2) %>%
   arrange(AICc)
-##     df      AICc
-## m_1  5 -1731.212
-## m_2  9 -1726.969
+##     df     AICc
+## m_2  9 37.28038
+## m_1  5 44.97988
 ```
 
 ## Predicted values
@@ -306,21 +306,21 @@ summary(m_1)
     ## lm(formula = y ~ treatment, data = sites)
     ## 
     ## Residuals:
-    ##        Min         1Q     Median         3Q        Max 
-    ## -0.0020681 -0.0004008 -0.0001258  0.0002503  0.0042158 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -1.42483 -0.13714  0.00537  0.18591  0.57502 
     ## 
     ## Coefficients:
-    ##                       Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)          0.0029747  0.0001042  28.538  < 2e-16 ***
-    ## treatmentcut_summer  0.0005489  0.0001835   2.991 0.003255 ** 
-    ## treatmentgrazing    -0.0011408  0.0001835  -6.216 4.87e-09 ***
-    ## treatmentcut_autumn  0.0006940  0.0001835   3.781 0.000225 ***
+    ##                     Estimate Std. Error  t value Pr(>|t|)    
+    ## (Intercept)         -6.37271    0.03459 -184.252  < 2e-16 ***
+    ## treatmentcut_summer  0.42266    0.06090    6.941 1.12e-10 ***
+    ## treatmentgrazing    -0.38230    0.06090   -6.278 3.56e-09 ***
+    ## treatmentcut_autumn  0.44019    0.06090    7.229 2.36e-11 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.0008274 on 149 degrees of freedom
-    ## Multiple R-squared:  0.3798, Adjusted R-squared:  0.3673 
-    ## F-statistic: 30.42 on 3 and 149 DF,  p-value: 2.124e-15
+    ## Residual standard error: 0.2745 on 149 degrees of freedom
+    ## Multiple R-squared:  0.5584, Adjusted R-squared:  0.5495 
+    ## F-statistic:  62.8 on 3 and 149 DF,  p-value: < 2.2e-16
 
 ### Forest plot
 
@@ -330,7 +330,7 @@ dotwhisker::dwplot(
   ci = 0.95,
   show_intercept = FALSE,
   vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) +
-  xlim(-0.3, 0.35) +
+  xlim(-60, 90) +
   theme_classic()
 ```
 
@@ -343,29 +343,29 @@ necessary.
 
 ``` r
 (emm <- emmeans(
-  m_2,
+  m_1,
   revpairwise ~ treatment,
   type = "response"
   ))
 ```
 
     ## $emmeans
-    ##  treatment   emmean       SE  df lower.CL upper.CL
-    ##  control    0.00285 0.000160 145  0.00253  0.00316
-    ##  cut_summer 0.00353 0.000153 145  0.00322  0.00383
-    ##  grazing    0.00246 0.000526 145  0.00142  0.00350
-    ##  cut_autumn 0.00379 0.000176 145  0.00344  0.00414
+    ##  treatment  emmean     SE  df lower.CL upper.CL
+    ##  control     -6.37 0.0346 149    -6.44    -6.30
+    ##  cut_summer  -5.95 0.0501 149    -6.05    -5.85
+    ##  grazing     -6.76 0.0501 149    -6.85    -6.66
+    ##  cut_autumn  -5.93 0.0501 149    -6.03    -5.83
     ## 
     ## Confidence level used: 0.95 
     ## 
     ## $contrasts
-    ##  contrast                 estimate       SE  df t.ratio p.value
-    ##  cut_summer - control     0.000679 0.000221 145   3.069  0.0135
-    ##  grazing - control       -0.000385 0.000550 145  -0.700  0.8971
-    ##  grazing - cut_summer    -0.001064 0.000548 145  -1.941  0.2155
-    ##  cut_autumn - control     0.000942 0.000238 145   3.963  0.0007
-    ##  cut_autumn - cut_summer  0.000262 0.000233 145   1.125  0.6747
-    ##  cut_autumn - grazing     0.001327 0.000555 145   2.390  0.0835
+    ##  contrast                estimate     SE  df t.ratio p.value
+    ##  cut_summer - control      0.4227 0.0609 149   6.941  <.0001
+    ##  grazing - control        -0.3823 0.0609 149  -6.278  <.0001
+    ##  grazing - cut_summer     -0.8050 0.0709 149 -11.356  <.0001
+    ##  cut_autumn - control      0.4402 0.0609 149   7.229  <.0001
+    ##  cut_autumn - cut_summer   0.0175 0.0709 149   0.247  0.9947
+    ##  cut_autumn - grazing      0.8225 0.0709 149  11.604  <.0001
     ## 
     ## P value adjustment: tukey method for comparing a family of 4 estimates
 

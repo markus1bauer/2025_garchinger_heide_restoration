@@ -36,7 +36,6 @@ sites <- read_csv(
     )
 ) %>%
   rename(y = CWM_Seed) %>%
-  mutate(y = 100 * y) %>%
   filter(
     is.na(location) | location != "Rollfeld" &
       !(id %in% c(
@@ -68,7 +67,7 @@ ggplot(sites, aes(y = y, x = cover_vegetation)) +
 
 sites %>% group_by(treatment) %>% count(treatment)
 ggplot(sites, aes(x = treatment, y = y)) + geom_quasirandom()
-ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .0001)
+ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .1)
 ggplot(sites, aes(x = y)) + geom_density()
 # ID with >= 10% of Polygonatum odoratum (seed mass = 0.08 g):
 # X2021tum03

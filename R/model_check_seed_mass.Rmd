@@ -72,7 +72,6 @@ sites <- read_csv(
     )
   ) %>%
   rename(y = CWM_Seed) %>%
-  mutate(y = 100 * y) %>%
   filter(
     is.na(location) | location != "Rollfeld" &
       !(id %in% c(
@@ -114,7 +113,7 @@ sites %>%
 plot1 <- ggplot(sites, aes(x = treatment, y = y)) +
   geom_quasirandom()
 plot2 <- ggplot(sites, aes(x = y)) +
-  geom_histogram(binwidth = 0.0001)
+  geom_histogram(binwidth = 0.1)
 plot3 <- ggplot(sites, aes(x = y)) +
   geom_density()
 plot4 <- ggplot(sites, aes(x = log(y))) +
@@ -221,7 +220,7 @@ dotwhisker::dwplot(
   ci = 0.95,
   show_intercept = FALSE,
   vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) +
-  xlim(-0.3, 0.35) +
+  xlim(-60, 90) +
   theme_classic()
 ```
 
@@ -232,7 +231,7 @@ necessary.
 
 ```{r effect-sizes, message = FALSE}
 (emm <- emmeans(
-  m_2,
+  m_1,
   revpairwise ~ treatment,
   type = "response"
   ))

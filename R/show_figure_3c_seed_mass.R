@@ -64,8 +64,7 @@ sites <- read_csv(
     treatment = fct_recode(
       treatment, "Control" = "control", "Mowing\nsummer" = "cut_summer",
       "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
-      ),
-    y = 100 * y
+      )
     )
 
 ### * Model ####
@@ -90,15 +89,15 @@ data_model <- ggeffect(
       "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
     )
   ) %>%
-  # mutate(
-  #   predicted = exp(predicted),
-  #   conf.low = exp(conf.low),
-  #   conf.high = exp(conf.high)
-  # ) %>%
+  mutate(
+    predicted = exp(predicted) * 100,
+    conf.low = exp(conf.low) * 100,
+    conf.high = exp(conf.high) * 100
+  ) %>%
   slice(1:4)
 
 data <- sites %>%
-  #mutate(y = exp(y)) %>%
+  mutate(y = exp(y) * 100) %>%
   rename(predicted = y, x = treatment)
 
 (graph_c <- ggplot() +
@@ -108,7 +107,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16, color = "grey70"
     ) +
     geom_hline(
-      yintercept = c(0.2974702, 0.2768726, 0.3180678),
+      yintercept = c(0.1707518, 0.1594717, 0.1828297),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
@@ -122,11 +121,11 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    annotate("text", label = "a", x = 1, y = .8) +
-    annotate("text", label = "b", x = 2, y = .8) +
-    annotate("text", label = "b", x = 3, y = .8) +
-    annotate("text", label = "ab", x = 4, y = .8) +
-    scale_y_continuous(limits = c(0, .8), breaks = seq(-100, 400, .1)) +
+    annotate("text", label = "a", x = 1, y = .4) +
+    annotate("text", label = "b", x = 2, y = .4) +
+    annotate("text", label = "b", x = 3, y = .4) +
+    annotate("text", label = "c", x = 4, y = .4) +
+    scale_y_continuous(limits = c(0, .4), breaks = seq(-100, 400, .1)) +
     labs(x = "", y = expression(CWM ~ seed ~ mass ~ "[" * mg * "]")
     ) +
     theme_mb())
