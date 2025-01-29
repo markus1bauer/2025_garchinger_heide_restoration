@@ -622,7 +622,7 @@ traits_without_trees <- traits %>%
   filter(is.na(growth_form) | growth_form != "tree") %>%
   filter(accepted_name != "Prunus spinosa") %>%
   mutate(
-    see_mass = log(seed_mass),
+    seed_mass = log(seed_mass),
     sla = log(sla)
       )
 
