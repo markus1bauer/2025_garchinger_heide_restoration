@@ -1,6 +1,6 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
-# Canopy Height ####
+# Management Garchinger Heide restoration sites
+# Seed mass ####
 # Model building
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
@@ -35,7 +35,7 @@ sites <- read_csv(
       treatment = "f"
     )
 ) %>%
-  rename(y = CWM_Height)
+  rename(y = CWM_Seed)
 
 
 
@@ -61,7 +61,7 @@ ggplot(sites, aes(y = y, x = cover_vegetation)) +
 
 sites %>% group_by(treatment) %>% count(treatment)
 ggplot(sites, aes(x = treatment, y = y)) + geom_quasirandom()
-ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .01)
+ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .001)
 ggplot(sites, aes(x = y)) + geom_density()
 
 
@@ -101,13 +101,13 @@ m1 <- blmer(
 )
 
 m1 <- lm(
-  y ~ treatment,
+  log(y) ~ treatment,
   data = sites
 )
 simulateResiduals(m1, plot = TRUE)
 
 m2 <- lm(
-  y ~ treatment * cover_vegetation,
+  log(y) ~ treatment * cover_vegetation,
   data = sites
 )
 simulateResiduals(m2, plot = TRUE)
@@ -117,6 +117,6 @@ simulateResiduals(m2, plot = TRUE)
 ### d Save ---------------------------------------------------------------------
 
 
-save(m1, file = here("outputs", "models", "model_height_1.Rdata"))
-save(m2, file = here("outputs", "models", "model_height_2.Rdata"))
+save(m1, file = here("outputs", "models", "model_seed_mass_1.Rdata"))
+save(m2, file = here("outputs", "models", "model_seed_mass_2.Rdata"))
 
