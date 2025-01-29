@@ -54,6 +54,7 @@ sites_reference <- read_csv2(
 ) %>%
   select(!ends_with("_2026")) %>%
   rename(
+    location = verortung,
     botanist_2021 = botaniker_2021,
     survey_date_2021 = aufnahmedatum_2021,
     height_vegetation_2021 = vegetationshoehe_2021,
@@ -621,7 +622,6 @@ traits_without_trees <- traits %>%
   filter(is.na(growth_form) | growth_form != "tree") %>%
   filter(accepted_name != "Prunus spinosa") %>%
   mutate(
-    plant_height = log(plant_height),
     see_mass = log(seed_mass),
     sla = log(sla)
       )
