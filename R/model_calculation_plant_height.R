@@ -29,10 +29,12 @@ rm(list = ls())
 ### Load data ###
 sites <- read_csv(
   here("data", "processed", "data_processed_sites.csv"),
-  col_names = TRUE, na = c("na", "NA", ""), col_types =
+  col_names = TRUE, na = c("", "na", "NA"), col_types = 
     cols(
       .default = "?",
-      treatment = "f"
+      treatment = col_factor(
+        levels = c("control", "cut_summer", "cut_autumn", "grazing")
+      )
     )
 ) %>%
   rename(y = CWM_Height)
@@ -82,23 +84,8 @@ sites %>%
 
 ### a Random structure ---------------------------------------------------------
 
-m1a <- blmer(
-  y ~ 1 + (1 | patch), data = sites, REML = TRUE
-)
-
-MuMIn::AICc(m1a) %>%
-  arrange(AICc)
-
 
 ### b Fixed effects ------------------------------------------------------------
-
-m1 <- blmer(
-  y ~ treatment + (1 | patch),
-  REML = FALSE,
-  control = lmerControl(optimizer = "Nelder_Mead"),
-  cov.prior = wishart,
-  data = sites
-)
 
 m1 <- lm(
   y ~ treatment,
@@ -117,6 +104,5 @@ simulateResiduals(m2, plot = TRUE)
 ### d Save ---------------------------------------------------------------------
 
 
-save(m1, file = here("outputs", "models", "model_height_1.Rdata"))
-save(m2, file = here("outputs", "models", "model_height_2.Rdata"))
-
+save(m1, file = here("outputs", "models", "model_plant_height_1.Rdata"))
+save(m2, file = here("outputs", "models", "model_plant_height_2.Rdata"))

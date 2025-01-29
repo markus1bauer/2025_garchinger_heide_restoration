@@ -45,16 +45,16 @@ theme_mb <- function() {
 ### Load data ###
 sites <- read_csv(
   here("data", "processed", "data_processed_sites.csv"),
-  col_names = TRUE, na = c("", "na", "NA"), col_types = cols(
-    .default = "?",
-    treatment = "f"
-  )
+  col_names = TRUE, na = c("", "na", "NA"), col_types = 
+    cols(
+      .default = "?",
+      treatment = col_factor(
+        levels = c("control", "cut_summer", "cut_autumn", "grazing")
+      )
+    )
 ) %>%
   rename(y = CWM_Height) %>%
   mutate(
-    treatment = fct_relevel(
-      treatment, "control", "cut_summer", "cut_autumn", "grazing"
-      ),
     treatment = fct_recode(
       treatment, "Control" = "control", "Mowing\nsummer" = "cut_summer",
       "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
