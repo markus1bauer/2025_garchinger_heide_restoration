@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
+# Management Garchinger Heide restoration sites
 # Canopy height ####
 # Show figure 3b
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -88,7 +88,7 @@ data_model <- ggeffect(
 data <- sites %>%
   rename(predicted = y, x = treatment)
 
-(graph_a <- ggplot() +
+(graph_b <- ggplot() +
     geom_quasirandom(
       data = data,
       aes(x = x, predicted),
