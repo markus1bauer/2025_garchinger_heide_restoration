@@ -1,10 +1,10 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
-# Canopy height ####
-# Show figure 3b
+# Management Garchinger Heide restoration sites
+# Seed mass ####
+# Show figure 3c
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
-# 2025-01-28
+# 2025-01-29
 
 
 
@@ -50,7 +50,7 @@ sites <- read_csv(
     treatment = "f"
   )
 ) %>%
-  rename(y = CWM_Height) %>%
+  rename(y = CWM_Seed) %>%
   mutate(
     treatment = fct_relevel(
       treatment, "control", "cut_summer", "cut_autumn", "grazing"
@@ -62,7 +62,7 @@ sites <- read_csv(
     )
 
 ### * Model ####
-load(file = here("outputs", "models", "model_height_1.Rdata"))
+load(file = here("outputs", "models", "model_seed_mass_1.Rdata"))
 m <- m1
 m #m@call
 
@@ -83,19 +83,24 @@ data_model <- ggeffect(
       "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
     )
   ) %>%
+  mutate(
+    predicted = exp(predicted),
+    conf.low = exp(conf.low),
+    conf.high = exp(conf.high)
+  ) %>%
   slice(1:4)
 
 data <- sites %>%
   rename(predicted = y, x = treatment)
 
-(graph_a <- ggplot() +
+(graph_c <- ggplot() +
     geom_quasirandom(
       data = data,
       aes(x = x, predicted),
       dodge.width = .6, size = 1, shape = 16, color = "grey70"
     ) +
     geom_hline(
-      yintercept = c(0.2569, 0.2448, 0.2691),
+      yintercept = c(0.003211998, 0.002901189, 0.003556105),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
@@ -109,15 +114,13 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    scale_y_continuous(limits = c(0, .7), breaks = seq(-100, 400, .1)) +
-    labs(x = "",
-         y = expression(
-           CWM ~ canopy ~ height ~ "[" * m * "]")
+    scale_y_continuous(limits = c(0, .025), breaks = seq(-100, 400, .005)) +
+    labs(x = "", y = expression(CWM ~ seed ~ mass ~ "[" * mg * "]")
     ) +
     theme_mb())
 
 ### Save ###
 ggsave(
-  here("outputs", "figures", "figure_3b_800dpi_8x8cm.tiff"),
+  here("outputs", "figures", "figure_3c_800dpi_8x8cm.tiff"),
   dpi = 800, width = 8, height = 8, units = "cm"
   )
