@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
+# Management Garchinger Heide restoration sites
 # Prepare data ####
 #
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -461,7 +461,6 @@ data_gift <- GIFT::GIFT_traits(
 # data_gift %>% filter(str_detect(work_species, "Cerastium f")) %>% select(1:2)
 
 gift <- data.table::fread(
-  # here("data", "processed", "data_processed_traits_tnrs_alle.csv")
   here("data", "processed", "data_processed_gift_tnrs.csv")
   ) %>%
   rename_with(tolower) %>%
@@ -485,6 +484,12 @@ gift <- data.table::fread(
           ),
       ),
     by = c("accepted_name" = "work_species")
+    ) %>%
+  rename(
+    growth_form = trait_value_1.2.2,
+    plant_height = trait_value_1.6.3,
+    seed_mass = trait_value_3.2.3,
+    sla = trait_value_4.1.3
     )
 
 
@@ -493,10 +498,7 @@ gift <- data.table::fread(
 data <- traits %>%
   left_join(
     gift %>%
-      select(
-        accepted_name, trait_value_1.2.2, trait_value_1.6.3, trait_value_3.2.3,
-        trait_value_4.1.3
-        ),
+      select(accepted_name, growth_form, plant_height, seed_mass, sla),
     by = "accepted_name"
   )
 
@@ -506,14 +508,12 @@ data_summarized <- data %>%
   group_by(accepted_name) %>%
   summarize(across(everything(), ~ first(.x))) %>%
   select(
-    accepted_name, trait_value_1.2.2, trait_value_1.6.3, trait_value_3.2.3, trait_value_4.1.3,
-    everything()
+    accepted_name, growth_form, plant_height, seed_mass, sla, everything()
   )
 
 data_summarized  %>% filter(duplicated(accepted_name))
 
 traits <- data_summarized
-
 
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
@@ -523,7 +523,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 ## 6 Alpha diversity ##########################################################
 
 
-### a Species richness -------------------------------------------------------
+### a Species richness --------------------------------------------------------
 
 richness <- species %>%
   left_join(traits, by = "accepted_name") %>%
@@ -586,7 +586,7 @@ sites <- sites %>%
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
-### b Species eveness ---------------------------------------------
+### b Species eveness ---------------------------------------------------------
 
 data <- as.data.frame(t(species))
 colnames(data) <- data[1,]
@@ -617,25 +617,19 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 ## 7 Calculation of CWMs ######################################################
 
 
-trait_ids <- c("1.2.2", "1.6.3", "3.2.3", "4.1.3")
-
-GIFT::GIFT_traits_meta() %>%
-  filter(Lvl3 %in% trait_ids) %>%
-  tibble()
-
 traits_without_trees <- traits %>%
-  filter(is.na(trait_value_1.2.2) | trait_value_1.2.2 != "tree") %>%
+  filter(is.na(growth_form) | growth_form != "tree") %>%
   filter(accepted_name != "Prunus spinosa") %>%
   mutate(
-    trait_value_1.6.3 = log(trait_value_1.6.3),
-    trait_value_3.2.3 = log(trait_value_3.2.3),
-    trait_value_4.1.3 = log(trait_value_4.1.3)
+    plant_height = log(plant_height),
+    see_mass = log(seed_mass),
+    sla = log(sla)
       )
 
 
 ### a CWM Plant height 1.6.3 --------------------------------------------------
 
-traits_height <- traits_without_trees[,c("accepted_name", "trait_value_1.6.3")]
+traits_height <- traits_without_trees[,c("accepted_name", "plant_height")]
 traits_height <- na.omit(traits_height)
 
 species_height <- species[species$accepted_name %in% traits_height$accepted_name, ]
@@ -658,7 +652,7 @@ CWM_Height$id <- row.names(CWM_Height)
 
 ### b CWM Seed mass 3.2.3 -----------------------------------------------------
 
-traits_seed <- traits_without_trees[,c("accepted_name", "trait_value_3.2.3")]
+traits_seed <- traits_without_trees[,c("accepted_name", "seed_mass")]
 traits_seed <- na.omit(traits_seed)
 
 species_seed <- species[species$accepted_name %in% traits_seed$accepted_name, ]
@@ -681,7 +675,7 @@ CWM_Seed$id <- row.names(CWM_Seed)
 
 ### c CWM SLA 4.1.3 -----------------------------------------------------------
 
-traits_SLA <- traits_without_trees[,c("accepted_name", "trait_value_4.1.3")]
+traits_SLA <- traits_without_trees[,c("accepted_name", "sla")]
 traits_SLA <- na.omit(traits_SLA)
 
 species_SLA <- species[species$accepted_name %in% traits_SLA$accepted_name, ]
@@ -745,7 +739,7 @@ obs <- species %>%
      # "Lotus corniculatus" = "Lotus corniculatus var hirsutus"
      # )
   ) %>%
-  filter(!is.na(Cover_Perc)) %>%
+  filter(!is.na(Cover_Perc) & Cover_Perc != 0) %>%
   data.table::as.data.table()
 
 
@@ -813,12 +807,30 @@ source(
 ### c Summary and integration --------------------------------------------------
 
 table(result.classification)
-eval.EUNIS(which(result.classification == "//?")[2], "//?")
+eval.EUNIS(which(result.classification == "H26a")[10], "H26a")
+# H26a (= U27) = Temperate, lowland to montane base-rich scree
+# R = Grassland
+# R18 = Perennial rocky calcareous grassland of subatlantic-submediterranean Europe
+# R1A = Semi-dry perennial calcareous grassland (meadow steppe)
+# R22 = Low and medium altitude hay meadow
+# S22 =  Alpine and subalpine ericoid heath
 
 data <- sites %>%
   mutate(
-    esy = result.classification#,
-    # esy = if_else(id == "X05_xxx", "R1A", esy) # nothing to change
+    esy = result.classification,
+    esy = if_else(id == "X2024res44", "R", esy), # R18
+    esy = if_else(id == "X2024res61", "R", esy), # S22
+    esy = if_else(id == "X2021tum20", "R", esy), # ?
+    esy = if_else(id == "X2024res20", "R1A", esy), # H26a (= U27)
+    esy = if_else(id == "X2024res21", "R", esy),
+    esy = if_else(id == "X2024res06", "R", esy),
+    esy = if_else(id == "X2024res85", "R", esy),
+    esy = if_else(id == "X2024res90", "R", esy),
+    esy = if_else(id == "X2024res75", "R", esy),
+    esy = if_else(id == "X2024res66", "R", esy),
+    esy = if_else(id == "X2024res69", "R", esy),
+    esy = if_else(id == "X2024res78", "R", esy),
+    esy = if_else(id == "X2024res72", "R", esy)
   )
 table(data$esy)
 sites <- data
