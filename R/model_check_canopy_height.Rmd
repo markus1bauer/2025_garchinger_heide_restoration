@@ -142,6 +142,8 @@ m_2 <- m2
 ```{r formulas, collapse = TRUE}
 #m_1@call
 #m_2@call
+m_1
+m_2
 ```
 
 ## Model check
