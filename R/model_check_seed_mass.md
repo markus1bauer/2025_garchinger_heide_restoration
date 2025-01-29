@@ -74,7 +74,13 @@ sites <- read_csv(
       )
     )
   ) %>%
-  rename(y = CWM_Seed)
+  rename(y = CWM_Seed) %>%
+  filter(
+    is.na(location) | location != "Rollfeld" &
+      !(id %in% c(
+        "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
+        )) # Plots with >=10% of Polygonatum odoratum (seed mass = 0.08 g)
+    )
 ```
 
 # Statistics
@@ -87,27 +93,27 @@ sites <- read_csv(
 Rmisc::CI(sites$y, ci = .95)
 ```
 
-    ##       upper        mean       lower 
-    ## 0.004030428 0.003522991 0.003015553
+    ##     upper      mean     lower 
+    ## -6.213159 -6.278489 -6.343818
 
 ``` r
 median(sites$y)
 ```
 
-    ## [1] 0.003133503
+    ## [1] -6.214908
 
 ``` r
 sd(sites$y)
 ```
 
-    ## [1] 0.003229254
+    ## [1] 0.4090089
 
 ``` r
 quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 ```
 
-    ##          5%         95% 
-    ## 0.001468017 0.005170256
+    ##        5%       95% 
+    ## -6.885702 -5.695782
 
 ### Graphs of raw data (Step 2, 6, 7)
 
@@ -118,7 +124,7 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
     ## # A tibble: 4 × 2
     ##   treatment      n
     ##   <fct>      <int>
-    ## 1 control       68
+    ## 1 control       63
     ## 2 cut_summer    30
     ## 3 cut_autumn    30
     ## 4 grazing       30
@@ -156,27 +162,27 @@ m_2 <- m2
 m_1
 ## 
 ## Call:
-## lm(formula = log(y) ~ treatment, data = sites)
+## lm(formula = y ~ treatment, data = sites)
 ## 
 ## Coefficients:
 ##         (Intercept)  treatmentcut_summer     treatmentgrazing  
-##            -5.74086              0.08662             -0.59053  
+##             -6.3727               0.4227              -0.3823  
 ## treatmentcut_autumn  
-##             0.12464
+##              0.4402
 m_2
 ## 
 ## Call:
-## lm(formula = log(y) ~ treatment * cover_vegetation, data = sites)
+## lm(formula = y ~ treatment * cover_vegetation, data = sites)
 ## 
 ## Coefficients:
 ##                          (Intercept)                   treatmentcut_summer  
-##                            -6.250920                              0.608250  
+##                            -7.128437                              1.146526  
 ##                     treatmentgrazing                   treatmentcut_autumn  
-##                            -0.355201                              0.915804  
+##                             0.179087                              1.792961  
 ##                     cover_vegetation  treatmentcut_summer:cover_vegetation  
-##                             0.007395                             -0.007585  
+##                             0.010970                             -0.010449  
 ##    treatmentgrazing:cover_vegetation  treatmentcut_autumn:cover_vegetation  
-##                             0.002843                             -0.011612
+##                            -0.003728                             -0.019926
 ```
 
 ## Model check
@@ -256,10 +262,10 @@ car::vif(m_2)
     ## there are higher-order terms (interactions) in this model
     ## consider setting type = 'predictor'; see ?vif
 
-    ##                                  GVIF Df GVIF^(1/(2*Df))
-    ## treatment                  13283.7591  3        4.866539
-    ## cover_vegetation              11.7061  1        3.421418
-    ## treatment:cover_vegetation  8085.4448  3        4.480062
+    ##                                   GVIF Df GVIF^(1/(2*Df))
+    ## treatment                  13151.56263  3        4.858433
+    ## cover_vegetation              12.03565  1        3.469243
+    ## treatment:cover_vegetation  8030.86572  3        4.475007
 
 ## Model comparison
 
@@ -268,10 +274,10 @@ car::vif(m_2)
 ``` r
 MuMIn::r.squaredGLMM(m_1)
 ##            R2m       R2c
-## [1,] 0.2672342 0.2672342
+## [1,] 0.5534671 0.5534671
 MuMIn::r.squaredGLMM(m_2)
 ##            R2m       R2c
-## [1,] 0.2789503 0.2789503
+## [1,] 0.5923313 0.5923313
 ```
 
 ### AICc
@@ -283,8 +289,8 @@ p. 66 ISBN: 978-0-387-95364-9
 MuMIn::AICc(m_1, m_2) %>%
   arrange(AICc)
 ##     df     AICc
-## m_1  5 184.2076
-## m_2  9 189.2593
+## m_2  9 37.28038
+## m_1  5 44.97988
 ```
 
 ## Predicted values
@@ -297,24 +303,24 @@ summary(m_1)
 
     ## 
     ## Call:
-    ## lm(formula = log(y) ~ treatment, data = sites)
+    ## lm(formula = y ~ treatment, data = sites)
     ## 
     ## Residuals:
     ##      Min       1Q   Median       3Q      Max 
-    ## -1.26494 -0.20112 -0.03209  0.07505  2.03882 
+    ## -1.42483 -0.13714  0.00537  0.18591  0.57502 
     ## 
     ## Coefficients:
     ##                     Estimate Std. Error  t value Pr(>|t|)    
-    ## (Intercept)         -5.74086    0.05152 -111.435  < 2e-16 ***
-    ## treatmentcut_summer  0.08662    0.09311    0.930    0.354    
-    ## treatmentgrazing    -0.59053    0.09311   -6.342  2.4e-09 ***
-    ## treatmentcut_autumn  0.12464    0.09311    1.339    0.183    
+    ## (Intercept)         -6.37271    0.03459 -184.252  < 2e-16 ***
+    ## treatmentcut_summer  0.42266    0.06090    6.941 1.12e-10 ***
+    ## treatmentgrazing    -0.38230    0.06090   -6.278 3.56e-09 ***
+    ## treatmentcut_autumn  0.44019    0.06090    7.229 2.36e-11 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.4248 on 154 degrees of freedom
-    ## Multiple R-squared:  0.271,  Adjusted R-squared:  0.2568 
-    ## F-statistic: 19.09 on 3 and 154 DF,  p-value: 1.414e-10
+    ## Residual standard error: 0.2745 on 149 degrees of freedom
+    ## Multiple R-squared:  0.5584, Adjusted R-squared:  0.5495 
+    ## F-statistic:  62.8 on 3 and 149 DF,  p-value: < 2.2e-16
 
 ### Forest plot
 
@@ -324,7 +330,7 @@ dotwhisker::dwplot(
   ci = 0.95,
   show_intercept = FALSE,
   vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) +
-  xlim(-0.3, 0.35) +
+  xlim(-60, 90) +
   theme_classic()
 ```
 
@@ -337,33 +343,31 @@ necessary.
 
 ``` r
 (emm <- emmeans(
-  m_2,
+  m_1,
   revpairwise ~ treatment,
   type = "response"
   ))
 ```
 
     ## $emmeans
-    ##  treatment  response       SE  df lower.CL upper.CL
-    ##  control     0.00298 0.000235 150  0.00255  0.00349
-    ##  cut_summer  0.00350 0.000275 150  0.00300  0.00409
-    ##  grazing     0.00247 0.000678 150  0.00144  0.00425
-    ##  cut_autumn  0.00376 0.000336 150  0.00315  0.00448
+    ##  treatment  emmean     SE  df lower.CL upper.CL
+    ##  control     -6.37 0.0346 149    -6.44    -6.30
+    ##  cut_summer  -5.95 0.0501 149    -6.05    -5.85
+    ##  grazing     -6.76 0.0501 149    -6.85    -6.66
+    ##  cut_autumn  -5.93 0.0501 149    -6.03    -5.83
     ## 
     ## Confidence level used: 0.95 
-    ## Intervals are back-transformed from the log scale 
     ## 
     ## $contrasts
-    ##  contrast                ratio    SE  df null t.ratio p.value
-    ##  cut_summer / control    1.174 0.131 150    1   1.442  0.4752
-    ##  grazing / control       0.829 0.236 150    1  -0.657  0.9128
-    ##  grazing / cut_summer    0.706 0.201 150    1  -1.221  0.6147
-    ##  cut_autumn / control    1.259 0.150 150    1   1.931  0.2197
-    ##  cut_autumn / cut_summer 1.072 0.128 150    1   0.586  0.9362
-    ##  cut_autumn / grazing    1.518 0.437 150    1   1.449  0.4709
+    ##  contrast                estimate     SE  df t.ratio p.value
+    ##  cut_summer - control      0.4227 0.0609 149   6.941  <.0001
+    ##  grazing - control        -0.3823 0.0609 149  -6.278  <.0001
+    ##  grazing - cut_summer     -0.8050 0.0709 149 -11.356  <.0001
+    ##  cut_autumn - control      0.4402 0.0609 149   7.229  <.0001
+    ##  cut_autumn - cut_summer   0.0175 0.0709 149   0.247  0.9947
+    ##  cut_autumn - grazing      0.8225 0.0709 149  11.604  <.0001
     ## 
-    ## P value adjustment: tukey method for comparing a family of 4 estimates 
-    ## Tests are performed on the log scale
+    ## P value adjustment: tukey method for comparing a family of 4 estimates
 
 ``` r
 plot(emm, comparison = TRUE)

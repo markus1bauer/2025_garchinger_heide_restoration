@@ -35,7 +35,13 @@ sites <- read_csv(
       treatment = "f"
     )
 ) %>%
-  rename(y = CWM_Seed)
+  rename(y = CWM_Seed) %>%
+  filter(
+    is.na(location) | location != "Rollfeld" &
+      !(id %in% c(
+        "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
+        ))
+    ) 
 
 
 
@@ -61,8 +67,15 @@ ggplot(sites, aes(y = y, x = cover_vegetation)) +
 
 sites %>% group_by(treatment) %>% count(treatment)
 ggplot(sites, aes(x = treatment, y = y)) + geom_quasirandom()
-ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .001)
+ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .1)
 ggplot(sites, aes(x = y)) + geom_density()
+# ID with >= 10% of Polygonatum odoratum (seed mass = 0.08 g):
+# X2021tum03
+# X2021tum27
+# X2021tum43
+# X2021tum48
+# X2021tum51
+
 
 
 ### c Check collinearity ------------------------------------------------------
@@ -82,40 +95,23 @@ sites %>%
 
 ### a Random structure ---------------------------------------------------------
 
-m1a <- blmer(
-  y ~ 1 + (1 | patch), data = sites, REML = TRUE
-)
-
-MuMIn::AICc(m1a) %>%
-  arrange(AICc)
-
 
 ### b Fixed effects ------------------------------------------------------------
 
-m1 <- blmer(
-  y ~ treatment + (1 | patch),
-  REML = FALSE,
-  control = lmerControl(optimizer = "Nelder_Mead"),
-  cov.prior = wishart,
-  data = sites
-)
-
 m1 <- lm(
-  log(y) ~ treatment,
+  y ~ treatment,
   data = sites
 )
 simulateResiduals(m1, plot = TRUE)
 
 m2 <- lm(
-  log(y) ~ treatment * cover_vegetation,
+  y ~ treatment * cover_vegetation,
   data = sites
 )
 simulateResiduals(m2, plot = TRUE)
 
 
-
 ### d Save ---------------------------------------------------------------------
-
 
 save(m1, file = here("outputs", "models", "model_seed_mass_1.Rdata"))
 save(m2, file = here("outputs", "models", "model_seed_mass_2.Rdata"))
