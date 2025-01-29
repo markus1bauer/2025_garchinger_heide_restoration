@@ -54,6 +54,7 @@ sites <- read_csv(
     )
 ) %>%
   rename(y = CWM_Height) %>%
+  filter(is.na(location) | location != "Rollfeld") %>%
   mutate(
     treatment = fct_recode(
       treatment, "Control" = "control", "Mowing\nsummer" = "cut_summer",
@@ -62,8 +63,8 @@ sites <- read_csv(
     )
 
 ### * Model ####
-load(file = here("outputs", "models", "model_height_1.Rdata"))
-m <- m1
+load(file = here("outputs", "models", "model_plant_height_2.Rdata"))
+m <- m2
 m #m@call
 
 
@@ -95,7 +96,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16, color = "grey70"
     ) +
     geom_hline(
-      yintercept = c(0.2569, 0.2448, 0.2691),
+      yintercept = c(0.2198491, 0.2029876, 0.2367106),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
@@ -109,6 +110,10 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
+    annotate("text", label = "a", x = 1, y = .7) +
+    annotate("text", label = "b", x = 2, y = .7) +
+    annotate("text", label = "b", x = 3, y = .7) +
+    annotate("text", label = "a", x = 4, y = .7) +
     scale_y_continuous(limits = c(0, .7), breaks = seq(-100, 400, .1)) +
     labs(x = "",
          y = expression(
