@@ -1,7 +1,7 @@
 Garchinger Heide and restoration sites: <br> Canopy height
 ================
 <b>Markus Bauer</b> <br>
-<b>2025-01-28</b>
+<b>2025-01-29</b>
 
 - [Preparation](#preparation)
 - [Statistics](#statistics)
@@ -111,7 +111,7 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 
 ### Graphs of raw data (Step 2, 6, 7)
 
-![](model_check_height_files/figure-gfm/data-exploration-1.png)<!-- -->![](model_check_height_files/figure-gfm/data-exploration-2.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/data-exploration-1.png)<!-- -->![](model_check_canopy_height_files/figure-gfm/data-exploration-2.png)<!-- -->
 
 ### Outliers, zero-inflation, transformations? (Step 1, 3, 4)
 
@@ -123,7 +123,7 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
     ## 3 cut_autumn    30
     ## 4 grazing       30
 
-![](model_check_height_files/figure-gfm/outliers-1.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/outliers-1.png)<!-- -->
 
 ### Check collinearity part 1 (Step 5)
 
@@ -137,7 +137,7 @@ sites %>%
   theme(strip.text = element_text(size = 7))
 ```
 
-![](model_check_height_files/figure-gfm/collinearity-1.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/collinearity-1.png)<!-- -->
 
 ## Models
 
@@ -153,6 +153,30 @@ m_2 <- m2
 ``` r
 #m_1@call
 #m_2@call
+m_1
+## 
+## Call:
+## lm(formula = y ~ treatment, data = sites)
+## 
+## Coefficients:
+##         (Intercept)  treatmentcut_autumn  treatmentcut_summer  
+##              0.2570               0.2166               0.2163  
+##    treatmentgrazing  
+##             -0.0194
+m_2
+## 
+## Call:
+## lm(formula = y ~ treatment * cover_vegetation, data = sites)
+## 
+## Coefficients:
+##                          (Intercept)                   treatmentcut_autumn  
+##                            -0.001208                              0.430536  
+##                  treatmentcut_summer                      treatmentgrazing  
+##                             0.477861                              0.207211  
+##                     cover_vegetation  treatmentcut_autumn:cover_vegetation  
+##                             0.003744                             -0.003080  
+## treatmentcut_summer:cover_vegetation     treatmentgrazing:cover_vegetation  
+##                            -0.003799                             -0.002566
 ```
 
 ## Model check
@@ -163,51 +187,61 @@ m_2 <- m2
 simulation_output_1 <- simulateResiduals(m_1, plot = TRUE)
 ```
 
-![](model_check_height_files/figure-gfm/dharma_all-1.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_all-1.png)<!-- -->
 
 ``` r
 simulation_output_2 <- simulateResiduals(m_2, plot = TRUE)
 ```
 
-![](model_check_height_files/figure-gfm/dharma_all-2.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_all-2.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$treatment)
 ```
 
-![](model_check_height_files/figure-gfm/dharma_single-1.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_single-1.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$treatment)
 ```
 
-![](model_check_height_files/figure-gfm/dharma_single-2.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_single-2.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$cover_vegetation)
-## Warning in newton(lsp = lsp, X = G$X, y = G$y, Eb = G$Eb, UrS = G$UrS, L = G$L,
-## : Anpassung beendet mit Schrittweitenfehler - Ergebnisse sorgfältig prüfen
 ```
 
-![](model_check_height_files/figure-gfm/dharma_single-3.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_single-3.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$cover_vegetation)
 ```
 
-![](model_check_height_files/figure-gfm/dharma_single-4.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_single-4.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$height_vegetation)
 ```
 
-![](model_check_height_files/figure-gfm/dharma_single-5.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_single-5.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$height_vegetation)
 ```
 
-![](model_check_height_files/figure-gfm/dharma_single-6.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/dharma_single-6.png)<!-- -->
+
+``` r
+plotResiduals(simulation_output_1$scaledResiduals, sites$botanist)
+```
+
+![](model_check_canopy_height_files/figure-gfm/dharma_single-7.png)<!-- -->
+
+``` r
+plotResiduals(simulation_output_2$scaledResiduals, sites$botanist)
+```
+
+![](model_check_canopy_height_files/figure-gfm/dharma_single-8.png)<!-- -->
 
 ### Check collinearity part 2 (Step 5)
 
@@ -298,7 +332,7 @@ dotwhisker::dwplot(
   theme_classic()
 ```
 
-![](model_check_height_files/figure-gfm/predicted_values-1.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/predicted_values-1.png)<!-- -->
 
 ### Effect sizes
 
@@ -337,7 +371,7 @@ necessary.
 plot(emm, comparison = TRUE)
 ```
 
-![](model_check_height_files/figure-gfm/effect-sizes-1.png)<!-- -->
+![](model_check_canopy_height_files/figure-gfm/effect-sizes-1.png)<!-- -->
 
 # Session info
 

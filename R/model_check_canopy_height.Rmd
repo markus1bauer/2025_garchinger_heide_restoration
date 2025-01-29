@@ -155,13 +155,15 @@ simulation_output_1 <- simulateResiduals(m_1, plot = TRUE)
 simulation_output_2 <- simulateResiduals(m_2, plot = TRUE)
 ```
 
-```{r dharma_single, collapse = TRUE, fig.height = 3, fig.width = 4.5}
+```{r dharma_single, collapse = TRUE, fig.height = 3, fig.width = 4.5, warning = FALSE}
 plotResiduals(simulation_output_1$scaledResiduals, sites$treatment)
 plotResiduals(simulation_output_2$scaledResiduals, sites$treatment)
 plotResiduals(simulation_output_1$scaledResiduals, sites$cover_vegetation)
 plotResiduals(simulation_output_2$scaledResiduals, sites$cover_vegetation)
 plotResiduals(simulation_output_1$scaledResiduals, sites$height_vegetation)
 plotResiduals(simulation_output_2$scaledResiduals, sites$height_vegetation)
+plotResiduals(simulation_output_1$scaledResiduals, sites$botanist)
+plotResiduals(simulation_output_2$scaledResiduals, sites$botanist)
 ```
 
 ### Check collinearity part 2 (Step 5)
