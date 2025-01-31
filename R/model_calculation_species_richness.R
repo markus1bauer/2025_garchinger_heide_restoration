@@ -37,7 +37,8 @@ sites <- read_csv(
       )
     )
   ) %>%
-  rename(y = richness_total)
+  rename(y = richness_total) %>%
+  filter(is.na(location) | location != "Rollfeld")
 
 
 
@@ -45,9 +46,6 @@ sites <- read_csv(
 # B Statistics #################################################################
 #+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-
-
-## 1 Data exploration ##########################################################
 
 
 ## 1 Data exploration ##########################################################
@@ -89,23 +87,15 @@ sites %>%
 
 ### a Random structure ---------------------------------------------------------
 
-m1a <- blmer(
-  y ~ 1 + (1 | patch), data = sites, REML = TRUE
-)
-
-MuMIn::AICc(m1a) %>%
-  arrange(AICc)
+# m1a <- blmer(
+#   y ~ 1 + (1 | patch), data = sites, REML = TRUE
+# )
+# 
+# MuMIn::AICc(m1a) %>%
+#   arrange(AICc)
 
 
 ### b Fixed effects ------------------------------------------------------------
-
-m1 <- blmer(
-  y ~ treatment + (1 | patch),
-  REML = FALSE,
-  control = lmerControl(optimizer = "Nelder_Mead"),
-  cov.prior = wishart,
-  data = sites
-)
 
 m1 <- lm(
   y ~ treatment,
