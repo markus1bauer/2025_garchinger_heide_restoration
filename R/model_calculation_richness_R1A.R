@@ -1,10 +1,10 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
-# Species richness ####
+# Management Garchinger Heide restoration sites
+# Richness R1A ####
 # Model building
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Sina Appeltauer, Markus Bauer
-# 2024-10-09
+# Markus Bauer
+# 2025-01-28
 
 
 
@@ -32,13 +32,16 @@ sites <- read_csv(
   col_names = TRUE, na = c("na", "NA", ""), col_types =
     cols(
       .default = "?",
-      treatment = col_factor(
-        levels = c("control", "cut_summer", "cut_autumn", "grazing")
-      )
+      treatment = "f"
     )
-  ) %>%
-  rename(y = richness_total) %>%
-  filter(is.na(location) | location != "Rollfeld")
+) %>%
+  rename(y = richness_R1A) %>%
+  filter(
+    is.na(location) | location != "Rollfeld" &
+      !(id %in% c(
+        "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
+      ))
+  ) 
 
 
 
@@ -55,9 +58,6 @@ sites <- read_csv(
 
 ggplot(sites, aes(y = y, x = treatment)) +
   geom_quasirandom(color = "grey") + geom_boxplot(fill = "transparent")
-ggplot(sites, aes(y = y, x = height_vegetation)) +
-  geom_quasirandom(color = "grey") + geom_smooth(method = "lm") +
-  facet_grid(~treatment)
 ggplot(sites, aes(y = y, x = cover_vegetation)) +
   geom_quasirandom(color = "grey") + geom_smooth(method = "lm") +
   facet_grid(~treatment)
@@ -67,8 +67,15 @@ ggplot(sites, aes(y = y, x = cover_vegetation)) +
 
 sites %>% group_by(treatment) %>% count(treatment)
 ggplot(sites, aes(x = treatment, y = y)) + geom_quasirandom()
-ggplot(sites, aes(x = y)) + geom_histogram(binwidth = 1)
+ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .1)
 ggplot(sites, aes(x = y)) + geom_density()
+# ID with >= 10% of Polygonatum odoratum (seed mass = 0.08 g):
+# X2021tum03
+# X2021tum27
+# X2021tum43
+# X2021tum48
+# X2021tum51
+
 
 
 ### c Check collinearity ------------------------------------------------------
@@ -82,17 +89,11 @@ sites %>%
 # https://doi.org/10.1111/j.1600-0587.2012.07348.x
 
 
+
 ## 2 Model building ###########################################################
 
 
 ### a Random structure ---------------------------------------------------------
-
-# m1a <- blmer(
-#   y ~ 1 + (1 | patch), data = sites, REML = TRUE
-# )
-# 
-# MuMIn::AICc(m1a) %>%
-#   arrange(AICc)
 
 
 ### b Fixed effects ------------------------------------------------------------
@@ -104,7 +105,7 @@ m1 <- lm(
 simulateResiduals(m1, plot = TRUE)
 
 m2 <- lm(
-  y ~ treatment + cover_vegetation,
+  y ~ treatment * cover_vegetation,
   data = sites
 )
 simulateResiduals(m2, plot = TRUE)
@@ -112,6 +113,6 @@ simulateResiduals(m2, plot = TRUE)
 
 ### d Save ---------------------------------------------------------------------
 
+save(m1, file = here("outputs", "models", "model_seed_mass_1.Rdata"))
+save(m2, file = here("outputs", "models", "model_seed_mass_2.Rdata"))
 
-save(m1, file = here("outputs", "models", "model_species_richness_1.Rdata"))
-save(m2, file = here("outputs", "models", "model_species_richness_2.Rdata"))
