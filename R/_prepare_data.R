@@ -17,6 +17,7 @@ library(TNRS)
 library(GIFT)
 library(FD)
 library(vegan)
+library(adespatial)
 library(indicspecies)
 
 ### Start ###
@@ -89,7 +90,9 @@ coordinates_restoration <- read_csv(
   col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
 ) %>%
   mutate(
-    id = paste0("X2024", plot)
+    id = paste0("X2024", plot),
+    longitude = longitude / 100000,
+    latitude = latitude / 100000
   ) %>%
   select(id, plot, latitude, longitude)
 
@@ -835,11 +838,57 @@ data <- sites %>%
 table(data$esy)
 sites <- data
 
-rm(list = setdiff(ls(), c("species", "sites", "traits")))
+rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 9 Species ##################################################################
+## 9 dbMEM: Distance-based Moran's eigenvector maps ############################
+
+
+# Borcard et al. (2018) Numerical Ecology https://doi.org/10.1007/978-1-4419-7976-6
+# function 'quickMEM' from Numerical Ecology textbook:
+
+source("https://raw.githubusercontent.com/zdealveindy/anadat-r/master/scripts/NumEcolR2/quickMEM.R")
+data_sites <- sites %>%
+  filter(location != "rollfeld" | is.na(location)) %>%
+  left_join(coordinates, by = "id") %>%
+  select(id, longitude, latitude) %>%
+  arrange(id)
+  
+data_species <- species %>%
+  pivot_longer(-accepted_name, names_to = "id", values_to = "value") %>%
+  pivot_wider(id_cols = id, names_from = "accepted_name", values_from = "value") %>%
+  arrange(id) %>%
+  semi_join(data_sites, by = "id") %>%
+  column_to_rownames(var = "id") %>%
+  decostand("hellinger")
+
+data_sites <- data_sites %>%
+  column_to_rownames("id")
+
+m <- quickMEM(
+  data_species, data_sites,
+  alpha = 0.05,
+  method = "fwd",
+  rangexy = TRUE,
+  perm.max = 9999
+)
+
+# OUTPUT (2025-02-06)
+# Truncation level = 2.397639 
+# Time to compute dbMEMs = 0.030000  sec 
+# 
+# ------------------------------------------------------------------
+#   *** Procedure stopped ***
+#   p-value of global test:  0.2556
+# No significant spatial structure detected by global dbMEM analysis.
+# Selection of dbMEM variables would lead to spurious model.
+# ------------------------------------------------------------------
+
+
+
+## 10 Species ##################################################################
+
 
 # species_pa <- species
 # species_pa[,-1] <- ifelse(species[, -1] > 0, 1, 0) 
