@@ -37,11 +37,8 @@ sites <- read_csv(
 ) %>%
   rename(y = evenness) %>%
   filter(
-    is.na(location) | location != "Rollfeld" &
-      !(id %in% c(
-        "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
-      ))
-  ) 
+    is.na(location) | location != "Rollfeld")
+
 
 
 
@@ -69,12 +66,6 @@ sites %>% group_by(treatment) %>% count(treatment)
 ggplot(sites, aes(x = treatment, y = y)) + geom_quasirandom()
 ggplot(sites, aes(x = y)) + geom_histogram(binwidth = .1)
 ggplot(sites, aes(x = y)) + geom_density()
-# ID with >= 10% of Polygonatum odoratum (seed mass = 0.08 g):
-# X2021tum03
-# X2021tum27
-# X2021tum43
-# X2021tum48
-# X2021tum51
 
 
 
@@ -113,5 +104,5 @@ simulateResiduals(m2, plot = TRUE)
 
 ### d Save ---------------------------------------------------------------------
 
-save(m1, file = here("outputs", "models", "model_seed_mass_1.Rdata"))
-save(m2, file = here("outputs", "models", "model_seed_mass_2.Rdata"))
+save(m1, file = here("outputs", "models", "model_evenness_1.Rdata"))
+save(m2, file = here("outputs", "models", "model_evenness_2.Rdata"))
