@@ -88,11 +88,11 @@ data_model <- ggeffect(
 data <- sites %>%
   rename(predicted = y, x = treatment)
 
-(graph_a <- ggplot() +
+(graph_d <- ggplot() +
     geom_quasirandom(
       data = data,
-      aes(x = x, predicted),
-      dodge.width = .6, size = 1, shape = 16, color = "grey70"
+      aes(x = x, predicted, color = x),
+      dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
       yintercept = c(21.162, 20.325, 21.998),
@@ -109,10 +109,18 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    scale_y_continuous(limits = c(0, 50), breaks = seq(-100, 400, 5)) +
+    annotate("text", label = "a", x = 1, y = 35) +
+    annotate("text", label = "b", x = 2, y = 35) +
+    annotate("text", label = "b", x = 3, y = 35) +
+    annotate("text", label = "c", x = 4, y = 35) +
+    scale_y_continuous(limits = c(0, 35), breaks = seq(-100, 400, 5)) +
+    scale_color_manual(values = c("Reference" = "#f947d1", 
+                                  "Mowing\nsummer" = "#61a161", 
+                                  "Mowing\nautumn" = "#87ceeb", 
+                                  "Topsoil\nremoval" = "#b06e13")) +
     labs(x = "",
          y = expression(
-           Species ~ richness ~ "[" * 'sp./4m²' * "]")
+           Red ~ List ~ species ~ (Germany) ~ "[" * 'sp./4m²' * "]")
     ) +
     theme_mb())
 
