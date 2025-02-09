@@ -57,8 +57,8 @@ sites <- read_csv(
   filter(is.na(location) | location != "Rollfeld") %>%
   mutate(
     treatment = fct_recode(
-      treatment, "Control" = "control", "Mowing\nsummer" = "cut_summer",
-      "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
+      treatment, "Reference" = "control", "Mowing\nsummer" = "cut_summer",
+      "Mowing\nautumn" = "cut_autumn", "Topsoil\nremoval" = "grazing"
       )
     )
 
@@ -80,8 +80,8 @@ data_model <- ggeffect(
   ) %>%
   mutate(
     x = fct_recode(
-      x, "Control" = "control", "Mowing\nsummer" = "cut_summer",
-      "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
+      x, "Reference" = "control", "Mowing\nsummer" = "cut_summer",
+      "Mowing\nautumn" = "cut_autumn", "Topsoil\nremoval" = "grazing"
     )
   ) %>%
   slice(1:4)
