@@ -20,27 +20,27 @@ knitr::opts_chunk$set(
   )
 ```
 
-<br/>
-<br/>
-<b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren Teschauer</b> & <b>Markus Bauer</b>*
+<br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
+Teschauer</b> & <b>Markus Bauer</b>\*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
 
-*[markus1.bauer\@tum.de](mailto:markus1.bauer@tum.de)
+\*[markus1.bauer\@tum.de](mailto:markus1.bauer@tum.de)
 
 ORCiD ID: [0000-0001-5372-4174](https://orcid.org/0000-0001-5372-4174)
-<br>
-[Google Scholar](https://scholar.google.de/citations?user=oHhmOkkAAAAJ&hl=de&oi=ao)
-<br>
-GitHub: [markus1bauer](https://github.com/markus1bauer)
+<br> [Google
+Scholar](https://scholar.google.de/citations?user=oHhmOkkAAAAJ&hl=de&oi=ao)
+<br> GitHub: [markus1bauer](https://github.com/markus1bauer)
 
 To compare different models, you only have to change the models in
 section 'Load models'
 
 # Preparation
 
-Protocol of data exploration (Steps 1-8) used from Zuur et al. (2010) Methods Ecol Evol [DOI: 10.1111/2041-210X.12577](https://doi.org/10.1111/2041-210X.12577)
+Protocol of data exploration (Steps 1-8) used from Zuur et al. (2010)
+Methods Ecol Evol [DOI:
+10.1111/2041-210X.12577](https://doi.org/10.1111/2041-210X.12577)
 
 #### Packages
 
@@ -118,9 +118,8 @@ plot4 <- ggplot(sites, aes(x = log(y))) +
 
 ### Check collinearity part 1 (Step 5)
 
-Exclude r > 0.7
-<br>
-Dormann et al. 2013 Ecography [DOI: 10.1111/j.1600-0587.2012.07348.x](https://doi.org/10.1111/j.1600-0587.2012.07348.x)
+Exclude r \> 0.7 <br> Dormann et al. 2013 Ecography [DOI:
+10.1111/j.1600-0587.2012.07348.x](https://doi.org/10.1111/j.1600-0587.2012.07348.x)
 
 ```{r collinearity, warning = FALSE, message = FALSE}
 sites %>%
@@ -169,9 +168,8 @@ plotResiduals(simulation_output_2$scaledResiduals, sites$botanist)
 
 ### Check collinearity part 2 (Step 5)
 
-Remove VIF > 3 or > 10
-<br>
-Zuur et al. 2010 Methods Ecol Evol [DOI: 10.1111/j.2041-210X.2009.00001.x](https://doi.org/10.1111/j.2041-210X.2009.00001.x)
+Remove VIF \> 3 or \> 10 <br> Zuur et al. 2010 Methods Ecol Evol [DOI:
+10.1111/j.2041-210X.2009.00001.x](https://doi.org/10.1111/j.2041-210X.2009.00001.x)
 
 ```{r vif}
 #car::vif(m_1)
@@ -189,10 +187,8 @@ MuMIn::r.squaredGLMM(m_2)
 
 ### AICc
 
-Use AICc and not AIC since ratio n/K < 40
-<br>
-Burnahm & Anderson 2002 p. 66
-ISBN: 978-0-387-95364-9
+Use AICc and not AIC since ratio n/K \< 40 <br> Burnahm & Anderson 2002
+p. 66 ISBN: 978-0-387-95364-9
 
 ```{r aicc, collapse = TRUE}
 MuMIn::AICc(m_1, m_2) %>%
