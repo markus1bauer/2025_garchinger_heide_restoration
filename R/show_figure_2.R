@@ -37,6 +37,6 @@ rm(list = setdiff(ls(), c("graph_a", "graph_b", "graph_c", "graph_d")))
 
 ### Save ###
 ggsave(
-  here("outputs", "figures", "figure_3_800dpi_17x15cm.tiff"),
+  here("outputs", "figures", "figure_2_800dpi_17x15cm.tiff"),
   dpi = 800, width = 17, height = 15, units = "cm"
 )

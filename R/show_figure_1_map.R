@@ -77,7 +77,7 @@ ggplot() +
   #   angle = 345, color = "#38afcd"
   # ) +
   coord_sf(xlim = c(0, 19), ylim = c(44, 55)) +
-  geom_point(aes(x = 11.65286, y = 48.29032), size = .3) +
+  geom_point(aes(x = 11.65286, y = 48.29032), size = .3, color = "red") +
   geom_label(aes(x = 13.365, y = 52.523), label = "B", shape = 0, size = 1.2) +
   geom_label(aes(x = 2.3442, y = 48.8543), label = "P", shape = 0, size = 1.2) +
   geom_label(aes(x = 16.3882, y = 48.21), label = "V", shape = 0, size = 1.2) +
@@ -87,7 +87,7 @@ ggplot() +
   )
 
 ggsave(
-  "figure_1_map_ggplot_300dpi_2x2cm.tiff",
-  dpi = 300, width = 2, height = 2, units = "cm",
+  "figure_1_map_ggplot_800dpi_2x2cm.tiff",
+  dpi = 800, width = 2, height = 2, units = "cm",
   path = here("outputs", "figures")
 )
