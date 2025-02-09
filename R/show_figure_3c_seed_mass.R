@@ -62,8 +62,8 @@ sites <- read_csv(
       treatment, "control", "cut_summer", "cut_autumn", "grazing"
       ),
     treatment = fct_recode(
-      treatment, "Control" = "control", "Mowing\nsummer" = "cut_summer",
-      "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
+      treatment, "Reference" = "control", "Mowing\nsummer" = "cut_summer",
+      "Mowing\nautumn" = "cut_autumn", "Topsoil\nremoval" = "grazing"
       )
     )
 
@@ -85,8 +85,8 @@ data_model <- ggeffect(
   ) %>%
   mutate(
     x = fct_recode(
-      x, "Control" = "control", "Mowing\nsummer" = "cut_summer",
-      "Mowing\nautumn" = "cut_autumn", "Grazing\nTopsoil\nremoval" = "grazing"
+      x, "Reference" = "control", "Mowing\nsummer" = "cut_summer",
+      "Mowing\nautumn" = "cut_autumn", "Topsoil\nremoval" = "grazing"
     )
   ) %>%
   mutate(
@@ -132,6 +132,6 @@ data <- sites %>%
 
 ### Save ###
 ggsave(
-  here("outputs", "figures", "figure_3c_800dpi_8x8cm.tiff"),
+  here("outputs", "figures", "figure_3c_Seed_mass_800dpi_8x8cm.tiff"),
   dpi = 800, width = 8, height = 8, units = "cm"
   )
