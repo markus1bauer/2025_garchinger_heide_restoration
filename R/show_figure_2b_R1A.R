@@ -88,11 +88,11 @@ data_model <- ggeffect(
 data <- sites %>%
   rename(predicted = y, x = treatment)
 
-(graph_a <- ggplot() +
+(graph_b <- ggplot() +
     geom_quasirandom(
       data = data,
-      aes(x = x, predicted),
-      dodge.width = .6, size = 1, shape = 16, color = "grey70"
+      aes(x = x, predicted, color = x),
+      dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
       yintercept = c(12.515, 11.761, 13.268),
@@ -109,7 +109,15 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
+    annotate("text", label = "a", x = 1, y = 25) +
+    annotate("text", label = "a", x = 2, y = 25) +
+    annotate("text", label = "a", x = 3, y = 25) +
+    annotate("text", label = "b", x = 4, y = 25) +
     scale_y_continuous(limits = c(0, 25), breaks = seq(-100, 400, 5)) +
+    scale_color_manual(values = c("Reference" = "#f947d1", 
+                                  "Mowing\nsummer" = "#61a161", 
+                                  "Mowing\nautumn" = "#87ceeb", 
+                                  "Topsoil\nremoval" = "#b06e13")) +
     labs(x = "",
          y = expression(
            Indicator ~ species ~ R1A ~ "[" * 'sp./4m²' * "]")
