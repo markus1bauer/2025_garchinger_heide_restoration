@@ -3,7 +3,7 @@
 # SLA ####
 # Show figure 3a
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Markus Bauer
+# sina Appeltauer
 # 2025-01-28
 
 
@@ -28,11 +28,11 @@ rm(list = setdiff(ls(), c("graph_a", "graph_b", "graph_c", "graph_d")))
 theme_mb <- function() {
   theme(
     panel.background = element_rect(fill = "white"),
-    text = element_text(size = 9, color = "black"),
+    text = element_text(size = 8.5, color = "black"),
     strip.text = element_text(size = 10),
-    axis.text = element_text(angle = 0, hjust = 0.5, size = 9,
+    axis.text = element_text(angle = 0, hjust = 0.5, size = 8.5,
                              color = "black"),
-    axis.title = element_text(angle = 0, hjust = 0.5, size = 9,
+    axis.title = element_text(angle = 0, hjust = 0.5, size = 8.5,
                               color = "black"),
     axis.line = element_line(),
     legend.key = element_rect(fill = "white"),
@@ -54,7 +54,7 @@ sites <- read_csv(
     )
 ) %>%
   rename(y = CWM_SLA) %>%
-  filter(is.na(location) | location != "Rollfeld") %>%
+  filter(is.na(location) | location != "rollfeld") %>%
   mutate(
     treatment = fct_recode(
       treatment, "Reference" = "control", "Mowing\nsummer" = "cut_summer",
@@ -89,16 +89,16 @@ data_model <- ggeffect(
 data <- sites %>%
   rename(predicted = y, x = treatment)
 
-(graph_b <- ggplot() +
+(graph_a <- ggplot() +
     geom_quasirandom(
       data = data,
-      aes(x = x, predicted),
-      dodge.width = .6, size = 1, shape = 16, color = "grey70"
+      aes(x = x, predicted, color = x),
+      dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
       yintercept = c(5.299, 5.284, 5.314),
       linetype = c(1, 2, 2),
-      color = "grey70"
+      color = "gray70"
     ) +
     geom_errorbar(
       data = data_model,
@@ -110,12 +110,16 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    annotate("text", label = "a", x = 1, y = .7) +
-    annotate("text", label = "b", x = 2, y = .7) +
-    annotate("text", label = "b", x = 3, y = .7) +
-    annotate("text", label = "a", x = 4, y = .7) +
-    scale_y_continuous(limits = c(0, .7), breaks = seq(-100, 400, .1)) +
-    labs(x = "", y = expression(CWM ~ SLA ~ "[" * cm/g * "]")) +
+    annotate("text", label = "a", x = 1, y = 5.55) +
+    annotate("text", label = "a", x = 2, y = 5.55) +
+    annotate("text", label = "a", x = 3, y = 5.55) +
+    annotate("text", label = "b", x = 4, y = 5.55) +
+    scale_y_continuous(limits = c(5, 5.55), breaks = seq(-100, 400, .1)) +
+    scale_color_manual(values = c("Reference" = "#f947d1", 
+                                  "Mowing\nsummer" = "#61a161", 
+                                  "Mowing\nautumn" = "#87ceeb", 
+                                  "Topsoil\nremoval" = "#b06e13")) +
+    labs(x = "", y = expression(CWM ~ SLA ~ "[" * cm^2/g * "]")) +
     theme_mb())
 
 ### Save ###
