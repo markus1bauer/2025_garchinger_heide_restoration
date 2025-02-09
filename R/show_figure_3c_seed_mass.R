@@ -30,9 +30,9 @@ theme_mb <- function() {
     panel.background = element_rect(fill = "white"),
     text = element_text(size = 9, color = "black"),
     strip.text = element_text(size = 10),
-    axis.text = element_text(angle = 0, hjust = 0.5, size = 9,
+    axis.text = element_text(angle = 0, hjust = 0.5, size = 8.5,
                              color = "black"),
-    axis.title = element_text(angle = 0, hjust = 0.5, size = 9,
+    axis.title = element_text(angle = 0, hjust = 0.5, size = 8.5,
                               color = "black"),
     axis.line = element_line(),
     legend.key = element_rect(fill = "white"),
@@ -52,7 +52,7 @@ sites <- read_csv(
 ) %>%
   rename(y = CWM_Seed) %>%
   filter(
-    is.na(location) | location != "Rollfeld" &
+    is.na(location) | location != "rollfeld" &
       !(id %in% c(
         "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
       )) # Plots with >=10% of Polygonatum odoratum (seed mass = 0.08 g)
@@ -90,24 +90,24 @@ data_model <- ggeffect(
     )
   ) %>%
   mutate(
-    predicted = exp(predicted) * 100,
-    conf.low = exp(conf.low) * 100,
-    conf.high = exp(conf.high) * 100
+    predicted = exp(predicted),
+    conf.low = exp(conf.low),
+    conf.high = exp(conf.high)
   ) %>%
   slice(1:4)
 
 data <- sites %>%
-  mutate(y = exp(y) * 100) %>%
+  mutate(y = exp(y)) %>%
   rename(predicted = y, x = treatment)
 
 (graph_c <- ggplot() +
     geom_quasirandom(
       data = data,
-      aes(x = x, predicted),
-      dodge.width = .6, size = 1, shape = 16, color = "grey70"
+      aes(x = x, predicted, color = x),
+      dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
-      yintercept = c(0.1707518, 0.1594717, 0.1828297),
+      yintercept = c(0.200, 0.197, 0.203),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
@@ -125,7 +125,11 @@ data <- sites %>%
     annotate("text", label = "b", x = 2, y = .4) +
     annotate("text", label = "b", x = 3, y = .4) +
     annotate("text", label = "c", x = 4, y = .4) +
-    scale_y_continuous(limits = c(0, .4), breaks = seq(-100, 400, .1)) +
+    scale_y_continuous(limits = c(0, .004), breaks = seq(-100, 400, .1)) +
+    scale_color_manual(values = c("Reference" = "#f947d1", 
+                                  "Mowing\nsummer" = "#61a161", 
+                                  "Mowing\nautumn" = "#87ceeb", 
+                                  "Topsoil\nremoval" = "#b06e13")) +
     labs(x = "", y = expression(CWM ~ seed ~ mass ~ "[" * mg * "]")
     ) +
     theme_mb())
