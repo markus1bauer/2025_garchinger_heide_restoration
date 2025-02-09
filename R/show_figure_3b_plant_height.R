@@ -28,11 +28,11 @@ rm(list = setdiff(ls(), c("graph_a", "graph_b", "graph_c", "graph_d")))
 theme_mb <- function() {
   theme(
     panel.background = element_rect(fill = "white"),
-    text = element_text(size = 9, color = "black"),
+    text = element_text(size = 8.5, color = "black"),
     strip.text = element_text(size = 10),
-    axis.text = element_text(angle = 0, hjust = 0.5, size = 9,
+    axis.text = element_text(angle = 0, hjust = 0.5, size = 8.5,
                              color = "black"),
-    axis.title = element_text(angle = 0, hjust = 0.5, size = 9,
+    axis.title = element_text(angle = 0, hjust = 0.5, size = 8.5,
                               color = "black"),
     axis.line = element_line(),
     legend.key = element_rect(fill = "white"),
@@ -92,8 +92,8 @@ data <- sites %>%
 (graph_b <- ggplot() +
     geom_quasirandom(
       data = data,
-      aes(x = x, predicted),
-      dodge.width = .6, size = 1, shape = 16, color = "grey70"
+      aes(x = x, predicted, color = x),
+      dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
       yintercept = c(0.2569847, 0.2448479, 0.2691215),
@@ -115,6 +115,10 @@ data <- sites %>%
     annotate("text", label = "b", x = 3, y = .7) +
     annotate("text", label = "a", x = 4, y = .7) +
     scale_y_continuous(limits = c(0, .7), breaks = seq(-100, 400, .1)) +
+    scale_color_manual(values = c("Reference" = "#f947d1", 
+                                  "Mowing\nsummer" = "#61a161", 
+                                  "Mowing\nautumn" = "#87ceeb", 
+                                  "Topsoil\nremoval" = "#b06e13")) +
     labs(x = "",
          y = expression(
            CWM ~ canopy ~ height ~ "[" * m * "]")
