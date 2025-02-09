@@ -587,6 +587,8 @@ full_richness <- full_join(richness_total, richness_R1A, by = "plot_id") %>%
 sites <- sites %>%
   left_join(full_richness, by = "id")
 
+sites$rlg <- sites$rlg_CR + sites$rlg_EN + sites$rlg_VU + sites$rlg_NT
+
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
