@@ -123,10 +123,15 @@ data <- sites %>%
          y = expression(
            CWM ~ canopy ~ height ~ "[" * m * "]")
     ) +
-    theme_mb())
+    theme_mb() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.line.x = element_blank()
+    ))
 
 ### Save ###
 ggsave(
-  here("outputs", "figures", "figure_3b_Plant_height_800dpi_8x8cm.tiff"),
+  here("outputs", "figures", "figure_3b_plant_height_800dpi_8x8cm.tiff"),
   dpi = 800, width = 8, height = 8, units = "cm"
   )
