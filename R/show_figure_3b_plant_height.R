@@ -54,7 +54,7 @@ sites <- read_csv(
     )
 ) %>%
   rename(y = CWM_Height) %>%
-  filter(is.na(location) | location != "Rollfeld") %>%
+  filter(is.na(location) | location != "rollfeld") %>%
   mutate(
     treatment = fct_recode(
       treatment, "Reference" = "control", "Mowing\nsummer" = "cut_summer",
@@ -96,7 +96,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
-      yintercept = c(0.2569847, 0.2448479, 0.2691215),
+      yintercept = c(0.266, 0.255, 0.278),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +

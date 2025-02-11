@@ -51,6 +51,7 @@ sites <- read_csv(
   )
 ) %>%
   rename(y = richness_R1A) %>%
+  filter(is.na(location) | location != "rollfeld") %>%
   mutate(
     treatment = fct_relevel(
       treatment, "control", "cut_summer", "cut_autumn", "grazing"
@@ -95,7 +96,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
-      yintercept = c(12.515, 11.761, 13.268),
+      yintercept = c(12.98, 12.23, 13.73),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
