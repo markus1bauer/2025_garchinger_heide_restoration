@@ -120,7 +120,7 @@ data <- sites %>%
     annotate("text", label = "a", x = 2, y = 250) +
     annotate("text", label = "a", x = 3, y = 250) +
     annotate("text", label = "b", x = 4, y = 250) +
-    scale_y_continuous(limits = c(150, 253), breaks = seq(-100, 400, 50)) +
+    scale_y_continuous(limits = c(150, 253), breaks = seq(-100, 400, 10)) +
     scale_color_manual(
       values = c("Reference" = "#f947d1", 
                  "Mowing\nsummer" = "#61a161", 
