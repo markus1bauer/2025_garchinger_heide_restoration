@@ -37,7 +37,7 @@ sites <- read_csv(
 ) %>%
   rename(y = CWM_SLA) %>%
   filter(
-    is.na(location) | location != "Rollfeld")
+    is.na(location) | location != "rollfeld")
 
 
 

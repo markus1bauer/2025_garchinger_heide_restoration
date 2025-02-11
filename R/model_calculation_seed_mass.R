@@ -37,7 +37,7 @@ sites <- read_csv(
 ) %>%
   rename(y = CWM_Seed) %>%
   filter(
-    is.na(location) | location != "Rollfeld" &
+    is.na(location) | location != "rollfeld" &
       !(id %in% c(
         "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
         ))
