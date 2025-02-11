@@ -107,7 +107,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
-      yintercept = c(1.71, 1.59, 1.83),
+      yintercept = c(1.81, 1.7, 1.92),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
