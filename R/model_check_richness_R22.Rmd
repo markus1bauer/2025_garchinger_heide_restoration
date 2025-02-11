@@ -1,5 +1,5 @@
 ---
-title: "Garchinger Heide and restoration sites: <br> R22"
+title: "Garchinger Heide and restoration sites: <br> R22 indicator richness"
 author: "<b>Markus Bauer, Sina Appeltauer</b> <br>"
 date: "<b>`r format(Sys.time(), '%Y-%m-%d')`</b>"
 output:
