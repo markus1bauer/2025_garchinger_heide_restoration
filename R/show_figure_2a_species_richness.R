@@ -1,7 +1,7 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Garchinger Heide
 # Species richness ####
-# Show figure 2
+# Show figure 2a
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
 # 2025-01-28
@@ -109,23 +109,28 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    annotate("text", label = "a", x = 1, y = 50) +
-    annotate("text", label = "b", x = 2, y = 50) +
-    annotate("text", label = "b", x = 3, y = 50) +
-    annotate("text", label = "c", x = 4, y = 50) +
-    scale_y_continuous(limits = c(0, 50), breaks = seq(-100, 400, 5)) +
+    annotate("text", label = "a", x = 1, y = 48) +
+    annotate("text", label = "b", x = 2, y = 48) +
+    annotate("text", label = "b", x = 3, y = 48) +
+    annotate("text", label = "c", x = 4, y = 48) +
+    scale_y_continuous(limits = c(0, 48), breaks = seq(-100, 400, 5)) +
     scale_color_manual(values = c("Reference" = "#f947d1", 
                                   "Mowing\nsummer" = "#61a161", 
                                   "Mowing\nautumn" = "#87ceeb", 
                                   "Topsoil\nremoval" = "#b06e13")) +
     labs(x = "",
          y = expression(
-           Species ~ richness ~ "[" * 'sp./4m²' * "]")
+           Species ~ richness ~ "[" * '# / 4m²' * "]")
     ) +
-    theme_mb())
+    theme_mb() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.line.x = element_blank()
+    ))
 
 ### Save ###
 ggsave(
-  here("outputs", "figures", "figure_species_richness_800dpi_8x8cm.tiff"),
+  here("outputs", "figures", "figure_2a_species_richness_800dpi_8x8cm.tiff"),
   dpi = 800, width = 8, height = 8, units = "cm"
 )
