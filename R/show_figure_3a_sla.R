@@ -84,9 +84,15 @@ data_model <- ggeffect(
       "Mowing\nautumn" = "cut_autumn", "Topsoil\nremoval" = "grazing"
     )
   ) %>%
+  mutate(
+    predicted = exp(predicted),
+    conf.low = exp(conf.low),
+    conf.high = exp(conf.high)
+  ) %>%
   slice(1:4)
 
 data <- sites %>%
+  mutate(y = exp(y)) %>%
   rename(predicted = y, x = treatment)
 
 (graph_a <- ggplot() +
@@ -96,7 +102,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
-      yintercept = c(5.299, 5.284, 5.314),
+      yintercept = c(202, 199, 205),
       linetype = c(1, 2, 2),
       color = "gray70"
     ) +
@@ -110,20 +116,27 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    annotate("text", label = "a", x = 1, y = 5.55) +
-    annotate("text", label = "a", x = 2, y = 5.55) +
-    annotate("text", label = "a", x = 3, y = 5.55) +
-    annotate("text", label = "b", x = 4, y = 5.55) +
-    scale_y_continuous(limits = c(5, 5.55), breaks = seq(-100, 400, .1)) +
-    scale_color_manual(values = c("Reference" = "#f947d1", 
-                                  "Mowing\nsummer" = "#61a161", 
-                                  "Mowing\nautumn" = "#87ceeb", 
-                                  "Topsoil\nremoval" = "#b06e13")) +
-    labs(x = "", y = expression(CWM ~ SLA ~ "[" * cm^2/g * "]")) +
-    theme_mb())
+    annotate("text", label = "a", x = 1, y = 250) +
+    annotate("text", label = "a", x = 2, y = 250) +
+    annotate("text", label = "a", x = 3, y = 250) +
+    annotate("text", label = "b", x = 4, y = 250) +
+    scale_y_continuous(limits = c(150, 253), breaks = seq(-100, 400, 10)) +
+    scale_color_manual(
+      values = c("Reference" = "#f947d1", 
+                 "Mowing\nsummer" = "#61a161", 
+                 "Mowing\nautumn" = "#87ceeb", 
+                 "Topsoil\nremoval" = "#b06e13")
+    ) +
+    labs(x = "", y = expression(CWM ~ SLA ~ "[" * cm^2 * g^-1 * "]")) +
+    theme_mb() +
+    theme(
+      axis.text.x = element_blank(),
+      axis.ticks.x = element_blank(),
+      axis.line.x = element_blank()
+      ))
 
 ### Save ###
 ggsave(
-  here("outputs", "figures", "figure_3a_SLA_800dpi_8x8cm.tiff"),
+  here("outputs", "figures", "figure_3a_sla_800dpi_8x8cm.tiff"),
   dpi = 800, width = 8, height = 8, units = "cm"
 )

@@ -38,7 +38,7 @@ sites <- read_csv(
     )
   ) %>%
   rename(y = richness_total) %>%
-  filter(is.na(location) | location != "Rollfeld")
+  filter(is.na(location) | location != "rollfeld")
 
 
 

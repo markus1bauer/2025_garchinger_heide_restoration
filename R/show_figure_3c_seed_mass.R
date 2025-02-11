@@ -90,14 +90,14 @@ data_model <- ggeffect(
     )
   ) %>%
   mutate(
-    predicted = exp(predicted),
-    conf.low = exp(conf.low),
-    conf.high = exp(conf.high)
+    predicted = exp(predicted) * 1000,
+    conf.low = exp(conf.low) * 1000,
+    conf.high = exp(conf.high) * 1000
   ) %>%
   slice(1:4)
 
 data <- sites %>%
-  mutate(y = exp(y)) %>%
+  mutate(y = exp(y) * 1000) %>%
   rename(predicted = y, x = treatment)
 
 (graph_c <- ggplot() +
@@ -107,7 +107,7 @@ data <- sites %>%
       dodge.width = .6, size = 1, shape = 16
     ) +
     geom_hline(
-      yintercept = c(0.200, 0.197, 0.203),
+      yintercept = c(1.81, 1.7, 1.92),
       linetype = c(1, 2, 2),
       color = "grey70"
     ) +
@@ -121,21 +121,23 @@ data <- sites %>%
       aes(x, predicted),
       size = 2
     ) +
-    annotate("text", label = "a", x = 1, y = .4) +
-    annotate("text", label = "b", x = 2, y = .4) +
-    annotate("text", label = "b", x = 3, y = .4) +
-    annotate("text", label = "c", x = 4, y = .4) +
-    scale_y_continuous(limits = c(0, .004), breaks = seq(-100, 400, .1)) +
-    scale_color_manual(values = c("Reference" = "#f947d1", 
-                                  "Mowing\nsummer" = "#61a161", 
-                                  "Mowing\nautumn" = "#87ceeb", 
-                                  "Topsoil\nremoval" = "#b06e13")) +
+    annotate("text", label = "a", x = 1, y = 4) +
+    annotate("text", label = "b", x = 2, y = 4) +
+    annotate("text", label = "b", x = 3, y = 4) +
+    annotate("text", label = "c", x = 4, y = 4) +
+    scale_y_continuous(limits = c(0, 4), breaks = seq(-100, 400, .5)) +
+    scale_color_manual(
+      values = c("Reference" = "#f947d1", 
+                 "Mowing\nsummer" = "#61a161",
+                 "Mowing\nautumn" = "#87ceeb", 
+                 "Topsoil\nremoval" = "#b06e13")
+    ) +
     labs(x = "", y = expression(CWM ~ seed ~ mass ~ "[" * mg * "]")
     ) +
     theme_mb())
 
 ### Save ###
 ggsave(
-  here("outputs", "figures", "figure_3c_Seed_mass_800dpi_8x8cm.tiff"),
+  here("outputs", "figures", "figure_3c_seed_mass_800dpi_8x8cm.tiff"),
   dpi = 800, width = 8, height = 8, units = "cm"
   )
