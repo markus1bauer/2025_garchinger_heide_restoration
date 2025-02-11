@@ -1,5 +1,5 @@
 ---
-title: "Garchinger Heide and restoration sites: <br> SLA"
+title: "Garchinger Heide and restoration sites: <br> Specific Leaf Area (SLA)"
 author: "<b>Markus Bauer, Sina Appeltauer </b> <br>"
 date: "<b>`r format(Sys.time(), '%Y-%m-%d')`</b>"
 output:
@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 ```
 
 <br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
-Teschauer</b> & <b>Markus Bauer</b>\*
+Teschauer</b>, <b>Johannes Kollmann</b> & <b>Markus Bauer</b>\*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
@@ -72,7 +72,7 @@ sites <- read_csv(
     )
   ) %>%
   rename(y = CWM_SLA) %>%
-  filter(is.na(location) | location != "Rollfeld")
+  filter(is.na(location) | location != "rollfeld")
 ```
 
 # Statistics

@@ -21,7 +21,7 @@ knitr::opts_chunk$set(
 ```
 
 <br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
-Teschauer</b> & <b>Markus Bauer</b>\*
+Teschauer</b>, <b>Johannes Kollmann</b> & <b>Markus Bauer</b>\*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
@@ -72,7 +72,7 @@ sites <- read_csv(
     )
   ) %>%
   rename(y = rlg) %>%
-  filter(is.na(location) | location != "Rollfeld")
+  filter(is.na(location) | location != "rollfeld")
 ```
 
 # Statistics

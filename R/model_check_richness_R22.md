@@ -28,7 +28,7 @@ Garchinger Heide and restoration sites: <br> R22 indicator richness
 - [Session info](#session-info)
 
 <br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
-Teschauer</b> & <b>Markus Bauer</b>\*
+Teschauer</b>, <b>Johannes Kollmann</b> & <b>Markus Bauer</b>\*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
@@ -75,7 +75,7 @@ sites <- read_csv(
     )
   ) %>%
   rename(y = richness_R22) %>%
-  filter(is.na(location) | location != "Rollfeld")
+  filter(is.na(location) | location != "rollfeld")
 ```
 
 # Statistics
@@ -89,7 +89,7 @@ Rmisc::CI(sites$y, ci = .95)
 ```
 
     ##    upper     mean    lower 
-    ## 4.769143 4.240506 3.711870
+    ## 4.918329 4.381579 3.844829
 
 ``` r
 median(sites$y)
@@ -101,7 +101,7 @@ median(sites$y)
 sd(sites$y)
 ```
 
-    ## [1] 3.364162
+    ## [1] 3.349279
 
 ``` r
 quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
@@ -119,7 +119,7 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
     ## # A tibble: 4 × 2
     ##   treatment      n
     ##   <fct>      <int>
-    ## 1 control       68
+    ## 1 control       62
     ## 2 cut_summer    30
     ## 3 cut_autumn    30
     ## 4 grazing       30
@@ -161,9 +161,9 @@ m_1
 ## 
 ## Coefficients:
 ##         (Intercept)  treatmentcut_summer     treatmentgrazing  
-##              2.2353               5.8314              -0.5353  
+##              2.3871               5.6796              -0.6871  
 ## treatmentcut_autumn  
-##              5.2647
+##              5.1129
 m_2
 ## 
 ## Call:
@@ -171,13 +171,13 @@ m_2
 ## 
 ## Coefficients:
 ##                          (Intercept)                   treatmentcut_summer  
-##                            -0.459784                              6.639759  
+##                              3.29902                               2.88096  
 ##                     treatmentgrazing                   treatmentcut_autumn  
-##                             1.455501                              0.624360  
+##                             -2.30330                              -3.13444  
 ##                     cover_vegetation  treatmentcut_summer:cover_vegetation  
-##                             0.039076                             -0.008231  
+##                             -0.01291                               0.04375  
 ##    treatmentgrazing:cover_vegetation  treatmentcut_autumn:cover_vegetation  
-##                            -0.012829                              0.070956
+##                              0.03916                               0.12294
 ```
 
 ## Model check
@@ -257,10 +257,10 @@ car::vif(m_2)
     ## there are higher-order terms (interactions) in this model
     ## consider setting type = 'predictor'; see ?vif
 
-    ##                                  GVIF Df GVIF^(1/(2*Df))
-    ## treatment                  13283.7591  3        4.866539
-    ## cover_vegetation              11.7061  1        3.421418
-    ## treatment:cover_vegetation  8085.4448  3        4.480062
+    ##                                   GVIF Df GVIF^(1/(2*Df))
+    ## treatment                  30292.30254  3        5.583271
+    ## cover_vegetation              29.09249  1        5.393746
+    ## treatment:cover_vegetation 16534.49612  3        5.047370
 
 ## Model comparison
 
@@ -268,11 +268,11 @@ car::vif(m_2)
 
 ``` r
 MuMIn::r.squaredGLMM(m_1)
-##            R2m       R2c
-## [1,] 0.6852487 0.6852487
+##           R2m      R2c
+## [1,] 0.681363 0.681363
 MuMIn::r.squaredGLMM(m_2)
-##            R2m       R2c
-## [1,] 0.7252611 0.7252611
+##           R2m      R2c
+## [1,] 0.718933 0.718933
 ```
 
 ### AICc
@@ -284,8 +284,8 @@ p. 66 ISBN: 978-0-387-95364-9
 MuMIn::AICc(m_1, m_2) %>%
   arrange(AICc)
 ##     df     AICc
-## m_2  9 640.5774
-## m_1  5 656.4018
+## m_2  9 618.9461
+## m_1  5 632.2957
 ```
 
 ## Predicted values
@@ -302,20 +302,20 @@ summary(m_1)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -4.5000 -1.2353 -0.2353  0.7647  6.5000 
+    ## -4.5000 -1.3871 -0.0667  0.6129  6.5000 
     ## 
     ## Coefficients:
     ##                     Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)           2.2353     0.2296   9.737   <2e-16 ***
-    ## treatmentcut_summer   5.8314     0.4149  14.054   <2e-16 ***
-    ## treatmentgrazing     -0.5353     0.4149  -1.290    0.199    
-    ## treatmentcut_autumn   5.2647     0.4149  12.688   <2e-16 ***
+    ## (Intercept)           2.3871     0.2409   9.910   <2e-16 ***
+    ## treatmentcut_summer   5.6796     0.4218  13.465   <2e-16 ***
+    ## treatmentgrazing     -0.6871     0.4218  -1.629    0.105    
+    ## treatmentcut_autumn   5.1129     0.4218  12.121   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.893 on 154 degrees of freedom
-    ## Multiple R-squared:  0.6894, Adjusted R-squared:  0.6833 
-    ## F-statistic: 113.9 on 3 and 154 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 1.897 on 148 degrees of freedom
+    ## Multiple R-squared:  0.6857, Adjusted R-squared:  0.6793 
+    ## F-statistic: 107.6 on 3 and 148 DF,  p-value: < 2.2e-16
 
 ### Forest plot
 
@@ -346,21 +346,21 @@ necessary.
 
     ## $emmeans
     ##  treatment  emmean    SE  df lower.CL upper.CL
-    ##  control      2.24 0.230 154     1.78     2.69
-    ##  cut_summer   8.07 0.346 154     7.38     8.75
-    ##  grazing      1.70 0.346 154     1.02     2.38
-    ##  cut_autumn   7.50 0.346 154     6.82     8.18
+    ##  control      2.39 0.241 148     1.91     2.86
+    ##  cut_summer   8.07 0.346 148     7.38     8.75
+    ##  grazing      1.70 0.346 148     1.02     2.38
+    ##  cut_autumn   7.50 0.346 148     6.82     8.18
     ## 
     ## Confidence level used: 0.95 
     ## 
     ## $contrasts
     ##  contrast                estimate    SE  df t.ratio p.value
-    ##  cut_summer - control       5.831 0.415 154  14.054  <.0001
-    ##  grazing - control         -0.535 0.415 154  -1.290  0.5706
-    ##  grazing - cut_summer      -6.367 0.489 154 -13.025  <.0001
-    ##  cut_autumn - control       5.265 0.415 154  12.688  <.0001
-    ##  cut_autumn - cut_summer   -0.567 0.489 154  -1.159  0.6533
-    ##  cut_autumn - grazing       5.800 0.489 154  11.866  <.0001
+    ##  cut_summer - control       5.680 0.422 148  13.465  <.0001
+    ##  grazing - control         -0.687 0.422 148  -1.629  0.3656
+    ##  grazing - cut_summer      -6.367 0.490 148 -13.001  <.0001
+    ##  cut_autumn - control       5.113 0.422 148  12.121  <.0001
+    ##  cut_autumn - cut_summer   -0.567 0.490 148  -1.157  0.6547
+    ##  cut_autumn - grazing       5.800 0.490 148  11.844  <.0001
     ## 
     ## P value adjustment: tukey method for comparing a family of 4 estimates
 
