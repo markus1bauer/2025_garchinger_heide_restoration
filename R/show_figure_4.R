@@ -4,7 +4,7 @@
 # Show figure 4
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Sina Appeltauer, Markus Bauer
-# 2024-10-09
+# 2025-02-11
 
 
 
@@ -55,15 +55,16 @@ sites <- read_csv(
     cols(
       .default = "?"
       )
-)
+) %>%
+  filter(is.na(location) | location != "rollfeld")
 
 #### * Choosen model ####
 
 base::load(here("outputs", "models", "model_nmds.Rdata"))
 ordi
 
-base::load(here("outputs", "models", "model_nmds_envfit_vector.Rdata"))
-data_envfit <- ef_vector2
+base::load(here("outputs", "models", "model_nmds_envfit_vector1.Rdata"))
+data_envfit <- ef_vector1
 
 rm(
   list = setdiff(
@@ -84,22 +85,22 @@ rm(
 data_envfit <- data_envfit %>%
   scores(display = "vectors") %>%
   as_tibble(rownames = NA) %>%
-  rownames_to_column(var = "variable") %>%
-  mutate(
-    variable = as_factor(variable),
-    variable = fct_recode(
-      variable,
-      "Graminoid cover" = "graminoid_cover_ratio",
-      "Ruderal cover" = "ruderal_cover",
-      "Specialist richness" = "ellenberg_richness",
-      "Survey year" = "survey_year"
-    )
-  )
+  rownames_to_column(var = "variable") #%>%
+  # mutate(
+  #   variable = as_factor(variable),
+  #   variable = fct_recode(
+  #     variable,
+  #     "Graminoid cover" = "graminoid_cover_ratio",
+  #     "Ruderal cover" = "ruderal_cover",
+  #     "Specialist richness" = "ellenberg_richness",
+  #     "Survey year" = "survey_year"
+  #   )
+  # )
 
 data_nmds <-  sites %>%
-  select(id, esy, exposition) %>% # modify group
+  select(id, treatment) %>% # modify group
   mutate(
-    group_type = as_factor(esy), # modify group
+    group_type = as_factor(treatment), # modify group
     NMDS1 = ordi$points[, 1],
     NMDS2 = ordi$points[, 2]
   ) %>%
@@ -114,126 +115,126 @@ data_nmds <-  sites %>%
      aes(y = NMDS2, x = NMDS1, color = group_type, shape = group_type),
      data = data_nmds,
      cex = 2
-   ) +
+   ) )#+
    
-   #### * Ellipses ####
- 
- stat_ellipse(
-   aes(color = group, group = group),
-   geom = "path", level = 0.95, show.legend = FALSE
- ) +
-   ggrepel::geom_label_repel(
-     aes(x = NMDS1, y = NMDS2, label = variable),
-     data = data_envfit %>% filter(NMDS2 < 0 & NMDS1 < 0),
-     fill = alpha("white", .7),
-     size = 3,
-     nudge_y = -.1,
-     nudge_x = -.1,
-     min.segment.length = Inf
-   ) +
-   ggrepel::geom_label_repel(
-     aes(x = NMDS1, y = NMDS2, label = variable),
-     data = data_envfit %>% filter(NMDS2 > 0),
-     fill = alpha("white", .7),
-     size = 3,
-     nudge_y = .1,
-     min.segment.length = Inf
-   ) +
-   ggrepel::geom_label_repel(
-     aes(x = NMDS1, y = NMDS2, label = variable),
-     data = data_envfit %>% filter(NMDS2 < 0 & NMDS1 > 0 & NMDS2 > -.2),
-     fill = alpha("white", .7),
-     size = 3,
-     nudge_y = -.02,
-     nudge_x = .17,
-     min.segment.length = Inf
-   ) +
-   ggrepel::geom_label_repel(
-     aes(x = NMDS1, y = NMDS2, label = variable),
-     data = data_envfit %>% filter(NMDS2 < -.2 & NMDS1 > 0),
-     fill = alpha("white", .7),
-     size = 3,
-     nudge_y = -.17,
-     nudge_x = .1,
-     min.segment.length = Inf
-   ) +
-   
-   #### * Envfit variables ####
- 
- geom_segment(
-   data = data_envfit %>% filter(variable != "Survey year"),
-   aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2),
-   arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
-   color = "black",
-   linewidth = 1
- ) +
-   geom_segment(
-     data = data_envfit %>% filter(variable == "Survey year"),
-     aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2),
-     arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
-     color = "black",
-     linewidth = .8,
-     linetype = "dotted"
-   ) +
-   geom_label(
-     aes(x = mean1, y = mean2, label = group_type, fill = group_type),
-     data = data_nmds %>%
-       filter(group_type != "?") %>%
-       group_by(group_type) %>%
-       slice(1),
-     color = "white",
-     size = 3,
-     show.legend = FALSE
-   ) +
-   coord_fixed() +
-   
-   #### * Design ####
- 
- scale_color_manual(
-   labels = c(
-     "R22" = "R22:\nHay meadow",
-     "R1A" = "R1A:\nSemi-dry grassland",
-     "R" = "R:\nGeneral grassland",
-     "V38" = "V38:\nDry anthropogenic\nvegetation",
-     "?" = "No classification"
-   ),
-   values = c(
-     "R22" = "#00BFC4",
-     "R1A" = "#F8766D",
-     "R" = "grey30",
-     "V38" = "#C77CFF",
-     "?" = "grey90"
-   )
- ) +
-   scale_fill_manual(
-     values = alpha(c(
-       "R22" = "#00BFC4",
-       "R1A" = "#F8766D",
-       "R" = "grey30",
-       "V38" = "#C77CFF",
-       "?" = "grey30"
-     ), alpha = 0.6)
-   ) +
-   scale_shape_manual(
-     labels = c(
-       "R22" = "R22:\nHay meadow",
-       "R1A" = "R1A:\nSemi-dry grassland",
-       "R" = "R:\nGeneral grassland",
-       "V38" = "V38:\nDry anthropogenic\nvegetation",
-       "?" = "No classification"
-     ),
-     values = c(
-       "R22" = 16,
-       "R1A" = 16,
-       "R" = 3,
-       "V38" = 15,
-       "?" = 4
-     )
-   ) +
-   scale_linetype_manual(values = c(1, 1, 1, 1, 1, 1, 1)) +
-   labs(x = "NMDS1", y = "NMDS2", shape = "", color = "") +
-   theme_mb() +
-   theme(legend.key.height = unit(.9, "cm")))
+ #   #### * Ellipses ####
+ # 
+ # stat_ellipse(
+ #   aes(color = group, group = group),
+ #   geom = "path", level = 0.95, show.legend = FALSE
+ # ) +
+ #   ggrepel::geom_label_repel(
+ #     aes(x = NMDS1, y = NMDS2, label = variable),
+ #     data = data_envfit %>% filter(NMDS2 < 0 & NMDS1 < 0),
+ #     fill = alpha("white", .7),
+ #     size = 3,
+ #     nudge_y = -.1,
+ #     nudge_x = -.1,
+ #     min.segment.length = Inf
+ #   ) +
+ #   ggrepel::geom_label_repel(
+ #     aes(x = NMDS1, y = NMDS2, label = variable),
+ #     data = data_envfit %>% filter(NMDS2 > 0),
+ #     fill = alpha("white", .7),
+ #     size = 3,
+ #     nudge_y = .1,
+ #     min.segment.length = Inf
+ #   ) +
+ #   ggrepel::geom_label_repel(
+ #     aes(x = NMDS1, y = NMDS2, label = variable),
+ #     data = data_envfit %>% filter(NMDS2 < 0 & NMDS1 > 0 & NMDS2 > -.2),
+ #     fill = alpha("white", .7),
+ #     size = 3,
+ #     nudge_y = -.02,
+ #     nudge_x = .17,
+ #     min.segment.length = Inf
+ #   ) +
+ #   ggrepel::geom_label_repel(
+ #     aes(x = NMDS1, y = NMDS2, label = variable),
+ #     data = data_envfit %>% filter(NMDS2 < -.2 & NMDS1 > 0),
+ #     fill = alpha("white", .7),
+ #     size = 3,
+ #     nudge_y = -.17,
+ #     nudge_x = .1,
+ #     min.segment.length = Inf
+ #   ) +
+ #   
+ #   #### * Envfit variables ####
+ # 
+ # geom_segment(
+ #   data = data_envfit %>% filter(variable != "Survey year"),
+ #   aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2),
+ #   arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+ #   color = "black",
+ #   linewidth = 1
+ # ) +
+ #   geom_segment(
+ #     data = data_envfit %>% filter(variable == "Survey year"),
+ #     aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2),
+ #     arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
+ #     color = "black",
+ #     linewidth = .8,
+ #     linetype = "dotted"
+ #   ) +
+ #   geom_label(
+ #     aes(x = mean1, y = mean2, label = group_type, fill = group_type),
+ #     data = data_nmds %>%
+ #       filter(group_type != "?") %>%
+ #       group_by(group_type) %>%
+ #       slice(1),
+ #     color = "white",
+ #     size = 3,
+ #     show.legend = FALSE
+ #   ) +
+ #   coord_fixed() +
+ #   
+ #   #### * Design ####
+ # 
+ # scale_color_manual(
+ #   labels = c(
+ #     "R22" = "R22:\nHay meadow",
+ #     "R1A" = "R1A:\nSemi-dry grassland",
+ #     "R" = "R:\nGeneral grassland",
+ #     "V38" = "V38:\nDry anthropogenic\nvegetation",
+ #     "?" = "No classification"
+ #   ),
+ #   values = c(
+ #     "R22" = "#00BFC4",
+ #     "R1A" = "#F8766D",
+ #     "R" = "grey30",
+ #     "V38" = "#C77CFF",
+ #     "?" = "grey90"
+ #   )
+ # ) +
+ #   scale_fill_manual(
+ #     values = alpha(c(
+ #       "R22" = "#00BFC4",
+ #       "R1A" = "#F8766D",
+ #       "R" = "grey30",
+ #       "V38" = "#C77CFF",
+ #       "?" = "grey30"
+ #     ), alpha = 0.6)
+ #   ) +
+ #   scale_shape_manual(
+ #     labels = c(
+ #       "R22" = "R22:\nHay meadow",
+ #       "R1A" = "R1A:\nSemi-dry grassland",
+ #       "R" = "R:\nGeneral grassland",
+ #       "V38" = "V38:\nDry anthropogenic\nvegetation",
+ #       "?" = "No classification"
+ #     ),
+ #     values = c(
+ #       "R22" = 16,
+ #       "R1A" = 16,
+ #       "R" = 3,
+ #       "V38" = 15,
+ #       "?" = 4
+ #     )
+ #   ) +
+ #   scale_linetype_manual(values = c(1, 1, 1, 1, 1, 1, 1)) +
+ #   labs(x = "NMDS1", y = "NMDS2", shape = "", color = "") +
+ #   theme_mb() +
+ #   theme(legend.key.height = unit(.9, "cm")))
 
 
 

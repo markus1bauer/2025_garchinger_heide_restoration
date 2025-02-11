@@ -4,7 +4,7 @@
 # Model building
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Sina Appeltauer, Markus Bauer
-# 2024-10-09
+# 2025-02-11
 
 
 
@@ -33,7 +33,8 @@ sites <- read_csv(
       levels = c("control", "cut_summer", "cut_autumn", "grazing")
       )
     )
-  )
+  ) %>%
+  filter(is.na(location) | location != "rollfeld")
 
 #### * Load data species ####
 
@@ -41,9 +42,13 @@ species <- read_csv(
   here("data", "processed", "data_processed_species.csv"),
   col_names = TRUE, na = c("na", "NA", ""), col_types =
     cols(
-      .default = "d"
+      .default = "?"
     )
-)
+) %>%
+  pivot_longer(-accepted_name, names_to = "id", values_to = "value") %>%
+  semi_join(sites, by = "id") %>%
+  pivot_wider(names_from = "accepted_name", values_from = "value") %>%
+  column_to_rownames(var = "id")
 
 rm(list = setdiff(ls(), c("sites", "species", "theme_mb")))
 
@@ -59,11 +64,13 @@ rm(list = setdiff(ls(), c("sites", "species", "theme_mb")))
 
 
 ### Calculate ###
+# Calculate only once and then load below:
 # set.seed(11)
 # ordi <- metaMDS(
 #   species, dist = "bray", binary = TRUE,
 #   try = 99, previous.best = TRUE, na.rm = TRUE
 #   )
+# save(ordi, file = here("outputs", "models", "model_nmds.Rdata"))
 base::load(here("outputs", "models", "model_nmds.Rdata"))
 ordi
 
@@ -81,9 +88,7 @@ points(ordi, display = "sites", cex = goodness_of_fit * 300)
 #### a Vectors ----------------------------------------------------------------
 
 (ef_vector1 <- envfit(
-  ordi ~ species_richness + eveness + shannon +
-    accumulated_cover + graminoid_cover_ratio + ruderal_cover +
-    ellenberg_richness + ellenberg_cover_ratio + survey_year,
+  ordi ~ height_vegetation + cover_vegetation,
   data = sites,
   permu = 999,
   na.rm = TRUE
@@ -91,43 +96,18 @@ points(ordi, display = "sites", cex = goodness_of_fit * 300)
 plot(ordi, type = "n")
 plot(ef_vector1, add = TRUE, p. = .99)
 
-(ef_vector2 <- envfit(
-  ordi ~ ellenberg_richness + graminoid_cover_ratio + ruderal_cover +
-    survey_year,
-  data = sites,
-  permu = 999,
-  na.rm = TRUE
-))
-plot(ordi, type = "n")
-plot(ef_vector2, add = TRUE, p. = .99)
+save(
+  ef_vector1,
+  file = here("outputs", "models", "model_nmds_envfit_vector1.Rdata")
+)
 
 
 #### b Factors ----------------------------------------------------------------
 
 (ef_factor1 <- envfit(
-  ordi ~  orientation + exposition + esy + as_factor(survey_year),
+  ordi ~  treatment,
   data = sites, permu = 999, na.rm = TRUE
 ))
 plot(ordi, type = "n")
-ordiellipse(ordi, sites$orientation, kind = "sd", draw = "lines", label = TRUE)
-plot(ordi, type = "n")
-ordiellipse(ordi, sites$exposition, kind = "sd", draw = "lines", label = TRUE)
-plot(ordi, type = "n")
-ordiellipse(ordi, sites$esy, kind = "sd", draw = "lines", label = TRUE)
-plot(ordi, type = "n")
-ordiellipse(
-  ordi, as_factor(sites$survey_year), kind = "sd", draw = "lines", label = TRUE
-)
+ordiellipse(ordi, sites$treatment, kind = "sd", draw = "lines", label = TRUE)
 
-
-
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# C Save ######################################################################
-#++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-
-
-save(ordi, file = here("outputs", "models", "model_nmds.Rdata"))
-save(
-  ef_vector2, file = here("outputs", "models", "model_nmds_envfit_vector.Rdata")
-)
