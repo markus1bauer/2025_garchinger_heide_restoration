@@ -34,7 +34,8 @@ sites <- read_csv(
       )
     )
   ) %>%
-  filter(is.na(location) | location != "rollfeld")
+  filter(is.na(location) | location != "rollfeld") %>%
+  arrange(id)
 
 #### * Load data species ####
 
@@ -47,6 +48,7 @@ species <- read_csv(
 ) %>%
   pivot_longer(-accepted_name, names_to = "id", values_to = "value") %>%
   semi_join(sites, by = "id") %>%
+  arrange(id) %>%
   pivot_wider(names_from = "accepted_name", values_from = "value") %>%
   column_to_rownames(var = "id")
 
