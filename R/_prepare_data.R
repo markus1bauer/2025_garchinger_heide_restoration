@@ -713,7 +713,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 8 Markus: ESy: EUNIS expert vegetation classification system ################
+## 8 ESy: EUNIS expert vegetation classification system ################
 
 
 ### a Preparation --------------------------------------------------------------
