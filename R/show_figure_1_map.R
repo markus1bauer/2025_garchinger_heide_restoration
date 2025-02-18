@@ -3,8 +3,8 @@
 # Show figure 1 ####
 # Map
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Markus bauer
-# 2024-12-13
+# Markus Bauer
+# 2024-02-18
 
 
 
@@ -21,7 +21,6 @@ library(sf)
 library(rnaturalearth)
 library(ggrepel)
 
-
 ### Start ###
 rm(list = ls())
 
@@ -30,11 +29,20 @@ rm(list = ls())
 ## 1 Load data ################################################################
 
 
-europe <- ne_countries(scale = 50, continent = "Europe") %>%
+europe <- rnaturalearth::ne_countries(scale = 50, continent = "Europe") %>%
   summarise()
-rivers <- ne_download(
+rivers <- rnaturalearth::ne_download(
   scale = 50, type = 'rivers_lake_centerlines', category = 'physical'
 )
+elevation <- europe %>%
+  st_coordinates() %>%
+  data.frame() %>%
+  select(X, Y) %>%
+  st_as_sf(coords = c(1,2)) %>%
+  st_set_crs(4326) %>%
+  elevatr::get_elev_raster(z = 5, clip = "locations") %>%
+  raster::as.data.frame(xy = TRUE) %>%
+  rename(elevation = 3)
 
 
 
@@ -66,7 +74,8 @@ theme_mb <- function() {
 
 
 ggplot() +
-  geom_sf(data = europe, color = "black", fill = "grey95", linewidth = .2) +
+  geom_tile(data = elevation, aes(x = x, y = y, fill = elevation)) +
+  geom_sf(data = europe, color = "black", fill = "transparent", linewidth = .2) +
   geom_sf(data = rivers, color = "#38afcd", linewidth = 0.2) +
   # annotate(
   #   geom = "text", label = "Rhine", x = 8, y = 51.3,
@@ -81,13 +90,15 @@ ggplot() +
   geom_label(aes(x = 13.365, y = 52.523), label = "B", shape = 0, size = 1.2) +
   geom_label(aes(x = 2.3442, y = 48.8543), label = "P", shape = 0, size = 1.2) +
   geom_label(aes(x = 16.3882, y = 48.21), label = "V", shape = 0, size = 1.2) +
+  marmap::scale_fill_etopo() +
   theme_mb() +
   theme(
-    plot.background = element_blank()
+    plot.background = element_blank(),
+    legend.position = "none"
   )
 
 ggsave(
-  "figure_1_map_ggplot_800dpi_2x2cm.tiff",
+  "figure_1a_map_ggplot_800dpi_2x2cm.tiff",
   dpi = 800, width = 2, height = 2, units = "cm",
   path = here("outputs", "figures")
 )
