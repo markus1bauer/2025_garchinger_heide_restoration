@@ -30,19 +30,28 @@ rm(list = ls())
 
 
 europe <- rnaturalearth::ne_countries(scale = 50, continent = "Europe") %>%
-  summarise()
+  summarise() %>%
+  st_crop(xmin = 0, xmax = 19, ymin = 40, ymax = 55)
 rivers <- rnaturalearth::ne_download(
   scale = 50, type = 'rivers_lake_centerlines', category = 'physical'
-)
-elevation <- europe %>%
-  st_coordinates() %>%
-  data.frame() %>%
-  select(X, Y) %>%
-  st_as_sf(coords = c(1,2)) %>%
-  st_set_crs(4326) %>%
-  elevatr::get_elev_raster(z = 5, clip = "locations") %>%
-  raster::as.data.frame(xy = TRUE) %>%
-  rename(elevation = 3)
+  ) %>%
+  st_crop(xmin = 0, xmax = 19, ymin = 44, ymax = 55)
+ecoregions <- st_read(here("data", "raw", "spatial", "ecoregions2017.shp")) %>%
+  st_transform(crs = 4326) %>%
+  filter(
+    ECO_NAME == "Western European broadleaf forests" |
+      ECO_NAME == "Central European mixed forests" |
+      ECO_NAME == "European Atlantic mixed forests" |
+      ECO_NAME == "Baltic mixed forests" |
+      ECO_NAME == "Alps conifer and mixed forests"
+  ) %>%
+  st_crop(xmin = 0, xmax = 19, ymin = 44, ymax = 55)
+elevation <- elevatr::get_elev_raster(
+  locations = data.frame(x = c(0, 19), y = c(44, 55)),
+  prj = "+proj=longlat +datum=WGS84 +no_defs",
+  clip = "bbox", z = 5
+) %>%
+  terra::rast()
 
 
 
@@ -73,32 +82,43 @@ theme_mb <- function() {
 
 
 
-ggplot() +
-  geom_tile(data = elevation, aes(x = x, y = y, fill = elevation)) +
-  geom_sf(data = europe, color = "black", fill = "transparent", linewidth = .2) +
+graph_sites <- ggplot() +
+  tidyterra::geom_spatraster(data = elevation) +
+  geom_sf(
+    data = ecoregions, colour = "black", fill = "transparent", size = 1,
+    linetype = "dashed"
+  ) +
   geom_sf(data = rivers, color = "#38afcd", linewidth = 0.2) +
-  # annotate(
-  #   geom = "text", label = "Rhine", x = 8, y = 51.3,
-  #   angle = 300, color = "#38afcd"
-  #   ) +
-  # annotate(
-  #   geom = "text", label = "Danube", x = 14.2, y = 49.2,
-  #   angle = 345, color = "#38afcd"
-  # ) +
+  geom_point(aes(x = 11.65286, y = 48.29032), size = 1, color = "red") +
+  annotate(
+    geom = "text", label = "Danube", x = 13.5, y = 49.2,
+    angle = 335, color = "#38afcd", size = 1.2
+  ) +
   coord_sf(xlim = c(0, 19), ylim = c(44, 55)) +
-  geom_point(aes(x = 11.65286, y = 48.29032), size = .3, color = "red") +
-  geom_label(aes(x = 13.365, y = 52.523), label = "B", shape = 0, size = 1.2) +
-  geom_label(aes(x = 2.3442, y = 48.8543), label = "P", shape = 0, size = 1.2) +
-  geom_label(aes(x = 16.3882, y = 48.21), label = "V", shape = 0, size = 1.2) +
-  marmap::scale_fill_etopo() +
+  ggspatial::annotation_north_arrow(
+    which_north = "true",
+    style = ggspatial::north_arrow_fancy_orienteering(text_size = 0),
+    height = unit(.5, "cm"),
+    width = unit(.5, "cm"),
+    pad_y = unit(3.7, "cm"),
+    pad_x = unit(.3, "cm")
+  ) +
+  tidyterra::scale_fill_hypso_tint_c(
+    palette = "gmt_globe",
+    labels = scales::label_number(),
+    breaks = c(-1000, 0, 1000, 2000, 3000)
+  ) +
   theme_mb() +
   theme(
     plot.background = element_blank(),
     legend.position = "none"
-  )
+  );graph_sites
+
+
+## Save ####
 
 ggsave(
-  "figure_1a_map_ggplot_800dpi_2x2cm.tiff",
-  dpi = 800, width = 2, height = 2, units = "cm",
+  "figure_1a_map_300dpi_4x4cm.tiff",
+  dpi = 300, width = 4, height = 4, units = "cm",
   path = here("outputs", "figures")
 )
