@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+data/raw/spatial/ecoregions2017.shx
+data/raw/spatial/ecoregions2017.shp
+data/raw/spatial/ecoregions2017.prj
+data/raw/spatial/ecoregions2017.dbf
