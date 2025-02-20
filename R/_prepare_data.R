@@ -880,12 +880,12 @@ m <- quickMEM(
 # Truncation level = 2.397639 
 # Time to compute dbMEMs = 0.030000  sec 
 # 
-# ------------------------------------------------------------------
+#
 #   *** Procedure stopped ***
 #   p-value of global test:  0.2556
 # No significant spatial structure detected by global dbMEM analysis.
 # Selection of dbMEM variables would lead to spurious model.
-# ------------------------------------------------------------------
+#
 
 
 

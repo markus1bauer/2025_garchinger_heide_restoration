@@ -49,7 +49,6 @@ library(here)
 library(tidyverse)
 library(ggbeeswarm)
 library(patchwork)
-library(blme)
 library(DHARMa)
 library(emmeans)
 ```
