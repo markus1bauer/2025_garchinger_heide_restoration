@@ -65,11 +65,11 @@ base::load(here("outputs", "models", "model_nmds.Rdata"))
 ordi
 
 base::load(here("outputs", "models", "model_nmds_envfit_vector1.Rdata"))
-data_envfit <- ef_vector1
+envfit <- ef_vector1
 
 rm(
   list = setdiff(
-    ls(), c("sites", "data_envfit", "ordi", "theme_mb", "vegan_cov_ellipse")
+    ls(), c("sites", "envfit", "ordi", "theme_mb", "vegan_cov_ellipse")
   )
 )
 
@@ -83,20 +83,18 @@ rm(
 
 #### * Preparation ####
 
-data_envfit <- data_envfit %>%
+data_envfit <- envfit %>%
   scores(display = "vectors") %>%
   as_tibble(rownames = NA) %>%
-  rownames_to_column(var = "variable") #%>%
-  # mutate(
-  #   variable = as_factor(variable),
-  #   variable = fct_recode(
-  #     variable,
-  #     "Graminoid cover" = "graminoid_cover_ratio",
-  #     "Ruderal cover" = "ruderal_cover",
-  #     "Specialist richness" = "ellenberg_richness",
-  #     "Survey year" = "survey_year"
-  #   )
-  # )
+  rownames_to_column(var = "variable") %>%
+  mutate(
+    variable = as_factor(variable),
+    variable = fct_recode(
+      variable,
+      "Vegetation\nheight" = "height_vegetation",
+      "Vegetation\ncover" = "cover_vegetation"
+    )
+  )
 
 data_nmds <-  sites %>%
   select(id, treatment, esy) %>% # modify group
@@ -115,7 +113,7 @@ data_nmds <-  sites %>%
    geom_point(
      aes(y = NMDS2, x = NMDS1, shape = esy, color = group, group = group),
      data = data_nmds,
-     cex = 2
+     cex = 2, alpha = .8
    ) +
    
    #### * Ellipses ####
@@ -128,7 +126,7 @@ data_nmds <-  sites %>%
    ggrepel::geom_label_repel(
      aes(x = NMDS1, y = NMDS2, label = variable),
      data = data_envfit %>% filter(NMDS2 < 0 & NMDS1 > 0),
-     fill = alpha("white", .7),
+     fill = alpha("white", .6),
      size = 3,
      nudge_y = -.17,
      nudge_x = .1,
@@ -142,15 +140,8 @@ data_nmds <-  sites %>%
    aes(x = 0, xend = NMDS1, y = 0, yend = NMDS2),
    arrow = arrow(length = unit(0.25, "cm"), type = "closed"),
    color = "black",
-   linewidth = 1
+   linewidth = 1, alpha = 1
  ) +
-   # geom_label(
-   #   aes(x = mean1, y = mean2, label = group, fill = group),
-   #   data = data_nmds,
-   #   color = "white",
-   #   size = 3,
-   #   show.legend = FALSE
-   # ) +
    coord_fixed() +
 
    #### * Design ####
@@ -195,6 +186,6 @@ data_nmds <-  sites %>%
 
 
 ggsave(
-  here("outputs", "figures", "figure_4_nmds_800dpi_16.5x11cm.tiff"),
+  here("outputs", "figures", "figure_4a_nmds_800dpi_16.5x11cm.tiff"),
   dpi = 800, width = 16.5, height = 11, units = "cm"
 )
