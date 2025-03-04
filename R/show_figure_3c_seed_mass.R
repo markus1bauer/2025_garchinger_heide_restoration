@@ -4,7 +4,7 @@
 # Show figure 3c
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
-# 2025-01-29
+# 2025-03-03
 
 
 
@@ -17,7 +17,6 @@
 ### Packages ###
 library(here)
 library(tidyverse)
-library(blme)
 library(ggeffects)
 library(ggbeeswarm)
 
@@ -70,7 +69,7 @@ sites <- read_csv(
 ### * Model ####
 load(file = here("outputs", "models", "model_seed_mass_1.Rdata"))
 m <- m1
-m #m@call
+m
 
 
 
@@ -127,17 +126,18 @@ data <- sites %>%
     annotate("text", label = "c", x = 4, y = 4) +
     scale_y_continuous(limits = c(0, 4), breaks = seq(-100, 400, .5)) +
     scale_color_manual(
-      values = c("Reference" = "#f947d1", 
-                 "Mowing\nsummer" = "#61a161",
-                 "Mowing\nautumn" = "#87ceeb", 
-                 "Topsoil\nremoval" = "#b06e13")
+      values = c(
+        "Reference" = "#f947d1", 
+        "Mowing\nsummer" = "#61a161",
+        "Mowing\nautumn" = "#87ceeb", 
+        "Topsoil\nremoval" = "#b06e13"
+      )
     ) +
-    labs(x = "", y = expression(CWM ~ seed ~ mass ~ "[" * mg * "]")
-    ) +
+    labs(x = "", y = expression(CWM ~ seed ~ mass ~ "[" * mg * "]")) +
     theme_mb())
 
 ### Save ###
-ggsave(
-  here("outputs", "figures", "figure_3c_seed_mass_800dpi_8x8cm.tiff"),
-  dpi = 800, width = 8, height = 8, units = "cm"
-  )
+# ggsave(
+#   here("outputs", "figures", "figure_3c_seed_mass_800dpi_8x8cm.tiff"),
+#   dpi = 800, width = 8, height = 8, units = "cm"
+#   )

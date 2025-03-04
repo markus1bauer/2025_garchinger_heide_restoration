@@ -4,7 +4,7 @@
 # Show figure 3b
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
-# 2025-01-28
+# 2025-03-03
 
 
 
@@ -17,7 +17,6 @@
 ### Packages ###
 library(here)
 library(tidyverse)
-library(blme)
 library(ggeffects)
 library(ggbeeswarm)
 
@@ -65,7 +64,7 @@ sites <- read_csv(
 ### * Model ####
 load(file = here("outputs", "models", "model_plant_height_1.Rdata"))
 m <- m1
-m #m@call
+m
 
 
 
@@ -115,14 +114,13 @@ data <- sites %>%
     annotate("text", label = "b", x = 3, y = .7) +
     annotate("text", label = "a", x = 4, y = .7) +
     scale_y_continuous(limits = c(0, .7), breaks = seq(-100, 400, .1)) +
-    scale_color_manual(values = c("Reference" = "#f947d1", 
-                                  "Mowing\nsummer" = "#61a161", 
-                                  "Mowing\nautumn" = "#87ceeb", 
-                                  "Topsoil\nremoval" = "#b06e13")) +
-    labs(x = "",
-         y = expression(
-           CWM ~ canopy ~ height ~ "[" * m * "]")
+    scale_color_manual(
+      values = c("Reference" = "#f947d1", 
+                 "Mowing\nsummer" = "#61a161", 
+                 "Mowing\nautumn" = "#87ceeb", 
+                 "Topsoil\nremoval" = "#b06e13")
     ) +
+    labs(x = "", y = expression(CWM ~ canopy ~ height ~ "[" * m * "]")) +
     theme_mb() +
     theme(
       axis.text.x = element_blank(),
@@ -131,7 +129,7 @@ data <- sites %>%
     ))
 
 ### Save ###
-ggsave(
-  here("outputs", "figures", "figure_3b_plant_height_800dpi_8x8cm.tiff"),
-  dpi = 800, width = 8, height = 8, units = "cm"
-  )
+# ggsave(
+#   here("outputs", "figures", "figure_3b_plant_height_800dpi_8x8cm.tiff"),
+#   dpi = 800, width = 8, height = 8, units = "cm"
+#   )

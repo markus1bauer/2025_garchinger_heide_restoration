@@ -1,10 +1,10 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
-# Species rlg ####
+# Management Garchinger Heide restoration sites
+# Species richness red list Germany ####
 # Show figure 2
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Markus Bauer
-# 2025-01-28
+# Sina Appeltauer, Markus Bauer
+# 2025-03-03
 
 
 
@@ -17,7 +17,6 @@
 ### Packages ###
 library(here)
 library(tidyverse)
-library(blme)
 library(ggeffects)
 library(ggbeeswarm)
 
@@ -65,7 +64,7 @@ sites <- read_csv(
 ### * Model ####
 load(file = here("outputs", "models", "model_richness_RLG_1.Rdata"))
 m <- m1
-m #m@call
+m
 
 
 
@@ -115,14 +114,16 @@ data <- sites %>%
     annotate("text", label = "b", x = 3, y = 35) +
     annotate("text", label = "c", x = 4, y = 35) +
     scale_y_continuous(limits = c(0, 35), breaks = seq(-100, 400, 5)) +
-    scale_color_manual(values = c("Reference" = "#f947d1", 
-                                  "Mowing\nsummer" = "#61a161", 
-                                  "Mowing\nautumn" = "#87ceeb", 
-                                  "Topsoil\nremoval" = "#b06e13")) +
+    scale_color_manual(
+      values = c(
+        "Reference" = "#f947d1", 
+        "Mowing\nsummer" = "#61a161", 
+        "Mowing\nautumn" = "#87ceeb", 
+        "Topsoil\nremoval" = "#b06e13"
+      )
+    ) +
     labs(
-      x = "",
-      y = expression(
-        Red ~ List ~ species ~ (Germany) ~ "[" * '# / 4m²' * "]")
+      x = "", y = expression(Red ~ List ~ species ~ (Germany) ~ "[" * '# / 4m²' * "]")
     ) +
     theme_mb() +
     theme(
@@ -132,7 +133,7 @@ data <- sites %>%
     ))
 
 ### Save ###
-ggsave(
-  here("outputs", "figures", "figure_2b_rlg_800dpi_8x8cm.tiff"),
-  dpi = 800, width = 8, height = 8, units = "cm"
-)
+# ggsave(
+#   here("outputs", "figures", "figure_2b_rlg_800dpi_8x8cm.tiff"),
+#   dpi = 800, width = 8, height = 8, units = "cm"
+# )
