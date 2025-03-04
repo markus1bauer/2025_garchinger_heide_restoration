@@ -3,7 +3,7 @@
 # Evenness ####
 # Model building
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Markus Bauer
+# Sina Appeltauer, Markus Bauer
 # 2025-01-28
 
 
@@ -82,25 +82,14 @@ sites %>%
 ## 2 Model building ###########################################################
 
 
-### a Random structure ---------------------------------------------------------
-
-
-### b Fixed effects ------------------------------------------------------------
-
-m1 <- lm(
-  y ~ treatment,
-  data = sites
-)
+m1 <- lm(y ~ treatment, data = sites)
 simulateResiduals(m1, plot = TRUE)
 
-m2 <- lm(
-  y ~ treatment * cover_vegetation,
-  data = sites
-)
+m2 <- lm(y ~ treatment * cover_vegetation, data = sites)
 simulateResiduals(m2, plot = TRUE)
 
 
-### d Save ---------------------------------------------------------------------
+### Save ####
 
 save(m1, file = here("outputs", "models", "model_evenness_1.Rdata"))
 save(m2, file = here("outputs", "models", "model_evenness_2.Rdata"))

@@ -1,10 +1,10 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
+# Management Garchinger Heide restoration sites
 # Canopy Height ####
 # Model building
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
-# 2025-01-28
+# 2025-03-03
 
 
 
@@ -81,26 +81,15 @@ sites %>%
 ## 2 Model building ###########################################################
 
 
-### a Random structure ---------------------------------------------------------
-
-
-### b Fixed effects ------------------------------------------------------------
-
-m1 <- lm(
-  y ~ treatment,
-  data = sites
-)
+m1 <- lm(y ~ treatment, data = sites)
 simulateResiduals(m1, plot = TRUE)
 
-m2 <- lm(
-  y ~ treatment * cover_vegetation,
-  data = sites
-)
+m2 <- lm(y ~ treatment * cover_vegetation, data = sites)
 simulateResiduals(m2, plot = TRUE)
 
 
 
-### d Save ---------------------------------------------------------------------
+### Save ####
 
 
 save(m1, file = here("outputs", "models", "model_plant_height_1.Rdata"))
