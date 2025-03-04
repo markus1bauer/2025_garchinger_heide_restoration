@@ -29,9 +29,12 @@ Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
 \*[markus1.bauer\@tum.de](mailto:markus1.bauer@tum.de)
 
 ORCiD ID: [0000-0001-5372-4174](https://orcid.org/0000-0001-5372-4174)
-<br> [Google
-Scholar](https://scholar.google.de/citations?user=oHhmOkkAAAAJ&hl=de&oi=ao)
-<br> GitHub: [markus1bauer](https://github.com/markus1bauer)
+<br>
+[Google Scholar](https://scholar.google.de/citations?user=oHhmOkkAAAAJ&hl=de&oi=ao)
+<br>
+GitHub: [markus1bauer](https://github.com/markus1bauer)
+<br>
+GitHub: [TUM-Restoration-Ecology](https://github.com/TUM-Restoration-Ecology)
 
 To compare different models, you only have to change the models in
 section 'Load models'
@@ -117,7 +120,7 @@ plot(ordi, type = "n")
 plot(ef_vector1, add = TRUE, p. = .99)
 ```
 
-### Factors
+## Factors
 
 ```{r aicc, collapse = TRUE}
 ef_factor1 <- envfit(

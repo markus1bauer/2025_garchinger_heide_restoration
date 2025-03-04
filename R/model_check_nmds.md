@@ -8,7 +8,7 @@ Garchinger Heide and restoration sites: <br> Plant height
   - [Models](#models)
   - [Model check](#model-check)
   - [Vectors](#vectors)
-    - [Factors](#factors)
+  - [Factors](#factors)
 - [Session info](#session-info)
 
 <br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
@@ -22,7 +22,9 @@ Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
 ORCiD ID: [0000-0001-5372-4174](https://orcid.org/0000-0001-5372-4174)
 <br> [Google
 Scholar](https://scholar.google.de/citations?user=oHhmOkkAAAAJ&hl=de&oi=ao)
-<br> GitHub: [markus1bauer](https://github.com/markus1bauer)
+<br> GitHub: [markus1bauer](https://github.com/markus1bauer) <br>
+GitHub:
+[TUM-Restoration-Ecology](https://github.com/TUM-Restoration-Ecology)
 
 To compare different models, you only have to change the models in
 section ‘Load models’
@@ -137,7 +139,7 @@ plot(ef_vector1, add = TRUE, p. = .99)
 
 ![](model_check_nmds_files/figure-gfm/r2-1.png)<!-- -->
 
-### Factors
+## Factors
 
 ``` r
 ef_factor1 <- envfit(
