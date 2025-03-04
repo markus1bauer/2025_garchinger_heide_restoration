@@ -4,7 +4,7 @@
 # Model building
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
-# 2025-01-28
+# 2025-03-03
 
 
 
@@ -75,7 +75,6 @@ ggplot(sites, aes(x = y)) + geom_density()
 # X2021tum51
 
 
-
 ### c Check collinearity ------------------------------------------------------
 
 sites %>%
@@ -91,21 +90,10 @@ sites %>%
 ## 2 Model building ###########################################################
 
 
-### a Random structure ---------------------------------------------------------
-
-
-### b Fixed effects ------------------------------------------------------------
-
-m1 <- lm(
-  y ~ treatment,
-  data = sites
-)
+m1 <- lm(y ~ treatment, data = sites)
 simulateResiduals(m1, plot = TRUE)
 
-m2 <- lm(
-  y ~ treatment * cover_vegetation,
-  data = sites
-)
+m2 <- lm(y ~ treatment * cover_vegetation, data = sites)
 simulateResiduals(m2, plot = TRUE)
 
 
@@ -113,4 +101,3 @@ simulateResiduals(m2, plot = TRUE)
 
 save(m1, file = here("outputs", "models", "model_seed_mass_1.Rdata"))
 save(m2, file = here("outputs", "models", "model_seed_mass_2.Rdata"))
-

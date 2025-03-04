@@ -1,10 +1,10 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
-# Richness R1A ####
+# Management Garchinger Heide restoration sites
+# Species richness EUNIS habitat type R1A ####
 # Show figure 2b
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Sina Appeltauer
-# 2025-02-09
+# Sina Appeltauer, Markus Bauer
+# 2025-03-03
 
 
 
@@ -17,7 +17,6 @@
 ### Packages ###
 library(here)
 library(tidyverse)
-library(blme)
 library(ggeffects)
 library(ggbeeswarm)
 
@@ -65,7 +64,7 @@ sites <- read_csv(
 ### * Model ####
 load(file = here("outputs", "models", "model_richness_R1A_1.Rdata"))
 m <- m1
-m #m@call
+m
 
 
 
@@ -115,19 +114,21 @@ data <- sites %>%
     annotate("text", label = "a", x = 3, y = 21) +
     annotate("text", label = "b", x = 4, y = 21) +
     scale_y_continuous(limits = c(0, 21), breaks = seq(-100, 400, 5)) +
-    scale_color_manual(values = c("Reference" = "#f947d1", 
-                                  "Mowing\nsummer" = "#61a161", 
-                                  "Mowing\nautumn" = "#87ceeb", 
-                                  "Topsoil\nremoval" = "#b06e13")) +
-    labs(
-      x = "",
-      y = expression(
-        Indicator ~ species ~ R1A ~ "[" * '# / 4m²' * "]")
+    scale_color_manual(
+      values = c(
+        "Reference" = "#f947d1", 
+        "Mowing\nsummer" = "#61a161", 
+        "Mowing\nautumn" = "#87ceeb", 
+        "Topsoil\nremoval" = "#b06e13"
+      )
     ) +
+    labs(
+      x = "", y = expression(Indicator ~ species ~ R1A ~ "[" * '# / 4m²' * "]")
+      ) +
     theme_mb())
 
 ### Save ###
-ggsave(
-  here("outputs", "figures", "figure_2c_R1A_800dpi_8x8cm.tiff"),
-  dpi = 800, width = 8, height = 8, units = "cm"
-)
+# ggsave(
+#   here("outputs", "figures", "figure_2c_R1A_800dpi_8x8cm.tiff"),
+#   dpi = 800, width = 8, height = 8, units = "cm"
+# )

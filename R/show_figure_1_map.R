@@ -1,10 +1,10 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Garchinger Heide
-# Show figure 1 ####
-# Map
+# Map ####
+# Show figure 1
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Markus Bauer
-# 2024-02-18
+# 2024-03-03
 
 
 
@@ -112,13 +112,14 @@ graph_sites <- ggplot() +
   theme(
     plot.background = element_blank(),
     legend.position = "none"
-  );graph_sites
+  )
+graph_sites
 
 
 ## Save ####
 
-ggsave(
-  "figure_1a_map_300dpi_4x4cm.tiff",
-  dpi = 300, width = 4, height = 4, units = "cm",
-  path = here("outputs", "figures")
-)
+# ggsave(
+#   "figure_1a_map_300dpi_4x4cm.tiff",
+#   dpi = 300, width = 4, height = 4, units = "cm",
+#   path = here("outputs", "figures")
+# )

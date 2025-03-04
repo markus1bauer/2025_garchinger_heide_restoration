@@ -1,7 +1,7 @@
 Garchinger Heide and restoration sites: <br> R1A indicator richness
 ================
-<b>Markus Bauer, Sina Appeltauer</b> <br>
-<b>2025-02-11</b>
+<b>Sina Appeltauer, Markus Bauer</b> <br>
+<b>2025-03-04</b>
 
 - [Preparation](#preparation)
 - [Statistics](#statistics)
@@ -38,7 +38,9 @@ Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
 ORCiD ID: [0000-0001-5372-4174](https://orcid.org/0000-0001-5372-4174)
 <br> [Google
 Scholar](https://scholar.google.de/citations?user=oHhmOkkAAAAJ&hl=de&oi=ao)
-<br> GitHub: [markus1bauer](https://github.com/markus1bauer)
+<br> GitHub: [markus1bauer](https://github.com/markus1bauer) <br>
+GitHub:
+[TUM-Restoration-Ecology](https://github.com/TUM-Restoration-Ecology)
 
 To compare different models, you only have to change the models in
 section ‘Load models’
@@ -46,8 +48,8 @@ section ‘Load models’
 # Preparation
 
 Protocol of data exploration (Steps 1-8) used from Zuur et al. (2010)
-Methods Ecol Evol [DOI:
-10.1111/2041-210X.12577](https://doi.org/10.1111/2041-210X.12577)
+Methods Ecol Evol
+[DOI:10.1111/2041-210X.12577](https://doi.org/10.1111/2041-210X.12577)
 
 #### Packages
 
@@ -56,7 +58,6 @@ library(here)
 library(tidyverse)
 library(ggbeeswarm)
 library(patchwork)
-library(blme)
 library(DHARMa)
 library(emmeans)
 ```
@@ -128,8 +129,8 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 
 ### Check collinearity part 1 (Step 5)
 
-Exclude r \> 0.7 <br> Dormann et al. 2013 Ecography [DOI:
-10.1111/j.1600-0587.2012.07348.x](https://doi.org/10.1111/j.1600-0587.2012.07348.x)
+Exclude r \> 0.7 <br> Dormann et al. 2013 Ecography
+[DOI:10.1111/j.1600-0587.2012.07348.x](https://doi.org/10.1111/j.1600-0587.2012.07348.x)
 
 ``` r
 sites %>%
@@ -152,8 +153,6 @@ m_2 <- m2
 ```
 
 ``` r
-#m_1@call
-#m_2@call
 m_1
 ## 
 ## Call:
@@ -246,8 +245,8 @@ plotResiduals(simulation_output_2$scaledResiduals, sites$botanist)
 
 ### Check collinearity part 2 (Step 5)
 
-Remove VIF \> 3 or \> 10 <br> Zuur et al. 2010 Methods Ecol Evol [DOI:
-10.1111/j.2041-210X.2009.00001.x](https://doi.org/10.1111/j.2041-210X.2009.00001.x)
+Remove VIF \> 3 or \> 10 <br> Zuur et al. 2010 Methods Ecol Evol
+[DOI:10.1111/j.2041-210X.2009.00001.x](https://doi.org/10.1111/j.2041-210X.2009.00001.x)
 
 ``` r
 #car::vif(m_1)
@@ -278,7 +277,8 @@ MuMIn::r.squaredGLMM(m_2)
 ### AICc
 
 Use AICc and not AIC since ratio n/K \< 40 <br> Burnahm & Anderson 2002
-p. 66 ISBN: 978-0-387-95364-9
+p. 66 ISBN:
+[978-0-387-95364-9](https://search.worldcat.org/de/title/845688581)
 
 ``` r
 MuMIn::AICc(m_1, m_2) %>%
@@ -391,33 +391,32 @@ plot(emm, comparison = TRUE)
     ## [1] stats     graphics  grDevices utils     datasets  methods   base     
     ## 
     ## other attached packages:
-    ##  [1] emmeans_1.10.5   DHARMa_0.4.7     blme_1.0-6       lme4_1.1-35.5   
-    ##  [5] Matrix_1.7-1     patchwork_1.3.0  ggbeeswarm_0.7.2 lubridate_1.9.3 
-    ##  [9] forcats_1.0.0    stringr_1.5.1    dplyr_1.1.4      purrr_1.0.2     
-    ## [13] readr_2.1.5      tidyr_1.3.1      tibble_3.2.1     ggplot2_3.5.1   
-    ## [17] tidyverse_2.0.0  here_1.0.1      
+    ##  [1] emmeans_1.10.7   DHARMa_0.4.7     patchwork_1.3.0  ggbeeswarm_0.7.2
+    ##  [5] lubridate_1.9.4  forcats_1.0.0    stringr_1.5.1    dplyr_1.1.4     
+    ##  [9] purrr_1.0.4      readr_2.1.5      tidyr_1.3.1      tibble_3.2.1    
+    ## [13] ggplot2_3.5.1    tidyverse_2.0.0  here_1.0.1      
     ## 
     ## loaded via a namespace (and not attached):
     ##  [1] tidyselect_1.2.1   vipor_0.4.7        farver_2.1.2       fastmap_1.2.0     
-    ##  [5] GGally_2.2.1       bayestestR_0.15.0  promises_1.3.2     digest_0.6.37     
+    ##  [5] GGally_2.2.1       bayestestR_0.15.2  promises_1.3.2     digest_0.6.37     
     ##  [9] estimability_1.5.1 timechange_0.3.0   mime_0.12          lifecycle_1.0.4   
-    ## [13] magrittr_2.0.3     compiler_4.4.2     rlang_1.1.4        tools_4.4.2       
+    ## [13] magrittr_2.0.3     compiler_4.4.2     rlang_1.1.5        tools_4.4.2       
     ## [17] utf8_1.2.4         yaml_2.3.10        knitr_1.49         labeling_0.4.3    
-    ## [21] bit_4.5.0          ggstance_0.3.7     plyr_1.8.9         RColorBrewer_1.1-3
-    ## [25] gap.datasets_0.0.6 abind_1.4-8        withr_3.0.2        datawizard_0.13.0 
-    ## [29] stats4_4.4.2       grid_4.4.2         fansi_1.0.6        xtable_1.8-4      
-    ## [33] colorspace_2.1-1   scales_1.3.0       iterators_1.0.14   MASS_7.3-61       
-    ## [37] insight_1.0.0      cli_3.6.3          mvtnorm_1.3-2      dotwhisker_0.8.3  
-    ## [41] rmarkdown_2.29     crayon_1.5.3       generics_0.1.3     performance_0.12.4
-    ## [45] rstudioapi_0.17.1  tzdb_0.4.0         parameters_0.24.0  minqa_1.2.8       
+    ## [21] bit_4.5.0.1        ggstance_0.3.7     plyr_1.8.9         RColorBrewer_1.1-3
+    ## [25] gap.datasets_0.0.6 abind_1.4-8        withr_3.0.2        datawizard_1.0.0  
+    ## [29] stats4_4.4.2       grid_4.4.2         xtable_1.8-4       colorspace_2.1-1  
+    ## [33] scales_1.3.0       iterators_1.0.14   MASS_7.3-61        insight_1.0.2     
+    ## [37] cli_3.6.4          mvtnorm_1.3-3      dotwhisker_0.8.3   rmarkdown_2.29    
+    ## [41] crayon_1.5.3       reformulas_0.4.0   generics_0.1.3     performance_0.13.0
+    ## [45] rstudioapi_0.17.1  tzdb_0.4.0         parameters_0.24.1  minqa_1.2.8       
     ## [49] splines_4.4.2      parallel_4.4.2     vctrs_0.6.5        boot_1.3-31       
-    ## [53] carData_3.0-5      car_3.1-3          hms_1.1.3          bit64_4.5.2       
-    ## [57] Formula_1.2-5      qgam_1.3.4         beeswarm_0.4.0     Rmisc_1.5.1       
-    ## [61] foreach_1.5.2      gap_1.6            glue_1.8.0         nloptr_2.1.1      
-    ## [65] ggstats_0.7.0      codetools_0.2-20   stringi_1.8.4      gtable_0.3.6      
-    ## [69] later_1.4.1        munsell_0.5.1      pillar_1.9.0       htmltools_0.5.8.1 
-    ## [73] R6_2.5.1           Rdpack_2.6.2       doParallel_1.0.17  rprojroot_2.0.4   
-    ## [77] vroom_1.6.5        evaluate_1.0.1     shiny_1.9.1        lattice_0.22-6    
-    ## [81] rbibutils_2.3      httpuv_1.6.15      Rcpp_1.0.13-1      gridExtra_2.3     
-    ## [85] coda_0.19-4.1      nlme_3.1-166       MuMIn_1.48.4       mgcv_1.9-1        
-    ## [89] xfun_0.49          pkgconfig_2.0.3
+    ## [53] Matrix_1.7-1       carData_3.0-5      car_3.1-3          hms_1.1.3         
+    ## [57] bit64_4.6.0-1      Formula_1.2-5      qgam_1.3.4         beeswarm_0.4.0    
+    ## [61] Rmisc_1.5.1        foreach_1.5.2      gap_1.6            glue_1.8.0        
+    ## [65] nloptr_2.1.1       ggstats_0.8.0      codetools_0.2-20   stringi_1.8.4     
+    ## [69] gtable_0.3.6       later_1.4.1        lme4_1.1-36        munsell_0.5.1     
+    ## [73] pillar_1.10.1      htmltools_0.5.8.1  R6_2.6.1           Rdpack_2.6.2      
+    ## [77] doParallel_1.0.17  rprojroot_2.0.4    vroom_1.6.5        evaluate_1.0.3    
+    ## [81] shiny_1.10.0       lattice_0.22-6     rbibutils_2.3      httpuv_1.6.15     
+    ## [85] Rcpp_1.0.14        gridExtra_2.3      coda_0.19-4.1      nlme_3.1-166      
+    ## [89] MuMIn_1.48.4       mgcv_1.9-1         xfun_0.50          pkgconfig_2.0.3

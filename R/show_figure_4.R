@@ -4,7 +4,7 @@
 # Show figure 4
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Sina Appeltauer, Markus Bauer
-# 2025-02-11
+# 2025-03-03
 
 
 
@@ -185,7 +185,7 @@ data_nmds <-  sites %>%
 
 
 
-ggsave(
-  here("outputs", "figures", "figure_4a_nmds_800dpi_16.5x11cm.tiff"),
-  dpi = 800, width = 16.5, height = 11, units = "cm"
-)
+# ggsave(
+#   here("outputs", "figures", "figure_4_nmds_800dpi_16.5x11cm.tiff"),
+#   dpi = 800, width = 16.5, height = 11, units = "cm"
+# )

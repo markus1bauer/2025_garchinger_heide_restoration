@@ -1,5 +1,5 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# Garchinger Heide
+# Management Garchinger Heide restoration sites
 # NMDS ####
 # Model building
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -41,16 +41,14 @@ sites <- read_csv(
 
 species <- read_csv(
   here("data", "processed", "data_processed_species.csv"),
-  col_names = TRUE, na = c("na", "NA", ""), col_types =
-    cols(
-      .default = "?"
-    )
-) %>%
+  col_names = TRUE, na = c("na", "NA", ""), col_types = cols(.default = "?")
+  ) %>%
   pivot_longer(-accepted_name, names_to = "id", values_to = "value") %>%
   semi_join(sites, by = "id") %>%
   arrange(id) %>%
   pivot_wider(names_from = "accepted_name", values_from = "value") %>%
   column_to_rownames(var = "id")
+
 
 rm(list = setdiff(ls(), c("sites", "species", "theme_mb")))
 
@@ -65,8 +63,9 @@ rm(list = setdiff(ls(), c("sites", "species", "theme_mb")))
 ### 1 NMDS ####################################################################
 
 
-### Calculate ###
-# Calculate only once and then load below:
+# Calculate only once and then load below the model:
+
+### Calculation ###
 # set.seed(11)
 # ordi <- metaMDS(
 #   species, dist = "bray", binary = TRUE,
@@ -89,12 +88,14 @@ points(ordi, display = "sites", cex = goodness_of_fit * 300)
 
 #### a Vectors ----------------------------------------------------------------
 
-(ef_vector1 <- envfit(
+ef_vector1 <- envfit(
   ordi ~ height_vegetation + cover_vegetation,
   data = sites,
   permu = 999,
   na.rm = TRUE
-))
+)
+ef_vector1
+
 plot(ordi, type = "n")
 plot(ef_vector1, add = TRUE, p. = .99)
 
@@ -106,10 +107,12 @@ save(
 
 #### b Factors ----------------------------------------------------------------
 
-(ef_factor1 <- envfit(
+ef_factor1 <- envfit(
   ordi ~  treatment,
   data = sites, permu = 999, na.rm = TRUE
-))
+)
+ef_factor1
+
 plot(ordi, type = "n")
 ordiellipse(ordi, sites$treatment, kind = "sd", draw = "lines", label = TRUE)
 

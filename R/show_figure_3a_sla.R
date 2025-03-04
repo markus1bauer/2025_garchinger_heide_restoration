@@ -1,10 +1,10 @@
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Management Garchinger Heide restoration sites
-# SLA ####
+# Specific leaf area (SLA) ####
 # Show figure 3a
 #++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-# sina Appeltauer
-# 2025-01-28
+# Sina Appeltauer
+# 2025-03-03
 
 
 
@@ -17,7 +17,6 @@
 ### Packages ###
 library(here)
 library(tidyverse)
-library(blme)
 library(ggeffects)
 library(ggbeeswarm)
 
@@ -65,7 +64,7 @@ sites <- read_csv(
 ### * Model ####
 load(file = here("outputs", "models", "model_sla_1.Rdata"))
 m <- m1
-m #m@call
+m
 
 
 
@@ -136,7 +135,7 @@ data <- sites %>%
       ))
 
 ### Save ###
-ggsave(
-  here("outputs", "figures", "figure_3a_sla_800dpi_8x8cm.tiff"),
-  dpi = 800, width = 8, height = 8, units = "cm"
-)
+# ggsave(
+#   here("outputs", "figures", "figure_3a_sla_800dpi_8x8cm.tiff"),
+#   dpi = 800, width = 8, height = 8, units = "cm"
+# )
