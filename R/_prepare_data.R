@@ -21,7 +21,6 @@ library(adespatial)
 library(indicspecies)
 
 ### Start ###
-# Create hashtag infront of a line: shift + strg + c
 rm(list = ls())
 # installr::updateR(
 #   browse_news = FALSE,
@@ -76,24 +75,24 @@ sites_restoration <- read_csv(
 coordinates_reference <- read_csv2(
   here("data", "raw", "data_raw_coordinates_reference.csv"),
   col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
-) %>%
+  ) %>%
   sf::st_as_sf(coords = c("longitude", "latitude"), crs = 25832) %>%
   sf::st_transform(4326) %>%
   mutate(
     latitude = sf::st_coordinates(.)[, 2],
     longitude = sf::st_coordinates(.)[, 1]
-  ) %>%
+    ) %>%
   sf::st_drop_geometry()
 
 coordinates_restoration <- read_csv(
   here("data", "raw", "data_raw_coordinates_restoration.csv"),
   col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
-) %>%
+  ) %>%
   mutate(
     id = paste0("X2024", plot),
     longitude = longitude / 100000,
     latitude = latitude / 100000
-  ) %>%
+    ) %>%
   select(id, plot, latitude, longitude)
 
 coordinates <- coordinates_reference %>%
@@ -106,20 +105,14 @@ coordinates <- coordinates_reference %>%
 
 species_reference <- read_csv2(
   here("data", "raw", "data_raw_species_reference.csv"),
-  col_names = TRUE, na = c("", "NA", "na"), col_types =
-    cols(
-      .default = "?"
-    )
+  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
   ) %>%
   mutate(name = str_replace_all(name, "_", " "))
 
 species_restoration <- read_csv(
   here("data", "raw", "data_raw_species_restoration.csv"),
-  col_names = TRUE, na = c("", "NA", "na"), col_types =
-    cols(
-      .default = "?"
-    )
-)
+  col_names = TRUE, na = c("", "NA", "na"), col_types = cols(.default = "?")
+  )
 
 
 
@@ -221,7 +214,7 @@ data <- traits %>%
 traits <- data %>%
   rename(name = species)
 
-# Harmonization ran once and were than saved --> load below
+# Harmonization ran once and were than saved --> load below processed file
 #
 # harmonized_names <- traits %>%
 #     rowid_to_column("id") %>%
@@ -269,7 +262,7 @@ traits <- traits %>%
       )
     )
 
-# Harmonization ran once and were than saved --> load below
+# Harmonization ran once and were than saved --> load below processed file
 #
 # harmonized_names <- species %>%
 #   full_join(traits, by = "name") %>% # combine with target species list
@@ -350,7 +343,6 @@ traits <- data_summarized %>%
     ) %>%
   mutate(across(where(is.numeric), replace_na, 0))
 
-# write.csv2(traits,"data/processed/data_processed_traits_tnrs_alle.csv")
 
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
@@ -374,7 +366,7 @@ data_redlist <- readxl::read_excel(
       )
     )
 
-# Calculate just once to save time (afterwards load file)
+# Calculate just once to save time (afterwards load file below)
 #
 # harmonized_names <- data_redlist %>%
 #   rowid_to_column("id") %>%
@@ -447,7 +439,7 @@ data_gift <- GIFT::GIFT_traits(
   agreement = 0.66, bias_ref = FALSE, bias_deriv = FALSE
 )
 
-# # Harmonization ran once and were than saved --> load below
+# # Harmonization ran once and were than saved --> load below processed file
 # 
 # harmonized_names <- data_gift %>%
 #   rowid_to_column("id") %>%
@@ -644,10 +636,12 @@ species_height <- species_height[-1,]
 species_height <- species_height %>% mutate_all(as.numeric)
 
 traits_height <- traits_height %>%
-  column_to_rownames(var="accepted_name")
+  column_to_rownames(var = "accepted_name")
 
-CWM.Height <- dbFD(traits_height, species_height, 
-                   w.abun=T, corr="lingoes", calc.FRic=F, calc.CWM=T)
+CWM.Height <- dbFD(
+  traits_height, species_height, 
+  w.abun = TRUE, corr = "lingoes", calc.FRic = FALSE, calc.CWM = TRUE
+)
 
 # Mean value
 CWM_Height <- CWM.Height$CWM
@@ -667,10 +661,12 @@ species_seed <- species_seed[-1,]
 species_seed <- species_seed %>% mutate_all(as.numeric)
 
 traits_seed <- traits_seed %>%
-  column_to_rownames(var="accepted_name")
+  column_to_rownames(var = "accepted_name")
 
-CWM.Seed <- dbFD(traits_seed, species_seed, 
-                   w.abun=T, corr="lingoes", calc.FRic=F, calc.CWM=T)
+CWM.Seed <- dbFD(
+  traits_seed, species_seed, 
+  w.abun = TRUE, corr = "lingoes", calc.FRic = FALSE, calc.CWM = TRUE
+)
 
 # Mean value
 CWM_Seed <- CWM.Seed$CWM
@@ -690,10 +686,12 @@ species_SLA <- species_SLA[-1,]
 species_SLA <- species_SLA %>% mutate_all(as.numeric)
 
 traits_SLA <- traits_SLA %>%
-  column_to_rownames(var="accepted_name")
+  column_to_rownames(var = "accepted_name")
 
-CWM.SLA <- dbFD(traits_SLA, species_SLA, 
-                 w.abun=T, corr="lingoes", calc.FRic=F, calc.CWM=T)
+CWM.SLA <- dbFD(
+  traits_SLA, species_SLA, 
+  w.abun = TRUE, corr = "lingoes", calc.FRic = FALSE, calc.CWM = TRUE
+)
 
 # Mean value
 CWM_SLA <- CWM.SLA$CWM
@@ -709,11 +707,12 @@ CWM <- full_join(CWM_Height, CWM_Seed, by = "id") %>%
 sites <- sites %>%
   left_join(CWM)
 
+
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 8 ESy: EUNIS expert vegetation classification system ################
+## 8 ESy: EUNIS expert vegetation classification system ########################
 
 
 ### a Preparation --------------------------------------------------------------
@@ -733,16 +732,7 @@ obs <- species %>%
     TaxonName = str_replace_all(TaxonName, "_", " "),
     TaxonName = str_replace_all(TaxonName, "ssp", "subsp."),
     TaxonName = as.factor(TaxonName),
-    RELEVE_NR = as.factor(RELEVE_NR)#,
-    # TaxonName = fct_recode(
-    #  TaxonName,
-    #  "Centaurea pannonica" = "Centaurea angustifolia",
-    #  "Euphrasia picta" = "Euphrasia officinalis subsp. picta",
-    #  "Euphrasia officinalis subsp. pratensis" =
-    #    "Euphrasia officinalis subsp. rostkoviana",
-     # "Lotus corniculatus" = "Lotus corniculatus var corniculatus",
-     # "Lotus corniculatus" = "Lotus corniculatus var hirsutus"
-     # )
+    RELEVE_NR = as.factor(RELEVE_NR)
   ) %>%
   filter(!is.na(Cover_Perc) & Cover_Perc != 0) %>%
   data.table::as.data.table()
@@ -840,6 +830,7 @@ data <- sites %>%
 table(data$esy)
 sites <- data
 
+
 rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
@@ -880,40 +871,12 @@ m <- quickMEM(
 # Truncation level = 2.397639 
 # Time to compute dbMEMs = 0.030000  sec 
 # 
-#
-#   *** Procedure stopped ***
-#   p-value of global test:  0.2556
+# *** Procedure stopped ***
+# p-value of global test:  0.2556
 # No significant spatial structure detected by global dbMEM analysis.
 # Selection of dbMEM variables would lead to spurious model.
-#
 
 
-
-## 10 Species ##################################################################
-
-
-# species_pa <- species
-# species_pa[,-1] <- ifelse(species[, -1] > 0, 1, 0) 
-# 
-# phi_taxa <- multipatt(species_pa, sites$treatment, 
-#                       func="r.g", duleg=T, control=how(nperm=999))
-# summary(phi_taxa)
-
-
-# phi_taxa <- as.data.frame(phi_taxa$sign)
-# phi_taxa$code_sp <- row.names(phi_taxa)
-# phi_taxa <- merge(data.trait[,c("code_sp", "Taxa")], phi_taxa, by="code_sp")
-# phi_taxa <- subset(phi_taxa, p.value<=0.051)
-# write.table(phi_taxa,"output/Phi_individual_Taxa_by_Type.csv", sep=";", row.names=F, col.names=T)
-
-
-## 10 Finalization ############################################################
-
-
-### a Rounding ----------------------------------------------------------------
-
-
-### b Final selection of variables --------------------------------------------
 
 
 
