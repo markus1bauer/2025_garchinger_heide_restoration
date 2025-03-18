@@ -1,0 +1,11 @@
+treatment,esy,n,total_n,ratio
+Control,R,11,68,0.16
+Control,R1A,55,68,0.81
+Control,R22,2,68,0.03
+Summer cut,R,14,30,0.47
+Summer cut,R1A,16,30,0.53
+Autumn cut,R,16,30,0.53
+Autumn cut,R1A,14,30,0.47
+Grazing,R,12,30,0.4
+Grazing,R1A,17,30,0.57
+Grazing,R22,1,30,0.03
