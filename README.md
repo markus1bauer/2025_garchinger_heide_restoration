@@ -1,4 +1,4 @@
-# Data and code for Appeltauer, Knöppler et al. (under preparation)
+# Data and code for Appeltauer, Knöppler et al. (submitted)
 
 Sina Appeltauer,
 Malte Knöppler,
@@ -47,11 +47,11 @@ When using the **data available** in this repository, please cite the original p
 
 **Publication**
 
-> Appeltauer S, Knöppler M, Teschauer M & Bauer M (under preparation) Title. &ndash; *XXX* XX, XXX&ndash;XXX. <https://doi.org/10.XXX>
+> Appeltauer S, Knöppler M, Teschauer M & Bauer M (submitted) Title. &ndash; *XXX* XX, XXX&ndash;XXX. <https://doi.org/10.XXX>
 
 **Dataset**
 
-> Appeltauer S, Knöppler M, Teschauer M & Bauer M (under preparation) Data and code for Appeltauer, Knöppler et al. (XXX) XXX (v1.X.X) [Data set]. &ndash; *Zenodo*. <https://doi.org/10.XXX>
+> Appeltauer S, Knöppler M, Teschauer M & Bauer M (2025) Data and code for Appeltauer, Knöppler et al. (submitted) (v1.X.X) [Data set]. &ndash; *Zenodo*. <https://doi.org/10.XXX>
 
 This dataset is also linked to PANGAEA
 > Appeltauer S, Knöppler M, Teschauer M & Bauer M (XXX) XXX. &ndash; *PANGAEA*. https://doi.org/10.XXX
