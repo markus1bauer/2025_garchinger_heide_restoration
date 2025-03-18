@@ -1,7 +1,7 @@
-Garchinger Heide and restoration sites: <br> R22 indicator richness
+Garchinger Heide and restoration sites: <br> Specific Leaf Area (SLA)
 ================
-<b>Sina Appeltauer, Markus Bauer</b> <br>
-<b>2025-03-04</b>
+<b>Markus Bauer, Sina Appeltauer </b> <br>
+<b>2025-03-18</b>
 
 - [Preparation](#preparation)
 - [Statistics](#statistics)
@@ -28,7 +28,7 @@ Garchinger Heide and restoration sites: <br> R22 indicator richness
 - [Session info](#session-info)
 
 <br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
-Teschauer</b>, <b>Johannes Kollmann</b> & <b>Markus Bauer</b>\*
+Teschauer</b> & <b>Markus Bauer</b>\*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
@@ -75,7 +75,7 @@ sites <- read_csv(
       )
     )
   ) %>%
-  rename(y = richness_R22) %>%
+  rename(y = CWM_SLA) %>%
   filter(is.na(location) | location != "rollfeld")
 ```
 
@@ -90,30 +90,30 @@ Rmisc::CI(sites$y, ci = .95)
 ```
 
     ##    upper     mean    lower 
-    ## 4.918329 4.381579 3.844829
+    ## 5.300903 5.287456 5.274009
 
 ``` r
 median(sites$y)
 ```
 
-    ## [1] 3
+    ## [1] 5.29858
 
 ``` r
 sd(sites$y)
 ```
 
-    ## [1] 3.349279
+    ## [1] 0.08390805
 
 ``` r
 quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 ```
 
-    ##  5% 95% 
-    ##   0  11
+    ##       5%      95% 
+    ## 5.154218 5.406022
 
 ### Graphs of raw data (Step 2, 6, 7)
 
-![](model_check_richness_R22_files/figure-gfm/data-exploration-1.png)<!-- -->![](model_check_richness_R22_files/figure-gfm/data-exploration-2.png)<!-- -->
+![](model_check_sla_files/figure-gfm/data-exploration-1.png)<!-- -->![](model_check_sla_files/figure-gfm/data-exploration-2.png)<!-- -->
 
 ### Outliers, zero-inflation, transformations? (Step 1, 3, 4)
 
@@ -125,7 +125,7 @@ quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
     ## 3 cut_autumn    30
     ## 4 grazing       30
 
-![](model_check_richness_R22_files/figure-gfm/outliers-1.png)<!-- -->
+![](model_check_sla_files/figure-gfm/outliers-1.png)<!-- -->
 
 ### Check collinearity part 1 (Step 5)
 
@@ -139,15 +139,15 @@ sites %>%
   theme(strip.text = element_text(size = 7))
 ```
 
-![](model_check_richness_R22_files/figure-gfm/collinearity-1.png)<!-- -->
+![](model_check_sla_files/figure-gfm/collinearity-1.png)<!-- -->
 
 ## Models
 
 Only here you have to modify the script to compare other models
 
 ``` r
-load(file = here("outputs", "models", "model_richness_R22_1.Rdata"))
-load(file = here("outputs", "models", "model_richness_R22_2.Rdata"))
+load(file = here("outputs", "models", "model_sla_1.Rdata"))
+load(file = here("outputs", "models", "model_sla_2.Rdata"))
 m_1 <- m1
 m_2 <- m2
 ```
@@ -160,9 +160,9 @@ m_1
 ## 
 ## Coefficients:
 ##         (Intercept)  treatmentcut_summer     treatmentgrazing  
-##              2.3871               5.6796              -0.6871  
+##             5.30616              0.02487             -0.13432  
 ## treatmentcut_autumn  
-##              5.1129
+##             0.01470
 m_2
 ## 
 ## Call:
@@ -170,13 +170,13 @@ m_2
 ## 
 ## Coefficients:
 ##                          (Intercept)                   treatmentcut_summer  
-##                              3.29902                               2.88096  
+##                            5.2022307                             0.1921240  
 ##                     treatmentgrazing                   treatmentcut_autumn  
-##                             -2.30330                              -3.13444  
+##                           -0.0177287                             0.0743596  
 ##                     cover_vegetation  treatmentcut_summer:cover_vegetation  
-##                             -0.01291                               0.04375  
+##                            0.0014711                            -0.0025064  
 ##    treatmentgrazing:cover_vegetation  treatmentcut_autumn:cover_vegetation  
-##                              0.03916                               0.12294
+##                           -0.0019430                            -0.0008071
 ```
 
 ## Model check
@@ -187,66 +187,66 @@ m_2
 simulation_output_1 <- simulateResiduals(m_1, plot = TRUE)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_all-1.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_all-1.png)<!-- -->
 
 ``` r
 simulation_output_2 <- simulateResiduals(m_2, plot = TRUE)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_all-2.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_all-2.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$treatment)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-1.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-1.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$treatment)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-2.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-2.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$cover_vegetation)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-3.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-3.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$cover_vegetation)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-4.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-4.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$height_vegetation)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-5.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-5.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$height_vegetation)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-6.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-6.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$botanist)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-7.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-7.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$botanist)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/dharma_single-8.png)<!-- -->
+![](model_check_sla_files/figure-gfm/dharma_single-8.png)<!-- -->
 
 ### Check collinearity part 2 (Step 5)
 
-Remove VIF \> 3 or \> 10 <br> Zuur et al. 2010 Methods Ecol Evol
-[DOI:10.1111/j.2041-210X.2009.00001.x](https://doi.org/10.1111/j.2041-210X.2009.00001.x)
+Remove VIF \> 3 or \> 10 <br> Zuur et al. 2010 Methods Ecol Evol [DOI:
+10.1111/j.2041-210X.2009.00001.x](https://doi.org/10.1111/j.2041-210X.2009.00001.x)
 
 ``` r
 #car::vif(m_1)
@@ -267,11 +267,11 @@ car::vif(m_2)
 
 ``` r
 MuMIn::r.squaredGLMM(m_1)
-##           R2m      R2c
-## [1,] 0.681363 0.681363
+##            R2m       R2c
+## [1,] 0.4776356 0.4776356
 MuMIn::r.squaredGLMM(m_2)
-##           R2m      R2c
-## [1,] 0.718933 0.718933
+##            R2m       R2c
+## [1,] 0.4837114 0.4837114
 ```
 
 ### AICc
@@ -283,9 +283,9 @@ p. 66 ISBN:
 ``` r
 MuMIn::AICc(m_1, m_2) %>%
   arrange(AICc)
-##     df     AICc
-## m_2  9 618.9461
-## m_1  5 632.2957
+##     df      AICc
+## m_1  5 -412.7291
+## m_2  9 -407.7189
 ```
 
 ## Predicted values
@@ -301,21 +301,21 @@ summary(m_1)
     ## lm(formula = y ~ treatment, data = sites)
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -4.5000 -1.3871 -0.0667  0.6129  6.5000 
+    ##       Min        1Q    Median        3Q       Max 
+    ## -0.132518 -0.034834  0.001893  0.032954  0.209038 
     ## 
     ## Coefficients:
-    ##                     Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)           2.3871     0.2409   9.910   <2e-16 ***
-    ## treatmentcut_summer   5.6796     0.4218  13.465   <2e-16 ***
-    ## treatmentgrazing     -0.6871     0.4218  -1.629    0.105    
-    ## treatmentcut_autumn   5.1129     0.4218  12.121   <2e-16 ***
+    ##                      Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)          5.306156   0.007742 685.362   <2e-16 ***
+    ## treatmentcut_summer  0.024873   0.013558   1.835   0.0686 .  
+    ## treatmentgrazing    -0.134316   0.013558  -9.907   <2e-16 ***
+    ## treatmentcut_autumn  0.014698   0.013558   1.084   0.2801    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.897 on 148 degrees of freedom
-    ## Multiple R-squared:  0.6857, Adjusted R-squared:  0.6793 
-    ## F-statistic: 107.6 on 3 and 148 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.06096 on 148 degrees of freedom
+    ## Multiple R-squared:  0.4826, Adjusted R-squared:  0.4722 
+    ## F-statistic: 46.02 on 3 and 148 DF,  p-value: < 2.2e-16
 
 ### Forest plot
 
@@ -329,7 +329,7 @@ dotwhisker::dwplot(
   theme_classic()
 ```
 
-![](model_check_richness_R22_files/figure-gfm/predicted_values-1.png)<!-- -->
+![](model_check_sla_files/figure-gfm/predicted_values-1.png)<!-- -->
 
 ### Effect sizes
 
@@ -345,22 +345,22 @@ necessary.
 ```
 
     ## $emmeans
-    ##  treatment  emmean    SE  df lower.CL upper.CL
-    ##  control      2.39 0.241 148     1.91     2.86
-    ##  cut_summer   8.07 0.346 148     7.38     8.75
-    ##  grazing      1.70 0.346 148     1.02     2.38
-    ##  cut_autumn   7.50 0.346 148     6.82     8.18
+    ##  treatment  emmean      SE  df lower.CL upper.CL
+    ##  control     5.306 0.00774 148    5.291    5.321
+    ##  cut_summer  5.331 0.01110 148    5.309    5.353
+    ##  grazing     5.172 0.01110 148    5.150    5.194
+    ##  cut_autumn  5.321 0.01110 148    5.299    5.343
     ## 
     ## Confidence level used: 0.95 
     ## 
     ## $contrasts
-    ##  contrast                estimate    SE  df t.ratio p.value
-    ##  cut_summer - control       5.680 0.422 148  13.465  <.0001
-    ##  grazing - control         -0.687 0.422 148  -1.629  0.3656
-    ##  grazing - cut_summer      -6.367 0.490 148 -13.001  <.0001
-    ##  cut_autumn - control       5.113 0.422 148  12.121  <.0001
-    ##  cut_autumn - cut_summer   -0.567 0.490 148  -1.157  0.6547
-    ##  cut_autumn - grazing       5.800 0.490 148  11.844  <.0001
+    ##  contrast                estimate     SE  df t.ratio p.value
+    ##  cut_summer - control      0.0249 0.0136 148   1.835  0.2613
+    ##  grazing - control        -0.1343 0.0136 148  -9.907  <.0001
+    ##  grazing - cut_summer     -0.1592 0.0157 148 -10.114  <.0001
+    ##  cut_autumn - control      0.0147 0.0136 148   1.084  0.6998
+    ##  cut_autumn - cut_summer  -0.0102 0.0157 148  -0.646  0.9166
+    ##  cut_autumn - grazing      0.1490 0.0157 148   9.467  <.0001
     ## 
     ## P value adjustment: tukey method for comparing a family of 4 estimates
 
@@ -368,7 +368,7 @@ necessary.
 plot(emm, comparison = TRUE)
 ```
 
-![](model_check_richness_R22_files/figure-gfm/effect-sizes-1.png)<!-- -->
+![](model_check_sla_files/figure-gfm/effect-sizes-1.png)<!-- -->
 
 # Session info
 

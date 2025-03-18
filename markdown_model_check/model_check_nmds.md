@@ -1,7 +1,7 @@
 Garchinger Heide and restoration sites: <br> Plant height
 ================
 <b>Markus Bauer</b> <br>
-<b>2025-03-04</b>
+<b>2025-03-18</b>
 
 - [Preparation](#preparation)
 - [Statistics](#statistics)
@@ -12,7 +12,7 @@ Garchinger Heide and restoration sites: <br> Plant height
 - [Session info](#session-info)
 
 <br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
-Teschauer</b>, <b>Johannes Kollmann</b> & <b>Markus Bauer</b>\*
+Teschauer</b> & <b>Markus Bauer</b>\*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
