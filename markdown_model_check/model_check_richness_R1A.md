@@ -1,7 +1,7 @@
-Garchinger Heide and restoration sites: <br> Seed mass
+Garchinger Heide and restoration sites: <br> R1A indicator richness
 ================
-<b>Markus Bauer</b> <br>
-<b>2025-03-04</b>
+<b>Sina Appeltauer, Markus Bauer</b> <br>
+<b>2025-03-18</b>
 
 - [Preparation](#preparation)
 - [Statistics](#statistics)
@@ -28,7 +28,7 @@ Garchinger Heide and restoration sites: <br> Seed mass
 - [Session info](#session-info)
 
 <br/> <br/> <b>Sina Appeltauer</b>, <b>Malte Knöppler</b>, <b>Maren
-Teschauer</b>, <b>Johannes Kollmann</b> & <b>Markus Bauer</b>\*
+Teschauer</b> & <b>Markus Bauer</b>\*
 
 Technichal University of Munich, TUM School of Life Sciences, Chair of
 Restoration Ecology, Emil-Ramann-Straße 6, 85354 Freising, Germany
@@ -48,8 +48,8 @@ section ‘Load models’
 # Preparation
 
 Protocol of data exploration (Steps 1-8) used from Zuur et al. (2010)
-Methods Ecol Evol [DOI:
-10.1111/2041-210X.12577](https://doi.org/10.1111/2041-210X.12577)
+Methods Ecol Evol
+[DOI:10.1111/2041-210X.12577](https://doi.org/10.1111/2041-210X.12577)
 
 #### Packages
 
@@ -75,13 +75,8 @@ sites <- read_csv(
       )
     )
   ) %>%
-  rename(y = CWM_Seed) %>%
-  filter(
-    is.na(location) | location != "rollfeld" &
-      !(id %in% c(
-        "X2021tum03", "X2021tum27", "X2021tum43", "X2021tum48", "X2021tum51"
-        )) # Plots with >=10% of Polygonatum odoratum (high seed mass: 0.08 g)
-    )
+  rename(y = richness_R1A) %>%
+  filter(is.na(location) | location != "rollfeld")
 ```
 
 # Statistics
@@ -94,43 +89,43 @@ sites <- read_csv(
 Rmisc::CI(sites$y, ci = .95)
 ```
 
-    ##     upper      mean     lower 
-    ## -6.189941 -6.252987 -6.316033
+    ##    upper     mean    lower 
+    ## 12.64943 12.03289 11.41636
 
 ``` r
 median(sites$y)
 ```
 
-    ## [1] -6.176563
+    ## [1] 12
 
 ``` r
 sd(sites$y)
 ```
 
-    ## [1] 0.386771
+    ## [1] 3.847107
 
 ``` r
 quantile(sites$y, probs = c(0.05, 0.95), na.rm = TRUE)
 ```
 
-    ##        5%       95% 
-    ## -6.866933 -5.692730
+    ##  5% 95% 
+    ##   6  18
 
 ### Graphs of raw data (Step 2, 6, 7)
 
-![](model_check_seed_mass_files/figure-gfm/data-exploration-1.png)<!-- -->![](model_check_seed_mass_files/figure-gfm/data-exploration-2.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/data-exploration-1.png)<!-- -->![](model_check_richness_R1A_files/figure-gfm/data-exploration-2.png)<!-- -->
 
 ### Outliers, zero-inflation, transformations? (Step 1, 3, 4)
 
     ## # A tibble: 4 × 2
     ##   treatment      n
     ##   <fct>      <int>
-    ## 1 control       57
+    ## 1 control       62
     ## 2 cut_summer    30
     ## 3 cut_autumn    30
     ## 4 grazing       30
 
-![](model_check_seed_mass_files/figure-gfm/outliers-1.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/outliers-1.png)<!-- -->
 
 ### Check collinearity part 1 (Step 5)
 
@@ -144,15 +139,15 @@ sites %>%
   theme(strip.text = element_text(size = 7))
 ```
 
-![](model_check_seed_mass_files/figure-gfm/collinearity-1.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/collinearity-1.png)<!-- -->
 
 ## Models
 
 Only here you have to modify the script to compare other models
 
 ``` r
-load(file = here("outputs", "models", "model_seed_mass_1.Rdata"))
-load(file = here("outputs", "models", "model_seed_mass_2.Rdata"))
+load(file = here("outputs", "models", "model_richness_R1A_1.Rdata"))
+load(file = here("outputs", "models", "model_richness_R1A_2.Rdata"))
 m_1 <- m1
 m_2 <- m2
 ```
@@ -165,9 +160,9 @@ m_1
 ## 
 ## Coefficients:
 ##         (Intercept)  treatmentcut_summer     treatmentgrazing  
-##             -6.3169               0.3668              -0.4381  
+##             12.9839               0.9161              -5.8505  
 ## treatmentcut_autumn  
-##              0.3843
+##              0.1161
 m_2
 ## 
 ## Call:
@@ -175,13 +170,13 @@ m_2
 ## 
 ## Coefficients:
 ##                          (Intercept)                   treatmentcut_summer  
-##                            -6.175924                              0.194013  
+##                             18.68627                              -5.47493  
 ##                     treatmentgrazing                   treatmentcut_autumn  
-##                            -0.773426                              0.840447  
+##                            -13.69698                             -12.73361  
 ##                     cover_vegetation  treatmentcut_summer:cover_vegetation  
-##                            -0.001993                              0.002514  
+##                             -0.08072                               0.09198  
 ##    treatmentgrazing:cover_vegetation  treatmentcut_autumn:cover_vegetation  
-##                             0.009236                             -0.006962
+##                              0.16062                               0.18793
 ```
 
 ## Model check
@@ -192,61 +187,61 @@ m_2
 simulation_output_1 <- simulateResiduals(m_1, plot = TRUE)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_all-1.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_all-1.png)<!-- -->
 
 ``` r
 simulation_output_2 <- simulateResiduals(m_2, plot = TRUE)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_all-2.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_all-2.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$treatment)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-1.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-1.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$treatment)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-2.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-2.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$cover_vegetation)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-3.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-3.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$cover_vegetation)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-4.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-4.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$height_vegetation)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-5.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-5.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$height_vegetation)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-6.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-6.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_1$scaledResiduals, sites$botanist)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-7.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-7.png)<!-- -->
 
 ``` r
 plotResiduals(simulation_output_2$scaledResiduals, sites$botanist)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/dharma_single-8.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/dharma_single-8.png)<!-- -->
 
 ### Check collinearity part 2 (Step 5)
 
@@ -262,9 +257,9 @@ car::vif(m_2)
     ## consider setting type = 'predictor'; see ?vif
 
     ##                                   GVIF Df GVIF^(1/(2*Df))
-    ## treatment                  31926.73717  3        5.632386
-    ## cover_vegetation              31.96906  1        5.654119
-    ## treatment:cover_vegetation 17427.21034  3        5.091800
+    ## treatment                  30292.30254  3        5.583271
+    ## cover_vegetation              29.09249  1        5.393746
+    ## treatment:cover_vegetation 16534.49612  3        5.047370
 
 ## Model comparison
 
@@ -273,10 +268,10 @@ car::vif(m_2)
 ``` r
 MuMIn::r.squaredGLMM(m_1)
 ##            R2m       R2c
-## [1,] 0.6190794 0.6190794
+## [1,] 0.4045761 0.4045761
 MuMIn::r.squaredGLMM(m_2)
 ##            R2m       R2c
-## [1,] 0.6391753 0.6391753
+## [1,] 0.4389252 0.4389252
 ```
 
 ### AICc
@@ -289,8 +284,8 @@ p. 66 ISBN:
 MuMIn::AICc(m_1, m_2) %>%
   arrange(AICc)
 ##     df     AICc
-## m_2  9 1.697596
-## m_1  5 3.536786
+## m_2  9 768.1574
+## m_1  5 770.3000
 ```
 
 ## Predicted values
@@ -306,21 +301,21 @@ summary(m_1)
     ## lm(formula = y ~ treatment, data = sites)
     ## 
     ## Residuals:
-    ##      Min       1Q   Median       3Q      Max 
-    ## -0.69295 -0.12649  0.00537  0.15918  0.51917 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -6.9839 -1.9839  0.0161  2.0161  6.9000 
     ## 
     ## Coefficients:
-    ##                     Estimate Std. Error  t value Pr(>|t|)    
-    ## (Intercept)         -6.31687    0.03174 -199.004  < 2e-16 ***
-    ## treatmentcut_summer  0.36681    0.05406    6.786 2.84e-10 ***
-    ## treatmentgrazing    -0.43815    0.05406   -8.106 2.13e-13 ***
-    ## treatmentcut_autumn  0.38435    0.05406    7.110 5.09e-11 ***
+    ##                     Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)          12.9839     0.3793  34.235  < 2e-16 ***
+    ## treatmentcut_summer   0.9161     0.6642   1.379    0.170    
+    ## treatmentgrazing     -5.8505     0.6642  -8.809 3.13e-15 ***
+    ## treatmentcut_autumn   0.1161     0.6642   0.175    0.861    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.2397 on 143 degrees of freedom
-    ## Multiple R-squared:  0.624,  Adjusted R-squared:  0.6161 
-    ## F-statistic: 79.09 on 3 and 143 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 2.986 on 148 degrees of freedom
+    ## Multiple R-squared:  0.4094, Adjusted R-squared:  0.3974 
+    ## F-statistic:  34.2 on 3 and 148 DF,  p-value: < 2.2e-16
 
 ### Forest plot
 
@@ -330,11 +325,11 @@ dotwhisker::dwplot(
   ci = 0.95,
   show_intercept = FALSE,
   vline = geom_vline(xintercept = 0, colour = "grey60", linetype = 2)) +
-  xlim(-60, 90) +
+  xlim(-0.3, 0.35) +
   theme_classic()
 ```
 
-![](model_check_seed_mass_files/figure-gfm/predicted_values-1.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/predicted_values-1.png)<!-- -->
 
 ### Effect sizes
 
@@ -350,22 +345,22 @@ necessary.
 ```
 
     ## $emmeans
-    ##  treatment  emmean     SE  df lower.CL upper.CL
-    ##  control     -6.32 0.0317 143    -6.38    -6.25
-    ##  cut_summer  -5.95 0.0438 143    -6.04    -5.86
-    ##  grazing     -6.76 0.0438 143    -6.84    -6.67
-    ##  cut_autumn  -5.93 0.0438 143    -6.02    -5.85
+    ##  treatment  emmean    SE  df lower.CL upper.CL
+    ##  control     12.98 0.379 148    12.23    13.73
+    ##  cut_summer  13.90 0.545 148    12.82    14.98
+    ##  grazing      7.13 0.545 148     6.06     8.21
+    ##  cut_autumn  13.10 0.545 148    12.02    14.18
     ## 
     ## Confidence level used: 0.95 
     ## 
     ## $contrasts
-    ##  contrast                estimate     SE  df t.ratio p.value
-    ##  cut_summer - control      0.3668 0.0541 143   6.786  <.0001
-    ##  grazing - control        -0.4381 0.0541 143  -8.106  <.0001
-    ##  grazing - cut_summer     -0.8050 0.0619 143 -13.009  <.0001
-    ##  cut_autumn - control      0.3843 0.0541 143   7.110  <.0001
-    ##  cut_autumn - cut_summer   0.0175 0.0619 143   0.283  0.9920
-    ##  cut_autumn - grazing      0.8225 0.0619 143  13.292  <.0001
+    ##  contrast                estimate    SE  df t.ratio p.value
+    ##  cut_summer - control       0.916 0.664 148   1.379  0.5142
+    ##  grazing - control         -5.851 0.664 148  -8.809  <.0001
+    ##  grazing - cut_summer      -6.767 0.771 148  -8.776  <.0001
+    ##  cut_autumn - control       0.116 0.664 148   0.175  0.9981
+    ##  cut_autumn - cut_summer   -0.800 0.771 148  -1.038  0.7277
+    ##  cut_autumn - grazing       5.967 0.771 148   7.738  <.0001
     ## 
     ## P value adjustment: tukey method for comparing a family of 4 estimates
 
@@ -373,7 +368,7 @@ necessary.
 plot(emm, comparison = TRUE)
 ```
 
-![](model_check_seed_mass_files/figure-gfm/effect-sizes-1.png)<!-- -->
+![](model_check_richness_R1A_files/figure-gfm/effect-sizes-1.png)<!-- -->
 
 # Session info
 
