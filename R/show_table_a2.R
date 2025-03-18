@@ -117,3 +117,4 @@ data <- read_csv(
 ### Save ###
 write_csv(data, here("outputs", "tables", "table_a2_habitat_types.csv"))
 gtsave(table, here("outputs", "tables", "table_a2_habitat_types.html"))
+gtsave(table, here("outputs", "tables", "table_a2_habitat_types.png"))
