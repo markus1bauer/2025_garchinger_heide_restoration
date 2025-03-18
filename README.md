@@ -18,19 +18,17 @@ XXX (under preparation) __Title__ &ndash; *XXX* XX, XXX&ndash;XXX.
     -   `Raw` and `processed` data of the sites variables (.csv)
     -   `Raw` and `processed` data of the species' abundances (.csv)
     -   `Raw` and `processed` data of the species' traits (.csv)
-    -   Raw and processed `raws/spatial` data (.shp)
-    -   `photos` of the plots (.jpg)
+    -   Raw and processed `raw/spatial` data (.shp)
 2.  **Outputs**: the folder `outputs` contains
     -   The figures generated (.tiff)
     -   The tables generated (.html/.png)
     -   The models calculated (.Rdata)
-    -   The summary statistics of the models (.csv)
 3.  **R**: the folder `R` contains
     -   Scripts to calculate all models (.R)
     -   Scripts to generate all figures and tables (.R)
     -   Metadata script for creating EML file
     -   Folder for calculating habitat types (ESY)
-4.  **Markdown**: the folder `markdown` contains
+4.  **Markdown**: the folder `markdown_model_check` contains
     -   Markdown documents of the analyses with model evaluations and comparisons (.md)
 
 #### Package versioning
