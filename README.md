@@ -1,8 +1,8 @@
 # Data and code for Appeltauer, Knöppler et al. (submitted)
 
-Sina Appeltauer,
-Malte Knöppler,
-Maren Teschauer &
+Sina Appeltauer <a href="https://orcid.org/0009-0002-3244-6720"><img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"/></a>,
+Malte Knöppler <a href="https://orcid.org/0009-0007-4844-3272"><img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"/></a>,
+Maren Teschauer <a href="https://orcid.org/0009-0004-0762-6353"><img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"/></a> &
 Markus Bauer <a href="https://orcid.org/0000-0001-5372-4174"><img src="https://info.orcid.org/wp-content/uploads/2019/11/orcid_16x16.png" width="16" height="16"/></a>
 
 
