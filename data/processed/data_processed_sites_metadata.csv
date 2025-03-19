@@ -1,0 +1,32 @@
+attributeName,attributeDefinition,formatString,definition,unit,numberType,type,factor,comment
+id,Serial number accompanied with the survey year,NA,serial number accompanied with the survey year,NA,NA,character,NA,NA
+plot,Serial number of the plot,NA,serial number of the plot,NA,NA,character,NA,NA
+location,Location of the plots within the reference site (= control),NA,NA,NA,NA,factor,sued = south / mitte = center / nord = north / Rollfeld = topsoil removal in reference site,NA
+survey_date,Date of the vegetation survey,YYYY-mm-dd,NA,NA,NA,date,NA,NA
+height_vegetation,Average overall height of the total vegetation,NA,NA,centiMeter,integer,numeric,NA,NA
+cover_vegetation,Estimated total vegetation cover,NA,NA,percent,integer,numeric,NA,NA
+cover_moss,Estimated moss cover,NA,NA,percent,real,numeric,NA,NA
+cover_litter,Estimated litter cover,NA,NA,percent,real,numeric,NA,NA
+cover_soil,Estimated raw soil cover,NA,NA,percent,real,numeric,NA,NA
+elevation,Height above sea level,NA,NA,meter,integer,numeric,NA,NA
+plot_size,Size of the vegetation surveys (rectangular),NA,NA,squareMeter,integer,numeric,NA,NA
+treatment,Restoration measure either cutted in summer after 01.07. or in autumn after 01.09 or grazed once a year,NA,NA,NA,NA,factor,control / cut_summer / cut_autumn / grazing,NA
+mowing,Year when mowing regime started,YYYY,NA,NA,NA,date,NA,NA
+grass_cover,Summed cover of all Poaceae species,NA,NA,percent,real,numeric,NA,NA
+richness_total,Total species richness,NA,NA,NA,integer,numeric,NA,NA
+richness_R1A,Species richness of R1A indicator species,NA,NA,NA,integer,numeric,NA,NA
+richness_R22,Species richness of R22 indicator species,NA,NA,NA,integer,numeric,NA,NA
+richness_both,Species richness of R1A and R22 indicator species,NA,NA,NA,integer,numeric,NA,NA
+rlg_VU,Species richness of vulnerable species (see data_processed_traits),NA,NA,NA,integer,numeric,NA,NA
+rlg_NT,Species richness of near threatened species (see data_processed_traits),NA,NA,NA,integer,numeric,NA,NA
+rlg_EN,Species richness of endangered species (see data_processed_traits),NA,NA,NA,integer,numeric,NA,NA
+rlg_CR,Species richness of critically endangered species (see data_processed_traits),NA,NA,NA,integer,numeric,NA,NA
+rlg,Species richness of rlg_CR + rlg_EN + rlg_VU + rlg_NT,NA,NA,NA,integer,numeric,NA,NA
+shannon,Shannon index (for calculation see _prepare_data.R in the code),NA,NA,NA,real,numeric,NA,NA
+eveness,Eveness index calculated: shannon / log(richness_total),NA,NA,NA,real,numeric,NA,NA
+CWM_Height,Community-weighted mean (abundance data) of plant height,NA,NA,meter,real,numeric,NA,NA
+CWM_Seed,Community-weighted mean of (abundance data) seed mass in log-transformed gram,NA,NA,NA,real,numeric,NA,NA
+CWM_SLA,Community-weighted mean (abundance data) of specific leaf area of log-transforemed values in squareCentiMeterPerGram,NA,NA,NA,real,numeric,NA,NA
+esy,EUNIS habitat type (Chytry et al. 2020) calculated with the ESy of Bruelheide et al. (2021),NA,NA,NA,NA,factor,R = general grassland / R1A = semi-dry perennial calcareous grassland (meadow steppe) / R22 = Low and medium altitude hay meadow,Chytrý et al. (2020) Appl Veg Sci https://doi.org/10.1111/avsc.12519 / Bruelheide et al. 2021 Appl Veg Sci https://doi.org/10.1111/avsc.12562
+botanist,Botanist who conducted the vegetation survey,NA,Botanist who conducted the vegetation survey,NA,NA,character,NA,NA
+comments,Comments,NA,Comments,NA,NA,character,NA,NA

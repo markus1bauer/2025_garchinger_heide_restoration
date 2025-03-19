@@ -1,0 +1,14 @@
+attributeName,attributeDefinition,formatString,definition,unit,numberType,type,factor,comment
+plot,plot ID independent of the survey year,NA,plot ID independent of year,NA,NA,character,NA,NA
+elevation,Height above sea level,NA,NA,meter,integer,numeric,NA,NA
+plot_size,Size of the vegetation surveys (rectangular),NA,NA,squareMeter,integer,numeric,NA,NA
+treatment,Restoration measure either cutted in summer after 01.07. or in autumn after 01.09 or grazed once a year,NA,NA,NA,NA,factor,control / cut_summer / cut_autumn / grazing,NA
+mowing,Year when mowing regime started,YYYY,NA,NA,NA,date,NA,NA
+survey_date_2024,Date of the vegetation survey in 2024,YYYY-mm-dd,NA,NA,NA,date,NA,NA
+botanist_2024,Botanists who conducted the vegetation survey in 2024,NA,Botanist who conducted the vegetation survey,NA,NA,character,NA,NA
+cover_vegetation_2024,Estimated total vegetation cover in 2024,NA,NA,percent,integer,numeric,NA,NA
+cover_moss_2024,Estimated moss cover in 2024,NA,NA,percent,real,numeric,NA,NA
+cover_litter_2024,Estimated litter cover in 2024,NA,NA,percent,real,numeric,NA,NA
+cover_soil_2024,Estimated raw soil cover in 2024,NA,NA,percent,real,numeric,NA,NA
+height_vegetation_2024,Average overall height of the total vegetation in 2024,NA,NA,centiMeter,integer,numeric,NA,NA
+comments,Comments,NA,Comments,NA,NA,character,NA,NA

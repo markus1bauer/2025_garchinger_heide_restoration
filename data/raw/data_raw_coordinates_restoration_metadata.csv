@@ -1,0 +1,4 @@
+attributeName,attributeDefinition,formatString,definition,unit,numberType,type,factor,comment
+plot,plot ID independent of the survey year,NA,plot ID independent of year,NA,NA,character,NA,NA
+latitude,Latitude of the plot in WGS84 EPSG 4326,NA,NA,NA,real,numeric,NA,NA
+longitude,Longitude of the plot in WGS84 EPSG 4326,NA,NA,NA,real,numeric,NA,NA

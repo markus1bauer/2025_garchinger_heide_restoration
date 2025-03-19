@@ -897,6 +897,13 @@ m <- quickMEM(
 
 
 
+## 11 Final selection of variables ############################################
+
+
+sites <- sites %>%
+  relocate(botanist, .after = last_col()) %>%
+  relocate(comments, .after = last_col()) %>%
+  select(-streuhoehe_2021, -flechtendeckung_2021, -rlg_LC, -rlg_NA, -rlg_NE)
 
 
 
