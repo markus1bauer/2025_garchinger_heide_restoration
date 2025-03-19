@@ -89,7 +89,7 @@ points(ordi, display = "sites", cex = goodness_of_fit * 300)
 #### a Vectors ----------------------------------------------------------------
 
 ef_vector1 <- envfit(
-  ordi ~ height_vegetation + cover_vegetation,
+  ordi ~ height_vegetation + cover_vegetation + grass_cover,
   data = sites,
   permu = 999,
   na.rm = TRUE
@@ -115,4 +115,3 @@ ef_factor1
 
 plot(ordi, type = "n")
 ordiellipse(ordi, sites$treatment, kind = "sd", draw = "lines", label = TRUE)
-

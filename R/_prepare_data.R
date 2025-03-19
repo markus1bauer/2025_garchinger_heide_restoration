@@ -168,6 +168,7 @@ sites <- sites_reference %>%
     plot_size = if_else(is.na(plot_size), 4, plot_size),
     treatment = if_else(is.na(treatment), "control", treatment)
   ) %>%
+  relocate(id, .before = "plot") %>%
   unite("botanist", c("botanist_2021", "botanist_2024"), na.rm = TRUE) %>%
   unite(
     "survey_date", c("survey_date_2021", "survey_date_2024"), na.rm = TRUE

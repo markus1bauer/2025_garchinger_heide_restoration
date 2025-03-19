@@ -92,7 +92,8 @@ data_envfit <- envfit %>%
     variable = fct_recode(
       variable,
       "Vegetation\nheight" = "height_vegetation",
-      "Vegetation\ncover" = "cover_vegetation"
+      "Vegetation\ncover" = "cover_vegetation",
+      "Grass\ncover" = "grass_cover",
     )
   )
 

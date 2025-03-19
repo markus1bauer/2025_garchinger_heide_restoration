@@ -110,7 +110,7 @@ points(ordi, display = "sites", cex = goodness_of_fit * 300)
 
 ```{r r2, collapse = TRUE}
 ef_vector1 <- envfit(
-  ordi ~ height_vegetation + cover_vegetation,
+  ordi ~ height_vegetation + cover_vegetation + grass_cover,
   data = sites,
   permu = 999,
   na.rm = TRUE

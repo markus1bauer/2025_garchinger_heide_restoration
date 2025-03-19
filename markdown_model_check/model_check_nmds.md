@@ -1,7 +1,7 @@
 Garchinger Heide and restoration sites: <br> Plant height
 ================
 <b>Markus Bauer</b> <br>
-<b>2025-03-18</b>
+<b>2025-03-19</b>
 
 - [Preparation](#preparation)
 - [Statistics](#statistics)
@@ -117,7 +117,7 @@ points(ordi, display = "sites", cex = goodness_of_fit * 300)
 
 ``` r
 ef_vector1 <- envfit(
-  ordi ~ height_vegetation + cover_vegetation,
+  ordi ~ height_vegetation + cover_vegetation + grass_cover,
   data = sites,
   permu = 999,
   na.rm = TRUE
@@ -129,6 +129,7 @@ ef_vector1
 ##                      NMDS1    NMDS2     r2 Pr(>r)    
 ## height_vegetation  0.97615 -0.21708 0.6675  0.001 ***
 ## cover_vegetation   0.25573 -0.96675 0.7334  0.001 ***
+## grass_cover        0.94009 -0.34092 0.6894  0.001 ***
 ## ---
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ## Permutation: free
