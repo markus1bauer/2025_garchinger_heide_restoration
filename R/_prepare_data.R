@@ -516,7 +516,25 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 6 Alpha diversity ##########################################################
+## 6 Create variables #########################################################
+
+
+### Grass cover ---------------------------------------------------------------
+
+data <- species %>%
+  left_join(
+    traits %>% select(accepted_name, accepted_family), by = "accepted_name"
+    ) %>%
+  filter(accepted_family == "Poaceae") %>%
+  select(-accepted_name, -accepted_family) %>%
+  summarize(across(where(is.numeric), ~ sum(., na.rm = TRUE))) %>%
+  pivot_longer(cols = everything(), names_to = "id", values_to = "grass_cover")
+sites <- sites %>%
+  left_join(data, by = "id")
+
+
+
+## 7 Alpha diversity ##########################################################
 
 
 ### a Species richness --------------------------------------------------------
@@ -612,7 +630,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 7 Calculation of CWMs ######################################################
+## 8 Calculation of CWMs ######################################################
 
 
 traits_without_trees <- traits %>%
@@ -712,7 +730,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 8 ESy: EUNIS expert vegetation classification system ########################
+## 9 ESy: EUNIS expert vegetation classification system ########################
 
 
 ### a Preparation --------------------------------------------------------------
@@ -835,7 +853,7 @@ rm(list = setdiff(ls(), c("species", "sites", "traits", "coordinates")))
 
 
 
-## 9 dbMEM: Distance-based Moran's eigenvector maps ############################
+## 10 dbMEM: Distance-based Moran's eigenvector maps ############################
 
 
 # Borcard et al. (2018) Numerical Ecology https://doi.org/10.1007/978-1-4419-7976-6
