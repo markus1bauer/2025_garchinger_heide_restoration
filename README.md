@@ -51,7 +51,7 @@ When using the **data available** in this repository, please cite the original p
 
 **Dataset**
 
-> Appeltauer S, Knöppler M, Teschauer M & Bauer M (2025) Data and code for Appeltauer, Knöppler et al. (prepared) (v0.0.1) [Data set]. &ndash; *Zenodo*. [<https://doi.org/10.XXX>](https://doi.org/10.5281/zenodo.15065628)
+> Appeltauer S, Knöppler M, Teschauer M & Bauer M (2025) Data and code for Appeltauer, Knöppler et al. (prepared) (v0.0.1) [Data set]. &ndash; *Zenodo*. <https://doi.org/10.XXX>
 
 This dataset is also linked to PANGAEA
 > Appeltauer S, Knöppler M, Teschauer M & Bauer M (XXX) XXX. &ndash; *PANGAEA*. https://doi.org/10.XXX
