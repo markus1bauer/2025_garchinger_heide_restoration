@@ -8,7 +8,7 @@ Markus Bauer <a href="https://orcid.org/0000-0001-5372-4174"><img src="https://i
 
 Data and code for:
 
-Appeltauer S, Knöppler M, Teschauer M & Bauer M (under preparation) __Title__ &ndash; *XXX* XX, XXX&ndash;XXX.
+Appeltauer S, Knöppler M, Teschauer M & Bauer M (submitted) __Title__ &ndash; *XXX* XX, XXX&ndash;XXX.
 
 [![DOI:10.XXX](http://img.shields.io/badge/DOI-10.XXX-informational.svg)](https://doi.org/10.XXX)
 
@@ -51,7 +51,7 @@ When using the **data available** in this repository, please cite the original p
 
 **Dataset**
 
-> Appeltauer S, Knöppler M, Teschauer M & Bauer M (2025) Data and code for Appeltauer, Knöppler et al. (submitted) (v1.X.X) [Data set]. &ndash; *Zenodo*. <https://doi.org/10.XXX>
+> Appeltauer S, Knöppler M, Teschauer M & Bauer M (2025) Data and code for Appeltauer, Knöppler et al. (prepared) (v0.0.1) [Data set]. &ndash; *Zenodo*. [<https://doi.org/10.XXX>](https://doi.org/10.5281/zenodo.15065628)
 
 This dataset is also linked to PANGAEA
 > Appeltauer S, Knöppler M, Teschauer M & Bauer M (XXX) XXX. &ndash; *PANGAEA*. https://doi.org/10.XXX
